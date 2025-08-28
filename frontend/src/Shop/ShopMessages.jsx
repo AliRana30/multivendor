@@ -1,0 +1,222 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSelector } from 'react-redux';
+import { useParams, useNavigate } from 'react-router-dom';
+import DashboardHeader from './ShopLayout/DashboardHeader';
+import DashboardSideBar from './ShopLayout/DashboardSideBar';
+import AllMessages from './ShopComponents/AllMessages';
+import MessageChat from './ShopComponents/MessageChat';
+
+const ShopMessages = () => {
+  const navigate = useNavigate();
+  const params = useParams();
+  
+  const conversationIdFromUrl = params.conversationId || params.id;
+  
+  const { seller } = useSelector((state) => state.seller);
+  const { user } = useSelector((state) => state.user);
+
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+  const [currentView, setCurrentView] = useState('list');
+  const [activeConversationId, setActiveConversationId] = useState(null);
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  const currentUserId = seller?._id 
+  const conversationId = conversationIdFromUrl || activeConversationId;
+
+  const handleBackToMessages = useCallback(() => {
+    setCurrentView('list');
+    setActiveConversationId(null);
+    
+    const backPath = seller ? '/shop-dashboard/messages' : '/dashboard/messages';
+    navigate(backPath, { replace: true });
+  }, [navigate, seller]);
+
+  const handleSelectConversation = useCallback((selectedConversationId) => {
+    if (!selectedConversationId) return;
+
+    if (typeof selectedConversationId !== 'string' || selectedConversationId.length < 12) {
+      return;
+    }
+
+    setCurrentView('chat');
+    setActiveConversationId(selectedConversationId);
+    
+    const navigationPath = seller 
+      ? `/shop-dashboard/messages/${selectedConversationId}` 
+      : `/dashboard/messages/${selectedConversationId}`;
+    
+    navigate(navigationPath);
+  }, [navigate, seller]);
+
+  // Authentication check
+  useEffect(() => {
+    const checkAuth = () => {
+      if (!currentUserId && !localStorage.getItem("token")) {
+        navigate('/shop-login', { replace: true });
+        return;
+      }
+      setIsAuthChecked(true);
+    };
+
+    const timer = setTimeout(checkAuth, 100);
+    return () => clearTimeout(timer);
+  }, [currentUserId, navigate]);
+
+  // Handle responsive design
+  useEffect(() => {
+    const handleResize = () => {
+      const isNowMobile = window.innerWidth < 768;
+      setIsMobile(isNowMobile);
+      setIsSidebarOpen(!isNowMobile);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Handle view initialization based on URL
+  useEffect(() => {
+    if (!isAuthChecked || !currentUserId) return;
+
+    if (conversationIdFromUrl && 
+        conversationIdFromUrl !== 'undefined' && 
+        conversationIdFromUrl !== 'null' && 
+        conversationIdFromUrl !== 'messages') {
+      
+      if (typeof conversationIdFromUrl === 'string' && conversationIdFromUrl.length >= 12) {
+        setCurrentView('chat');
+        setActiveConversationId(conversationIdFromUrl);
+      } else {
+        handleBackToMessages();
+      }
+    } else {
+      setCurrentView('list');
+      setActiveConversationId(null);
+    }
+
+    setIsInitialized(true);
+  }, [conversationIdFromUrl, isAuthChecked, currentUserId, handleBackToMessages]);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen((prev) => !prev);
+  };
+
+  if (!isAuthChecked) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!currentUserId && localStorage.getItem("token")) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading user data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isInitialized) {
+    return (
+      <div className="flex flex-col h-screen text-black bg-gray-50">
+        <DashboardHeader onToggleSidebar={toggleSidebar} isMobile={isMobile} />
+        <div className="flex flex-1 items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+            <p className="text-gray-600">Initializing messages...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col h-screen text-black bg-gray-50">
+      <DashboardHeader onToggleSidebar={toggleSidebar} isMobile={isMobile} />
+
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar */}
+        <div
+          className={`bg-white border-r border-gray-200 transition-all duration-300 shadow-sm ${
+            isMobile
+              ? isSidebarOpen
+                ? 'fixed z-50 top-0 left-0 w-64 h-full'
+                : 'hidden'
+              : isSidebarOpen
+              ? 'w-64'
+              : 'w-0'
+          }`}
+        >
+          {(isSidebarOpen || !isMobile) && (
+            <DashboardSideBar isCollapsed={!isSidebarOpen && !isMobile} />
+          )}
+        </div>
+
+        {/* Mobile overlay */}
+        {isMobile && isSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black opacity-50 z-40"
+            onClick={toggleSidebar}
+          ></div>
+        )}
+
+        {/* Main Content */}
+        <div className="flex-1 overflow-hidden bg-white">
+          {currentView === 'chat' && conversationId ? (
+            <div key={`chat-${conversationId}`} className="h-full">
+              <MessageChat
+                conversationId={conversationId}
+                onBack={handleBackToMessages}
+              />
+            </div>
+          ) : currentView === 'list' ? (
+            <div className="h-full flex flex-col">
+              {/* Messages Header */}
+              <div className="bg-white border-b border-gray-200 px-6 py-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h1 className="text-2xl font-bold text-gray-900">Messages</h1>
+                    <p className="text-gray-600 mt-1">
+                      Manage your conversations and messages
+                    </p>
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {seller ? 'Shop Dashboard' : 'User Dashboard'}
+                  </div>
+                </div>
+              </div>
+
+              {/* Messages List */}
+              <div className="flex-1 overflow-y-auto bg-gray-50">
+                <AllMessages 
+                  key={`messages-list-${currentUserId}`}
+                  onSelectConversation={handleSelectConversation} 
+                  currentUserId={currentUserId}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                <p className="text-gray-600">Loading...</p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ShopMessages;
