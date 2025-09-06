@@ -10,7 +10,7 @@ userRouter.post("/signup", upload.single("file"), signup);
 userRouter.post("/login", login);
 userRouter.get("/logout", logout);
 
-userRouter.get("/get-user", isAuthenticated, (req, res) => {
+userRouter.get("/get-user" , (req, res) => {
   res.json({ user: req.user }); 
 });
 
@@ -23,5 +23,6 @@ userRouter.delete('/delete-user-address/:id', isAuthenticated, deleteUserAddress
 userRouter.put("/update-password", isAuthenticated, updateUserPassword);
 
 userRouter.get("/activation/:token", useractivation);
+
 
 export default userRouter;
