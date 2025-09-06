@@ -1417,7 +1417,7 @@ const TrackOrders = () => {
             <div className="relative">
               <img
                 key={user?.avatar?.url}   
-                src={`http://localhost:5000/uploads/${user?.avatar?.url}`}
+                src={`https://multivendor-m00n.onrender.com/uploads/${user?.avatar?.url}`}
                 alt="User Avatar"
                 className="w-24 h-24 rounded-full border-2 border-gray-300 object-cover"
               />
@@ -1630,3 +1630,4 @@ const TrackOrders = () => {
 };
 
 export default ProfileContent;
+
