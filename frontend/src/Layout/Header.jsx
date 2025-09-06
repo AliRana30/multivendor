@@ -636,7 +636,7 @@ const Header = () => {
                         onClick={closeMobileMenu}
                       >
                         <Avatar
-                          src={currentUser?.avatar?.url ? `http://localhost:5000${currentUser.avatar.url}` : "/default-avatar.png"}
+                          src={currentUser?.avatar?.url ? `https://multivendor-m00n.onrender.com${currentUser.avatar.url}` : "/default-avatar.png"}
                           className="mr-3"
                           sx={{ width: 24, height: 24 }}
                         />
@@ -696,3 +696,4 @@ const Header = () => {
 
 
 export default Header;
+
