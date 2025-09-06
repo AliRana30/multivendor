@@ -20,7 +20,7 @@ import { withdrawRouter } from "./routes/withdraw.routes.js";
 const app =express()
 
 const corsOptions = {
-     origin: "http://localhost:5173",
+     origin: "https://multivendor-mu.vercel.app",
     credentials: true,          
     methods: ["GET", "POST", "PUT", "DELETE"],
 }
@@ -51,4 +51,5 @@ const PORT = 5000
 app.listen(PORT , ()=>{
     mongodb();
     console.log(`Server is running on port http://localhost:${PORT}`)
+
 })
