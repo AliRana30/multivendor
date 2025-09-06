@@ -120,7 +120,7 @@ const ConversationDetailsPage = () => {
     try {
       await api.put(`/conversation/${conversationId}`, { archived: true });
       toast.success("Conversation archived");
-      navigate('/shop-dashboard/messages');
+      navigate('/products');
     } catch (error) {
       toast.error("Failed to archive conversation");
     }
@@ -177,7 +177,7 @@ const ConversationDetailsPage = () => {
           <h2 className="text-2xl font-semibold mb-2 text-gray-900">Conversation Not Found</h2>
           <p className="text-gray-600 mb-6">The conversation you're looking for doesn't exist.</p>
           <button
-            onClick={() => navigate('/shop-dashboard/messages')}
+            onClick={() => navigate(`/products`)}
             className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
           >
             Back to Messages
@@ -193,14 +193,14 @@ const ConversationDetailsPage = () => {
         {showChat ? (
           <MessageChat 
             conversationId={conversationId} 
-            onBack={() => navigate('/shop-dashboard/messages')}
+            onBack={() => navigate('/products')}
           />
         ) : (
           <div className="flex flex-col h-full bg-white">
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
               <div className="flex items-center gap-4">
                 <button
-                  onClick={() => navigate('/shop-dashboard/messages')}
+                  onClick={() => navigate('/products')}
                   className="p-2 hover:bg-gray-100 rounded-full"
                 >
                   <ArrowLeft className="w-5 h-5" />

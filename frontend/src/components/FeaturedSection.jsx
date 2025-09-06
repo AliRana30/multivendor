@@ -29,7 +29,7 @@ const FeaturedSection = () => {
             const bScore = (b.sold_out || 0) * (b.ratings || 1);
             return bScore - aScore;
           })
-          .slice(0, 5); 
+          .slice(0, 3); 
         
         setFeaturedProducts(featured);
       };

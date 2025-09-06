@@ -23,7 +23,7 @@ const BestSelling = () => {
     if (allProducts && allProducts.length > 0) {
       const bestselling = () => {
         const sorted = [...allProducts].sort((a, b) => (b.sold_out || 0) - (a.sold_out || 0));
-        const topThree = sorted.slice(0, 3);
+        const topThree = sorted.slice(0, 5);
         setData(topThree);
       };
 

@@ -20,8 +20,56 @@ const navItems = [
   { name: "FAQ", url: "/faq" },
 ];
 
+// Animation variants (moved outside component to prevent recreation)
+const searchResultVariants = {
+  hidden: { opacity: 0, y: -20, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      type: "spring",
+      stiffness: 400,
+      damping: 30,
+      staggerChildren: 0.03
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -20,
+    scale: 0.95,
+    transition: { duration: 0.2, ease: "easeInOut" },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, x: -30 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { type: "spring", stiffness: 400, damping: 25 },
+  },
+};
+
+const mobileMenuVariants = {
+  hidden: { x: "-100%", opacity: 0 },
+  visible: {
+    x: 0,
+    opacity: 1,
+    transition: { type: "spring", stiffness: 300, damping: 30 },
+  },
+  exit: {
+    x: "-100%",
+    opacity: 0,
+    transition: { type: "spring", stiffness: 300, damping: 30 },
+  },
+};
+
 const Header = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  
+  // State management
   const [searchData, setSearchData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -31,51 +79,65 @@ const Header = () => {
   const [openCart, setOpenCart] = useState(false);
   const [openWishList, setOpenWishList] = useState(false);
   
+  // Redux selectors
   const { isSeller, seller } = useSelector((state) => state.seller);
   const { products } = useSelector((state) => state.product);
   const { isAuthenticated, user } = useSelector((state) => state.user);
   const { cart } = useSelector((state) => state.cart);
-  const dispatch = useDispatch();
 
+  // Memoized values
   const totalCartItems = useMemo(() => 
     cart?.reduce((acc, item) => acc + item.quantity, 0) || 0, 
     [cart]
   );
 
   const allProducts = useMemo(() => {
-    const combined = [
-      ...(products || [])
-    ];
+    if (!products?.length) return [];
     
     // Remove duplicates based on name
-    return combined.filter((product, index, self) => 
+    return products.filter((product, index, self) => 
       index === self.findIndex(p => p.name === product.name)
     );
   }, [products]);
 
+  const currentUser = useMemo(() => seller || user, [seller, user]);
+  const isCurrentlySeller = useMemo(() => !!seller?._id, [seller?._id]);
+
+  // Effects
   useEffect(() => {
     if (seller?._id && (!products || products.length === 0)) {
       dispatch(getAllProducts(seller._id));
     }
-  }, [dispatch, seller, products]);
+  }, [dispatch, seller?._id, products?.length]);
 
   useEffect(() => {
+    let timeoutId;
+    
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      if (timeoutId) clearTimeout(timeoutId);
+      
+      timeoutId = setTimeout(() => {
+        setIsScrolled(window.scrollY > 20);
+      }, 10);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, []);
 
+  // Utility functions
   const getProductImageUrl = useCallback((product) => {
     if (product.image_Url && typeof product.image_Url === 'string') {
       return product.image_Url;
     }
 
-    if (product.images && product.images.length > 0) {
+    if (product.images?.length > 0) {
       const firstImage = product.images[0];
       
-      if (typeof firstImage === 'string' && (firstImage.startsWith('http://') || firstImage.startsWith('https://'))) {
+      if (typeof firstImage === 'string' && firstImage.startsWith('http')) {
         return firstImage;
       }
       
@@ -84,10 +146,9 @@ const Header = () => {
       }
       
       if (typeof firstImage === 'string') {
-        if (firstImage.startsWith('/')) {
-          return `http://localhost:5000${firstImage}`;
-        }
-        return `http://localhost:5000/uploads/${firstImage}`;
+        return firstImage.startsWith('/') 
+          ? `http://localhost:5000${firstImage}`
+          : `http://localhost:5000/uploads/${firstImage}`;
       }
     }
     
@@ -103,6 +164,7 @@ const Header = () => {
       .trim();
   }, []);
 
+  // Event handlers
   const handleSearch = useCallback((term) => {
     setSearchTerm(term);
 
@@ -140,63 +202,24 @@ const Header = () => {
       await api.get("/logout");
       toast.success("Logged out successfully");
       navigate("/login");
-      window.location.reload(true);
+      window.location.reload();
     } catch (error) {
       toast.error("Logout failed");
     }
   }, [navigate]);
 
-  // Animation variants
-  const searchResultVariants = {
-    hidden: { opacity: 0, y: -20, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        type: "spring",
-        stiffness: 400,
-        damping: 30,
-        staggerChildren: 0.03
-      },
-    },
-    exit: {
-      opacity: 0,
-      y: -20,
-      scale: 0.95,
-      transition: { duration: 0.2, ease: "easeInOut" },
-    },
-  };
+  const closeMobileMenu = useCallback(() => {
+    setMobileMenuOpen(false);
+  }, []);
 
-  const itemVariants = {
-    hidden: { opacity: 0, x: -30 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { type: "spring", stiffness: 400, damping: 25 },
-    },
-  };
-
-  const mobileMenuVariants = {
-    hidden: { x: "-100%", opacity: 0 },
-    visible: {
-      x: 0,
-      opacity: 1,
-      transition: { type: "spring", stiffness: 300, damping: 30 },
-    },
-    exit: {
-      x: "-100%",
-      opacity: 0,
-      transition: { type: "spring", stiffness: 300, damping: 30 },
-    },
-  };
+  const closeMobileSearch = useCallback(() => {
+    setMobileSearchOpen(false);
+  }, []);
 
   // Search Component 
   const SearchComponent = ({ isMobile = false, onClose = null }) => (
     <div className={`relative ${isMobile ? 'w-full' : 'flex-1 max-w-2xl'}`}>
-      <motion.div
-        className="relative"
-      >
+      <motion.div className="relative">
         <div className={`relative ${
           isMobile 
             ? 'bg-gray-100 rounded-lg' 
@@ -212,9 +235,7 @@ const Header = () => {
           
           <motion.div
             className="absolute left-3 top-1/2 transform -translate-y-1/2"
-            animate={{
-              color: isSearchFocused ? "#3b82f6" : "#9ca3af"
-            }}
+            animate={{ color: isSearchFocused ? "#3b82f6" : "#9ca3af" }}
             transition={{ duration: 0.2 }}
           >
             <FiSearch size={18} />
@@ -226,12 +247,8 @@ const Header = () => {
             onChange={(e) => handleSearch(e.target.value)}
             onFocus={() => setIsSearchFocused(true)}
             onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
-            placeholder={isMobile ? "Search products..." : "Search products..."}
-            className={`relative w-full ${
-              isMobile 
-                ? 'py-2.5 pl-10 pr-10 rounded-lg text-sm' 
-                : 'py-2.5 pl-10 pr-10 rounded-lg text-sm'
-            } border-0 focus:outline-none bg-transparent text-gray-800 placeholder-gray-500 font-medium`}
+            placeholder="Search products..."
+            className={`relative w-full py-2.5 pl-10 pr-10 rounded-lg text-sm border-0 focus:outline-none bg-transparent text-gray-800 placeholder-gray-500 font-medium`}
           />
           
           <AnimatePresence>
@@ -244,9 +261,10 @@ const Header = () => {
                 whileTap={{ scale: 0.9 }}
                 onClick={() => {
                   clearSearch();
-                  onClose && onClose();
+                  onClose?.();
                 }}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-700 transition-all duration-200 p-1 rounded-full"
+                type="button"
               >
                 <FiX size={16} />
               </motion.button>
@@ -293,7 +311,7 @@ const Header = () => {
                         className="flex items-center p-2.5 hover:bg-white/70 transition-all duration-300 rounded-lg m-1 group border border-transparent hover:border-gray-100/50"
                         onClick={() => {
                           clearSearch();
-                          onClose && onClose();
+                          onClose?.();
                         }}
                       >
                         <div className={`relative ${
@@ -303,13 +321,12 @@ const Header = () => {
                             src={getProductImageUrl(item)}
                             alt={item.name}
                             className="w-full h-full object-cover"
+                            loading="lazy"
                           />
                         </div>
                         
                         <div className="flex-1 min-w-0">
-                          <h4 className={`font-semibold text-gray-900 truncate ${
-                            isMobile ? 'text-sm' : 'text-sm'
-                          } group-hover:text-indigo-600 transition-colors duration-200`}>
+                          <h4 className={`font-semibold text-gray-900 truncate text-sm group-hover:text-indigo-600 transition-colors duration-200`}>
                             {item.name}
                           </h4>
                           <span className="text-xs text-gray-500 font-medium">
@@ -409,6 +426,8 @@ const Header = () => {
               onClick={() => setMobileMenuOpen(true)}
               whileTap={{ scale: 0.9 }}
               className="p-2 text-gray-700"
+              type="button"
+              aria-label="Open menu"
             >
               <FiMenu size={22} />
             </motion.button>
@@ -418,6 +437,7 @@ const Header = () => {
                 src="./MultiMart.png"
                 className="w-12 h-auto"
                 alt="MultiMart"
+                loading="lazy"
               />
             </Link>
 
@@ -426,36 +446,36 @@ const Header = () => {
                 onClick={() => setMobileSearchOpen(true)}
                 whileTap={{ scale: 0.9 }}
                 className="p-2 text-gray-700"
+                type="button"
+                aria-label="Search"
               >
                 <FiSearch size={20} />
               </motion.button>
 
-              <motion.div
+              <motion.button
                 whileTap={{ scale: 0.9 }}
-                className="relative"
+                onClick={() => setOpenWishList(true)}
+                className="p-2 text-gray-700"
+                type="button"
+                aria-label="Wishlist"
               >
-                <FiHeart
-                  size={20}
-                  onClick={() => setOpenWishList(true)}
-                  className="cursor-pointer text-gray-700"
-                />
-              </motion.div>
+                <FiHeart size={20} />
+              </motion.button>
 
-              <motion.div
+              <motion.button
                 whileTap={{ scale: 0.9 }}
-                className="relative"
+                onClick={() => setOpenCart(true)}
+                className="relative p-2 text-gray-700"
+                type="button"
+                aria-label="Shopping cart"
               >
-                <FiShoppingCart
-                  size={20}
-                  onClick={() => setOpenCart(true)}
-                  className="cursor-pointer text-gray-700"
-                />
+                <FiShoppingCart size={20} />
                 {totalCartItems > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-medium">
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-medium min-w-4">
                     {totalCartItems > 99 ? '99+' : totalCartItems}
                   </span>
                 )}
-              </motion.div>
+              </motion.button>
             </div>
           </div>
 
@@ -471,6 +491,7 @@ const Header = () => {
                   src="./MultiMart.png"
                   className="w-14 h-auto"
                   alt="MultiMart"
+                  loading="lazy"
                 />
               </Link>
             </motion.div>
@@ -479,11 +500,11 @@ const Header = () => {
 
             <div className="flex-shrink-0">
               <Link
-                to="/create-shop"
+                to={isCurrentlySeller ? "/dashboard" : "/create-shop"}
                 className="bg-black text-white px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-300 flex items-center space-x-2 hover:bg-gray-800 shadow-md"
               >
                 <FiShoppingBag size={16} />
-                <span>{isSeller ? "My Shop" : "Start Selling"}</span>
+                <span>{isCurrentlySeller ? "My Shop" : "Start Selling"}</span>
               </Link>
             </div>
           </div>
@@ -494,11 +515,11 @@ const Header = () => {
       <AnimatePresence>
         {mobileSearchOpen && (
           <motion.div
-            className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50"
+            className="lg:hidden fixed inset-0 z-50 bg-black/50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setMobileSearchOpen(false)}
+            onClick={closeMobileSearch}
           >
             <motion.div
               className="bg-white p-4 m-4 mt-20 rounded-xl shadow-xl"
@@ -510,15 +531,17 @@ const Header = () => {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Search Products</h3>
                 <motion.button
-                  onClick={() => setMobileSearchOpen(false)}
+                  onClick={closeMobileSearch}
                   whileTap={{ scale: 0.9 }}
                   className="p-2"
+                  type="button"
+                  aria-label="Close search"
                 >
                   <FiX size={20} className="text-gray-700" />
                 </motion.button>
               </div>
               
-              <SearchComponent isMobile={true} onClose={() => setMobileSearchOpen(false)} />
+              <SearchComponent isMobile={true} onClose={closeMobileSearch} />
             </motion.div>
           </motion.div>
         )}
@@ -528,11 +551,11 @@ const Header = () => {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50"
+            className="lg:hidden fixed inset-0 z-50 bg-black/50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setMobileMenuOpen(false)}
+            onClick={closeMobileMenu}
           >
             <motion.div
               className="absolute left-0 top-0 h-full w-full max-w-sm bg-white shadow-xl overflow-y-auto"
@@ -546,12 +569,25 @@ const Header = () => {
                 <div className="flex justify-between items-center mb-8">
                   <h2 className="text-xl font-bold text-gray-900">Menu</h2>
                   <motion.button
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={closeMobileMenu}
                     whileTap={{ scale: 0.9 }}
                     className="p-2"
+                    type="button"
+                    aria-label="Close menu"
                   >
                     <FiX size={24} className="text-gray-700" />
                   </motion.button>
+                </div>
+
+                <div className="mb-6">
+                  <Link
+                    to={isCurrentlySeller ? `/shop/${seller?._id}` : "/create-shop"}
+                    className="flex items-center w-full bg-black text-white px-4 py-3 rounded-lg font-semibold text-sm transition-all duration-300 hover:bg-gray-800 shadow-md"
+                    onClick={closeMobileMenu}
+                  >
+                    <FiShoppingBag size={16} className="mr-3" />
+                    <span>{isCurrentlySeller ? "My Shop" : "Start Selling"}</span>
+                  </Link>
                 </div>
 
                 {/* Categories */}
@@ -559,6 +595,7 @@ const Header = () => {
                   <select
                     onChange={(e) => handleCategorySelect(e.target.value)}
                     className="w-full bg-gray-100 text-gray-800 px-4 py-3 rounded-xl font-medium cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm"
+                    defaultValue=""
                   >
                     <option value="">Browse Categories</option>
                     {categoriesData.map((cat, i) => (
@@ -581,7 +618,7 @@ const Header = () => {
                       <Link
                         to={item.url}
                         className="block py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors duration-200 font-medium"
-                        onClick={() => setMobileMenuOpen(false)}
+                        onClick={closeMobileMenu}
                       >
                         {item.name}
                       </Link>
@@ -596,10 +633,10 @@ const Header = () => {
                       <Link
                         to="/profile"
                         className="flex items-center py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors duration-200"
-                        onClick={() => setMobileMenuOpen(false)}
+                        onClick={closeMobileMenu}
                       >
                         <Avatar
-                          src={user?.avatar?.url ? `http://localhost:5000${user.avatar.url}` : "/default-avatar.png"}
+                          src={currentUser?.avatar?.url ? `http://localhost:5000${currentUser.avatar.url}` : "/default-avatar.png"}
                           className="mr-3"
                           sx={{ width: 24, height: 24 }}
                         />
@@ -608,9 +645,10 @@ const Header = () => {
                       <button
                         onClick={() => {
                           handleLogout();
-                          setMobileMenuOpen(false);
+                          closeMobileMenu();
                         }}
-                        className="flex items-center py-3 px-4 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200 w-full"
+                        className="flex items-center py-3 px-4 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200 w-full text-left"
+                        type="button"
                       >
                         <FaPowerOff className="mr-3" />
                         <span className="font-medium">Logout</span>
@@ -620,7 +658,7 @@ const Header = () => {
                     <Link
                       to="/login"
                       className="flex items-center py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors duration-200"
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={closeMobileMenu}
                     >
                       <FiUser size={20} className="mr-3" />
                       <span className="font-medium">Login</span>
@@ -637,7 +675,6 @@ const Header = () => {
       <Cart openCart={openCart} setOpenCart={setOpenCart} />
       <WishList openWishList={openWishList} setOpenWishList={setOpenWishList} />
 
-      {/* Custom Scrollbar Styles */}
       <style jsx>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 4px;

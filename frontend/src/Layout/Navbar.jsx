@@ -99,7 +99,7 @@ const Navbar = () => {
                   className="cursor-pointer text-white hover:text-red-300 transition-colors"
                 />
                 {totalWishlistItems > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                  <span className="absolute top-[8px] right-[24vh] bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
                     {totalWishlistItems > 99 ? '99+' : totalWishlistItems}
                   </span>
                 )}

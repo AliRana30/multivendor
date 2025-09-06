@@ -1,5 +1,5 @@
 import Conversation from "../models/conversation.js";
-
+import mongoose from 'mongoose'; 
 
 export const conversationController = async (req, res) => { 
   try {
@@ -101,7 +101,11 @@ export const updateLastMessage = async (req, res) => {
     
     const conversation = await Conversation.findByIdAndUpdate(
       conversationId,
-      { lastMessage, lastMessageId },
+      { 
+        lastMessage, 
+        lastMessageId,
+        updatedAt: new Date() 
+      },
       { new: true }
     );
     
@@ -129,7 +133,6 @@ export const updateLastMessage = async (req, res) => {
 export const getConversationById = async (req, res) => {
   try {
     const { conversationId } = req.params;
-    const userId = req.user._id;
 
     if (!conversationId) {
       return res.status(400).json({
@@ -138,16 +141,66 @@ export const getConversationById = async (req, res) => {
       });
     }
 
+    if (!mongoose.Types.ObjectId.isValid(conversationId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid conversation ID format"
+      });
+    }
+
+    let userId;
+    if (req.seller && req.seller._id) {
+      userId = req.seller._id; 
+    } else if (req.user && req.user._id) {
+      userId = req.user._id;
+    } else {
+      console.log('Authentication check failed:', {
+        hasSeller: !!req.seller,
+        hasUser: !!req.user,
+        sellerData: req.seller,
+        userData: req.user
+      });
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required"
+      });
+    }
+
+    console.log('Fetching conversation:', { 
+      conversationId, 
+      userId: userId.toString(),
+      userType: req.seller ? 'seller' : 'user'
+    });
+
     const conversation = await Conversation.findOne({
       _id: conversationId,
-      members: { $in: [userId] } 
-    }).populate('members', 'name email avatar'); 
+      members: { $in: [userId] }
+    });
 
     if (!conversation) {
-      return res.status(404).json({
-        success: false,
-        message: "Conversation not found or you don't have access to it"
+      console.log('Conversation not found or access denied:', { 
+        conversationId, 
+        userId: userId.toString() 
       });
+
+      const conversationExists = await Conversation.findById(conversationId);
+
+      if (!conversationExists) {
+        return res.status(404).json({
+          success: false,
+          message: "Conversation not found"
+        });
+      } else {
+        console.log('Conversation exists but access denied. Members:', conversationExists.members);
+        return res.status(403).json({
+          success: false,
+          message: "You don't have access to this conversation",
+          debug: {
+            conversationMembers: conversationExists.members.map(m => m.toString()),
+            requestingUserId: userId.toString()
+          }
+        });
+      }
     }
 
     res.status(200).json({
@@ -160,7 +213,7 @@ export const getConversationById = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Internal server error",
-      error: error.message
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 };

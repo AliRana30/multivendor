@@ -28,7 +28,6 @@ export const createNewMessage = async (req, res) => {
       });
     }
 
-    // Validate sender is part of conversation
     if (!conversation.members.includes(sender)) {
       return res.status(403).json({
         success: false,
@@ -36,7 +35,6 @@ export const createNewMessage = async (req, res) => {
       });
     }
 
-    // Validate that either text or images are provided
     const hasText = text && text.trim();
     const hasImages = req.files && req.files.length > 0;
     
@@ -49,23 +47,19 @@ export const createNewMessage = async (req, res) => {
 
     let imageUrls = [];
     
-    // Handle image uploads if present
     if (hasImages) {
       try {
         console.log("Processing images...");
         
         for (const file of req.files) {
-          // If using cloudinary
           if (process.env.CLOUDINARY_CLOUD_NAME) {
             const result = await cloudinary.uploader.upload(file.path, {
               folder: "messages",
               resource_type: "image"
             });
             imageUrls.push(result.secure_url);
-            // Clean up local file
             fs.unlinkSync(file.path);
           } else {
-            // If storing locally, just use filename
             imageUrls.push(file.filename);
           }
         }
@@ -92,7 +86,6 @@ export const createNewMessage = async (req, res) => {
     await newMessage.save();
     console.log("Message saved:", newMessage);
 
-    // Update conversation's last message and timestamp
     await Conversation.findByIdAndUpdate(conversationId, {
       lastMessage: hasText ? text.trim() : "Image",
       lastMessageId: newMessage._id,
@@ -110,7 +103,6 @@ export const createNewMessage = async (req, res) => {
   } catch (error) {
     console.error("Error creating message:", error);
     
-    // Clean up any uploaded files in case of error
     if (req.files && req.files.length > 0) {
       req.files.forEach(file => {
         try {

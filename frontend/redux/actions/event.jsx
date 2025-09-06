@@ -72,3 +72,25 @@ export const deleteEvent = (id) => async (dispatch) => {
       });
    }
 };
+
+export const getAllAdminEvents = () => async(dispatch)=>{
+  try {
+    dispatch({ type: "LoadAdminEventsRequest" });
+    
+    const { data } = await api.get(`/admin-all-events`, {
+      withCredentials: true
+    });
+    
+    
+    dispatch({
+      type: "LoadAdminEventsSuccess",
+      payload: data.adminevents
+    });
+  } catch (error) {
+    console.error('Error fetching admin sellers:', error);
+    dispatch({
+      type: "LoadAdminEventsFail",
+      payload: error.response?.data?.message || error.message,
+    });
+  }
+};

@@ -60,7 +60,7 @@ const AdminHeader = () => {
       <div className='flex items-center justify-between px-3 lg:px-6 py-3 md:py-4'>
         <div className='flex items-center'>
           <Link 
-            to={`/shop/${seller}`}
+            to={`/`}
             className="group flex items-center space-x-2 md:space-x-3 hover:scale-105 transition-transform duration-200"
           >
             <div className="relative">
@@ -75,7 +75,7 @@ const AdminHeader = () => {
               <h1 className="font-bold text-lg text-gray-800 group-hover:text-blue-600 transition-colors duration-200">
                 MultiMart
               </h1>
-              <p className="text-xs text-gray-500">Admin Dashboard</p>
+              <p className="text-xs text-gray-500">MultiMart</p>
             </div>
           </Link>
         </div>

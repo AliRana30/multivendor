@@ -9,20 +9,31 @@ import { getAllProducts } from "../../redux/actions/product";
 const ShopInfo = ({ isOwner }) => {
   const { seller } = useSelector((state) => state.seller);
   const { products } = useSelector((state) => state.product);
-  const [logout, setLogout] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const dispatch = useDispatch();
 
   const LogOutHandler = async () => {
+    if (isLoggingOut) return; 
+    
     try {
+      setIsLoggingOut(true);
       const { data } = await api.get("/shop-logout", { withCredentials: true });
-      navigate("/shop-login");
-      setLogout(true);
-      toast.success(data.message);
-      window.location.reload();
+      
+      if (data.success) {
+        toast.success(data.message || "Logged out successfully");
+        setTimeout(() => {
+          navigate("/shop-login", { replace: true });
+        }, 1000);
+      } else {
+        toast.error(data.message || "Logout failed");
+        setIsLoggingOut(false);
+      }
     } catch (error) {
-      toast.error("Logout failed. Please try again.");
+      console.error("Logout error:", error);
+      toast.error(error.response?.data?.message || "Logout failed. Please try again.");
+      setIsLoggingOut(false);
     }
   };
 
@@ -39,6 +50,12 @@ const ShopInfo = ({ isOwner }) => {
       dispatch(getAllProducts(seller._id));
     }
   }, [dispatch, seller?._id]);
+
+  useEffect(()=>{
+    if(!seller?._id){
+      navigate('/shop-login',{replace:true})
+    }
+  },[seller?._id])
   
   return (
     <>
@@ -135,9 +152,14 @@ const ShopInfo = ({ isOwner }) => {
               </button>
               <button
                 onClick={LogOutHandler}
-                className="w-full bg-gray-800 text-white py-2 px-3 rounded-lg hover:bg-gray-900 transition-colors duration-200 text-xs sm:text-sm font-medium relative z-10"
+                disabled={isLoggingOut}
+                className={`w-full py-2 px-3 rounded-lg transition-colors duration-200 text-xs sm:text-sm font-medium relative z-10 ${
+                  isLoggingOut 
+                    ? 'bg-gray-600 cursor-not-allowed' 
+                    : 'bg-gray-800 hover:bg-gray-900'
+                } text-white`}
               >
-                Log Out
+                {isLoggingOut ? "Logging Out..." : "Log Out"}
               </button>
             </div>
           )}

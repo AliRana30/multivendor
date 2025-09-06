@@ -26,7 +26,6 @@ const ProfileSideBar = () => {
     { name: 'Profile', icon: <FaUser />, shortName: 'Profile' },
     { name: 'Orders', icon: <FaBoxOpen />, shortName: 'Orders' },
     { name: 'Refunds', icon: <FaMoneyCheckAlt />, shortName: 'Refunds' },
-    { name: 'Inbox', icon: <FaEnvelope />, shortName: 'Inbox' },
     { name: 'Track Orders', icon: <FaTruck />, shortName: 'Track' },
     { name: 'Change Password', icon: <FaLock />, shortName: 'Password' },
     { name: 'Address', icon: <FaMapMarkerAlt />, shortName: 'Address' },

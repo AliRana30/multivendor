@@ -9,15 +9,16 @@ const ShopLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const { isSeller, seller } = useSelector((state) => state.seller);
 
   useEffect(() => {
     if (isSeller && seller?._id) {
-      navigate(`/shop/${seller._id}`);
+      navigate(`/shop/${seller._id}`, { replace: true });
     }
-  }, [isSeller, seller]);
+  }, [isSeller, seller, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -27,21 +28,45 @@ const ShopLogin = () => {
       return;
     }
 
+    if (isLoading) return; 
+
     try {
+      setIsLoading(true);
+      
       const res = await api.post(
         "/shop-login",
         { email, password },
         { withCredentials: true }
       );
 
-      if (res.data.success) {
+      console.log("Login response:", res.data); 
+
+      if (res.data.success && res.data.seller) {
         toast.success("Login Successful");
-        navigate(`/shop/${res.data.seller._id}`);
+        window.location.reload();
+        if (res.data.token) {
+          localStorage.setItem('shopToken', res.data.token);
+        }
+        setTimeout(() => {
+          navigate(`/shop/${res.data.seller._id}`, { replace: true });
+        }, 1000);
       } else {
-        toast.error(res.data.message || "Login failed");
+        toast.error(res.data.message || "Login failed - Invalid credentials");
       }
     } catch (error) {
-      toast.error(error.response?.data || "Login failed");
+      console.error("Login error:", error);
+      
+      if (error.response?.status === 401) {
+        toast.error("Invalid email or password");
+      } else if (error.response?.status === 400) {
+        toast.error(error.response.data?.message || "Invalid request");
+      } else if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Network error. Please check your connection.");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -65,10 +90,11 @@ const ShopLogin = () => {
                 type="email"
                 autoComplete="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value.trim())}
                 className="bg-transparent w-full py-2 text-white focus:outline-none"
                 placeholder="you@example.com"
                 required
+                disabled={isLoading}
               />
             </div>
           </div>
@@ -86,14 +112,16 @@ const ShopLogin = () => {
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="bg-transparent w-full py-2 text-white focus:outline-none"
+                className="bg-transparent w-full py-2 text-white focus:outline-none pr-10"
                 placeholder="••••••••"
                 required
+                disabled={isLoading}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
                 className="absolute right-3 text-gray-400 hover:text-white"
+                disabled={isLoading}
               >
                 {showPassword ? <FiEyeOff /> : <FiEye />}
               </button>
@@ -103,9 +131,14 @@ const ShopLogin = () => {
           {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 rounded-md transition"
+            disabled={isLoading}
+            className={`w-full font-medium py-2 rounded-md transition ${
+              isLoading 
+                ? 'bg-red-700 cursor-not-allowed opacity-50' 
+                : 'bg-red-600 hover:bg-red-700'
+            } text-white`}
           >
-            Login
+            {isLoading ? "Signing In..." : "Login"}
           </button>
         </form>
 

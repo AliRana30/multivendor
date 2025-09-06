@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { DataGrid } from '@mui/x-data-grid';
 import { Button } from '@mui/material';
 import { AiOutlineDelete, AiOutlineEye } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { toast } from 'react-hot-toast';
-import { AlertTriangle, ShoppingBag } from 'lucide-react';
+import { AlertTriangle, ShoppingBag, Eye, Trash } from 'lucide-react';
 import AdminSideBar from '../Components/AdminSideBar';
 import Loader from '../../components/Loader';
 import api from '../../components/axiosCongif';
@@ -22,7 +22,14 @@ const AdminAllProductsPage = () => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
-      setIsSidebarOpen(!mobile);
+      if (mobile) {
+        setIsSidebarOpen(false);
+      } else {
+        const savedState = localStorage.getItem('adminSidebarOpen');
+        if (savedState !== null) {
+          setIsSidebarOpen(JSON.parse(savedState));
+        }
+      }
     };
 
     handleResize();
@@ -42,7 +49,14 @@ const AdminAllProductsPage = () => {
     }
   };
 
-  const fetchAllProducts = async () => {
+  const createProductSlug = (name) => {
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '') 
+      .trim();
+  };
+
+  const fetchAllProducts = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -61,9 +75,9 @@ const AdminAllProductsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const handleDelete = async (id) => {
+  const handleDelete = useCallback(async (id) => {
     if (!window.confirm('Are you sure you want to delete this product? This action cannot be undone.')) return;
 
     try {
@@ -82,16 +96,102 @@ const AdminAllProductsPage = () => {
     } finally {
       setDeleteLoading(null);
     }
-  };
+  }, []);
 
-  const columns = [
+  const productStats = useMemo(() => {
+    const inStock = products.filter((p) => p.stock > 10).length;
+    const lowStock = products.filter((p) => p.stock > 0 && p.stock <= 10).length;
+    const outOfStock = products.filter((p) => p.stock === 0).length;
+    
+    return { inStock, lowStock, outOfStock };
+  }, [products]);
+
+  const mobileColumns = [
+    { 
+      field: "id", 
+      headerName: "ID", 
+      width: 70,
+      renderCell: (params) => (
+        <span className="font-mono text-xs bg-gray-100 px-1 py-0.5 rounded">
+          #{params.value.slice(-4)}
+        </span>
+      )
+    },
+    { 
+      field: "name", 
+      headerName: "Name", 
+      width: 100,
+      renderCell: (params) => (
+        <span className="text-xs font-medium truncate" title={params.value}>{params.value}</span>
+      )
+    },
+    { 
+      field: "price", 
+      headerName: "Price", 
+      width: 70,
+      renderCell: (params) => (
+        <span className="font-semibold text-green-600 text-xs">${params.value.replace('US$ ', '')}</span>
+      )
+    },
+    { 
+      field: "Stock", 
+      headerName: "Stock", 
+      width: 60,
+      renderCell: (params) => (
+        <span className={`px-1 py-0.5 rounded text-xs ${
+          params.value > 10 ? 'bg-green-100 text-green-800' : 
+          params.value > 0 ? 'bg-yellow-100 text-yellow-800' : 
+          'bg-red-100 text-red-800'
+        }`}>
+          {params.value}
+        </span>
+      )
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 80,
+      sortable: false,
+      renderCell: (params) => {
+        const isDeleting = deleteLoading === params.id;
+        const productNameSlug = createProductSlug(params.row.name);
+        
+        return (
+          <div className="flex items-center gap-0.5">
+            <Link to={`/products/${productNameSlug}`} state={{ productId: params.id }}>
+              <button className="p-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded transition-colors">
+                <Eye size={12} />
+              </button>
+            </Link>
+            <button 
+              onClick={() => handleDelete(params.id)}
+              disabled={isDeleting}
+              className={`p-1 rounded transition-colors ${
+                isDeleting ? 'bg-red-100 text-red-400 cursor-not-allowed' : 'bg-red-50 text-red-600 hover:bg-red-100'
+              }`}
+            >
+              {isDeleting ? (
+                <div className="w-3 h-3 border border-red-300 border-t-red-600 rounded-full animate-spin" />
+              ) : (
+                <Trash size={12} />
+              )}
+            </button>
+          </div>
+        );
+      }
+    },
+  ];
+
+  const desktopColumns = useMemo(() => [
     { 
       field: "id", 
       headerName: "Product ID", 
       minWidth: 120, 
       flex: 0.7,
       renderCell: (params) => (
-        <span className="font-mono text-xs">{params.value.slice(-8)}</span>
+        <span className="font-mono text-xs font-medium bg-gray-100 px-2 py-1 rounded">
+          #{params.value.slice(-8)}
+        </span>
       )
     },
     { 
@@ -100,7 +200,9 @@ const AdminAllProductsPage = () => {
       minWidth: 150, 
       flex: 1.4,
       renderCell: (params) => (
-        <span className="font-medium text-sm">{params.value}</span>
+        <span className="font-medium text-sm" title={params.value}>
+          {params.value}
+        </span>
       )
     },
     { 
@@ -166,40 +268,49 @@ const AdminAllProductsPage = () => {
       sortable: false,
       renderCell: (params) => {
         const isDeleting = deleteLoading === params.id;
+        const productNameSlug = createProductSlug(params.row.name);
+        
         return (
           <div className="flex items-center gap-1">
-            <Link to={`/products/${params.row.name}`}>
-              <Button size="small" className="text-blue-600 hover:bg-blue-50 min-w-0 p-1">
-                <AiOutlineEye size={16} />
-              </Button>
+            <Link to={`/products/${productNameSlug}`} state={{ productId: params.id }}>
+              <button 
+                className="p-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-md transition-colors"
+                title="View Product"
+              >
+                <Eye size={14} />
+              </button>
             </Link>
-            <Button 
+            <button 
               onClick={() => handleDelete(params.id)}
               disabled={isDeleting}
-              size="small"
-              className={`min-w-0 p-1 ${isDeleting ? 'text-red-400' : 'text-red-600 hover:bg-red-50'}`}
+              className={`p-1.5 rounded-md transition-colors ${
+                isDeleting ? 'bg-red-100 text-red-400 cursor-not-allowed' : 'bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700'
+              }`}
+              title="Delete Product"
             >
               {isDeleting ? (
-                <div className="w-4 h-4 border-2 border-red-300 border-t-red-600 rounded-full animate-spin" />
+                <div className="w-3.5 h-3.5 border-2 border-red-300 border-t-red-600 rounded-full animate-spin" />
               ) : (
-                <AiOutlineDelete size={16} />
+                <Trash size={14} />
               )}
-            </Button>
+            </button>
           </div>
         );
       }
     },
-  ];
+  ], [deleteLoading, handleDelete]);
 
-  const rows = products?.map((item) => ({
-    id: item._id,
-    name: item.name || 'N/A',
-    category: item.category || 'N/A',
-    price: "US$ " + (item.discountPrice || item.originalPrice || 0),
-    Stock: item.stock || 0,
-    sold: item.sold_out || 0,
-    shop: item.shop || 'N/A'
-  })) || [];
+  const rows = useMemo(() => 
+    products?.map((item) => ({
+      id: item._id,
+      name: item.name || 'N/A',
+      category: item.category || 'N/A',
+      price: "US$ " + (item.discountPrice || item.originalPrice || 0),
+      Stock: item.stock || 0,
+      sold: item.sold_out || 0,
+      shop: item.shop || 'N/A'
+    })) || [], [products]
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 text-gray-800">
@@ -207,121 +318,153 @@ const AdminAllProductsPage = () => {
       
       <div className="flex relative">
         <div className={`
-          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-          ${isMobile && isSidebarOpen ? 'fixed inset-0 z-40' : ''}
           transition-all duration-300 ease-in-out
-          ${isMobile && isSidebarOpen ? 'w-64' : isMobile ? 'w-0' : isSidebarOpen ? 'w-64' : 'w-16 md:w-20'}
+          ${isMobile 
+            ? `fixed inset-y-0 left-0 z-40 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} w-64`
+            : `${isSidebarOpen ? 'w-64' : 'w-16'} relative`
+          }
           bg-white/95 backdrop-blur-sm shadow-xl border-r border-gray-200
-          ${isMobile ? 'h-screen' : 'min-h-screen'}
           overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent
         `}>
-          <AdminSideBar isCollapsed={!isSidebarOpen || (isMobile && !isSidebarOpen)} />
+          <AdminSideBar isCollapsed={!isSidebarOpen} />
         </div>
 
         {isMobile && isSidebarOpen && (
           <div 
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 md:hidden transition-opacity duration-300"
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 transition-opacity duration-300"
             onClick={toggleSidebar}
           />
         )}
 
-        <div className={`
-          flex-1 transition-all duration-300 ease-in-out min-h-screen p-6 pt-20
-          ${isMobile ? 'ml-0 w-full' : isSidebarOpen ? 'ml-20' : 'md:ml-20'}
-        `}>
-          {loading ? (
-            <div className="flex justify-center items-center h-64">
-              <Loader />
-            </div>
-          ) : error ? (
-            <div className="flex flex-col justify-center items-center h-64">
-              <AlertTriangle className="w-12 h-12 text-red-500 mb-4" />
-              <div className="text-red-500 text-center">
-                <p className="font-semibold">Error loading products</p>
-                <p className="text-sm">{error}</p>
-                <button 
-                  onClick={fetchAllProducts}
-                  className="mt-2 px-4 py-2 bg-red-50 text-red-600 rounded-md hover:bg-red-100 transition-colors"
-                >
-                  Retry
-                </button>
+        <div className="flex-1 min-h-screen overflow-hidden">
+          <div className="h-full p-3 md:p-6 pt-20 overflow-auto">
+            {loading ? (
+              <div className="flex justify-center items-center h-64">
+                <Loader />
               </div>
-            </div>
-          ) : (
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-              <div className="p-6 border-b border-gray-200">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <ShoppingBag className="w-8 h-8 text-blue-600" />
-                    <div>
-                      <h1 className="text-2xl font-bold text-gray-900">Product Management</h1>
-                      <p className="text-gray-600 mt-1">
-                        Manage products from all sellers ({products.length} total)
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex gap-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-green-600">
-                        {products.filter(p => p.stock > 10).length}
+            ) : error ? (
+              <div className="flex flex-col justify-center items-center h-64">
+                <AlertTriangle className="w-12 h-12 text-red-500 mb-4" />
+                <div className="text-red-500 text-center">
+                  <p className="font-semibold">Error loading products</p>
+                  <p className="text-sm">{error}</p>
+                  <button 
+                    onClick={fetchAllProducts}
+                    className="mt-2 px-4 py-2 bg-red-50 text-red-600 rounded-md hover:bg-red-100 transition-colors"
+                  >
+                    Retry
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-white rounded-xl shadow-lg overflow-hidden h-full flex flex-col">
+                {/* Header */}
+                <div className="p-4 md:p-6 border-b border-gray-200 flex-shrink-0">
+                  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <ShoppingBag className="w-6 md:w-8 h-6 md:h-8 text-blue-600 flex-shrink-0" />
+                      <div>
+                        <h1 className="text-xl md:text-2xl font-bold text-gray-900">Product Management</h1>
+                        <p className="text-gray-600 mt-1 text-sm">
+                          Manage products from all sellers ({products.length} total)
+                        </p>
                       </div>
-                      <div className="text-xs text-gray-500">In Stock</div>
                     </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-yellow-600">
-                        {products.filter(p => p.stock > 0 && p.stock <= 10).length}
+
+                    {/* Stats */}
+                    <div className="flex gap-3 md:gap-4">
+                      <div className="text-center">
+                        <div className="text-lg md:text-2xl font-bold text-green-600">
+                          {productStats.inStock}
+                        </div>
+                        <div className="text-xs text-gray-500">In Stock</div>
                       </div>
-                      <div className="text-xs text-gray-500">Low Stock</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-red-600">
-                        {products.filter(p => p.stock === 0).length}
+                      <div className="text-center">
+                        <div className="text-lg md:text-2xl font-bold text-yellow-600">
+                          {productStats.lowStock}
+                        </div>
+                        <div className="text-xs text-gray-500">Low Stock</div>
                       </div>
-                      <div className="text-xs text-gray-500">Out of Stock</div>
+                      <div className="text-center">
+                        <div className="text-lg md:text-2xl font-bold text-red-600">
+                          {productStats.outOfStock}
+                        </div>
+                        <div className="text-xs text-gray-500">Out of Stock</div>
+                      </div>
                     </div>
                   </div>
                 </div>
+
+                {/* DataGrid container */}
+                <div className="flex-1 p-2 md:p-4 overflow-hidden">
+                  <div className="h-full w-full">
+                    <DataGrid
+                      rows={rows}
+                      columns={isMobile ? mobileColumns : desktopColumns}
+                      initialState={{
+                        pagination: {
+                          paginationModel: { page: 0, pageSize: isMobile ? 5 : 10 },
+                        },
+                        sorting: {
+                          sortModel: [{ field: 'name', sort: 'asc' }]
+                        }
+                      }}
+                      pageSizeOptions={isMobile ? [5, 10, 15] : [10, 25, 50]}
+                      disableSelectionOnClick
+                      className="border-0"
+                      rowHeight={isMobile ? 50 : 70}
+                      sx={{
+                        height: '100%',
+                        width: '100%',
+                        '& .MuiDataGrid-root': {
+                          border: 'none',
+                          fontSize: isMobile ? '0.75rem' : '0.875rem'
+                        },
+                        '& .MuiDataGrid-main': {
+                          overflow: 'hidden'
+                        },
+                        '& .MuiDataGrid-virtualScroller': {
+                          overflow: 'auto !important'
+                        },
+                        '& .MuiDataGrid-virtualScrollerContent': {
+                          minWidth: isMobile ? '380px' : '100%'
+                        },
+                        '& .MuiDataGrid-cell': {
+                          borderBottom: '1px solid #f3f4f6',
+                          display: 'flex',
+                          alignItems: 'center',
+                          fontSize: 'inherit',
+                          padding: isMobile ? '4px 8px' : '8px 16px'
+                        },
+                        '& .MuiDataGrid-columnHeaders': {
+                          backgroundColor: '#f9fafb',
+                          borderBottom: '2px solid #e5e7eb',
+                          fontSize: 'inherit',
+                          minHeight: isMobile ? '40px' : '56px'
+                        },
+                        '& .MuiDataGrid-columnHeader': {
+                          padding: isMobile ? '4px 8px' : '8px 16px'
+                        },
+                        '& .MuiDataGrid-row': {
+                          minHeight: isMobile ? '50px' : '70px'
+                        },
+                        '& .MuiDataGrid-row:hover': {
+                          backgroundColor: '#f8fafc',
+                        },
+                        '& .MuiDataGrid-footerContainer': {
+                          borderTop: '1px solid #e5e7eb',
+                          minHeight: isMobile ? '40px' : '52px'
+                        },
+                        '& .MuiTablePagination-root': {
+                          fontSize: isMobile ? '0.75rem' : '0.875rem'
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
-              
-              <div className="p-4">
-                <DataGrid
-                  rows={rows}
-                  columns={columns}
-                  initialState={{
-                    pagination: {
-                      paginationModel: { page: 0, pageSize: 10 }
-                    }
-                  }}
-                  pageSizeOptions={[10, 25, 50]}
-                  autoHeight
-                  disableSelectionOnClick
-                  className="border-0"
-                  density="compact"
-                  sx={{
-                    '& .MuiDataGrid-cell': {
-                      borderBottom: '1px solid #f3f4f6',
-                      padding: '8px 4px',
-                    },
-                    '& .MuiDataGrid-columnHeaders': {
-                      backgroundColor: '#f9fafb',
-                      borderBottom: '2px solid #e5e7eb',
-                      minHeight: '40px !important',
-                    },
-                    '& .MuiDataGrid-row': {
-                      minHeight: '48px !important',
-                    },
-                    '& .MuiDataGrid-row:hover': {
-                      backgroundColor: '#f8fafc',
-                    },
-                    '& .MuiDataGrid-columnHeader': {
-                      padding: '8px 4px',
-                    },
-                  }}
-                />
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>

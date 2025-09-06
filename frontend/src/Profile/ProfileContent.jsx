@@ -913,12 +913,6 @@ const Refunds = () => {
   );
 };
 
-const Inbox = () => (
-    <div className="bg-white p-6 rounded-lg shadow-md text-black">
-      <h2 className="text-xl font-bold mb-4">Inbox</h2>
-      <p>You have no new messages.</p>
-    </div>
-  );
 
 const TrackOrders = () => {
   const { orders } = useSelector((state) => state.order);
@@ -1628,7 +1622,6 @@ const TrackOrders = () => {
 
       {option === "Orders" && <AllOrders />}
       {option === "Refunds" && <Refunds />}
-      {option === "Inbox" && <Inbox />}
       {option === "Track Orders" && <TrackOrders />}
       {option === "Change Password" && <ChangePassword />}
       {option === "Address" && <AddressContent />}

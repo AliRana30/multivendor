@@ -3,10 +3,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getAllAdminOrders } from '../../../redux/actions/order'
 import { getAllAdminSellers } from '../../../redux/actions/seller'
 import { getAllAdminUsers } from '../../../redux/actions/user'
+import { getAllAdminEvents } from '../../../redux/actions/event'
 
 const AdminDashboardMain = () => {
   const {products} = useSelector((state) => state.product);
-  const {events} = useSelector((state) => state.event);
+  const {events , adminevents} = useSelector((state) => state.event);
   const {adminsellers} = useSelector((state) => state.seller);
   const {adminorders} = useSelector((state) => state.order);
   const dispatch = useDispatch()
@@ -57,7 +58,7 @@ const AdminDashboardMain = () => {
     dispatch(getAllAdminOrders)
     dispatch(getAllAdminSellers)
     dispatch(getAllAdminUsers)
-
+    dispatch(getAllAdminEvents)
   }, [dispatch])
 
   return (
@@ -152,7 +153,7 @@ const AdminDashboardMain = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-orange-100 text-sm">Active Events</p>
-                <p className="text-2xl font-bold">{events?.length || 0}</p>
+                <p className="text-2xl font-bold">{adminevents.length }</p>
               </div>
               <div className="bg-white/20 rounded-lg p-2">
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">

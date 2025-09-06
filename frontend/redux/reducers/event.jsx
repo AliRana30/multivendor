@@ -3,8 +3,9 @@ import { createReducer } from "@reduxjs/toolkit";
 const initialState = {
   loading: false,
   event: null,          
-  events: [],         // Events from specific seller
-  allEvents: [],      // Events from all sellers
+  events: [],        
+  allEvents: [],     
+  adminevents: [],      
   allEventsLoading: false,
   allEventsError: null,
   error: null,
@@ -44,6 +45,20 @@ const eventReducer = createReducer(initialState, (builder) => {
     .addCase("getAllEventsShopFailed", (state, action) => {
       state.loading = false;
       state.error = action.payload;
+    })
+
+    // get all admin events 
+     .addCase("LoadAdminEventsRequest", (state) => {
+      state.loading = true;
+    })
+    .addCase("LoadAdminEventsSuccess", (state, action) => {
+      state.loading = false;
+      state.adminevents = action.payload;
+    })
+    .addCase("LoadAdminEventsFail", (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+      state.isSeller = false;
     })
 
     // Get all events from all sellers

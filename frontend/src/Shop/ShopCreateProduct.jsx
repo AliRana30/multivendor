@@ -7,7 +7,6 @@ const ShopCreateProduct = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [isMobile, setIsMobile] = useState(false)
 
-  // Handle responsive behavior
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768
@@ -55,7 +54,7 @@ const ShopCreateProduct = () => {
         `}>
           <div className="p-4 mt-2">
           </div>
-          <div>
+          <div className='absolute right-10 w-[60%] '>
             <CreateProduct/>
           </div>
         </div>

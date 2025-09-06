@@ -87,7 +87,6 @@ const AdminAllOrdersPage = () => {
     return `${items[0].name} (+${items.length - 1} more)`;
   };
 
-  // Mobile columns - optimized for small screens
   const mobileColumns = [
     { 
       field: "id", 
@@ -166,7 +165,6 @@ const AdminAllOrdersPage = () => {
     }
   ];
 
-  // Desktop columns - full feature set
   const desktopColumns = [
     { 
       field: "id", 

@@ -53,9 +53,9 @@ const ShopCreateEvent = () => {
           flex-1 transition-all duration-300 ease-in-out
           ${isMobile ? 'ml-0' : isSidebarOpen ? 'ml-64' : 'ml-20'}
         `}>
-          <div className="p-4 mt-2">
+          <div className="p-2  mt-2">
           </div>
-          <div>
+          <div className='absolute right-10 w-[60%]'>
             <CreateEvent/>
           </div>
         </div>

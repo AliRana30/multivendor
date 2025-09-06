@@ -18,18 +18,17 @@ const ShopMessages = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [currentView, setCurrentView] = useState('list');
-  const [activeConversationId, setActiveConversationId] = useState(null);
+  const [activeConversationId, setActiveConversationId] = useState(conversationIdFromUrl || null);
   const [isAuthChecked, setIsAuthChecked] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  const currentUserId = seller?._id 
-  const conversationId = conversationIdFromUrl || activeConversationId;
+  const currentUserId = seller?._id || user?._id; 
 
   const handleBackToMessages = useCallback(() => {
     setCurrentView('list');
     setActiveConversationId(null);
     
-    const backPath = seller ? '/shop-dashboard/messages' : '/dashboard/messages';
+    const backPath = seller ? '/shop-dashboard/all-messages' : '/dashboard/messages';
     navigate(backPath, { replace: true });
   }, [navigate, seller]);
 
@@ -37,6 +36,7 @@ const ShopMessages = () => {
     if (!selectedConversationId) return;
 
     if (typeof selectedConversationId !== 'string' || selectedConversationId.length < 12) {
+      console.warn('Invalid conversation ID:', selectedConversationId);
       return;
     }
 
@@ -54,7 +54,8 @@ const ShopMessages = () => {
   useEffect(() => {
     const checkAuth = () => {
       if (!currentUserId && !localStorage.getItem("token")) {
-        navigate('/shop-login', { replace: true });
+        const loginPath = seller ? '/shop-login' : '/login';
+        navigate(loginPath, { replace: true });
         return;
       }
       setIsAuthChecked(true);
@@ -62,7 +63,7 @@ const ShopMessages = () => {
 
     const timer = setTimeout(checkAuth, 100);
     return () => clearTimeout(timer);
-  }, [currentUserId, navigate]);
+  }, [currentUserId, navigate, seller]);
 
   // Handle responsive design
   useEffect(() => {
@@ -77,32 +78,69 @@ const ShopMessages = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Handle view initialization based on URL
+  // FIXED: Initialize conversation ID from URL only once
   useEffect(() => {
     if (!isAuthChecked || !currentUserId) return;
 
-    if (conversationIdFromUrl && 
-        conversationIdFromUrl !== 'undefined' && 
-        conversationIdFromUrl !== 'null' && 
-        conversationIdFromUrl !== 'messages') {
-      
-      if (typeof conversationIdFromUrl === 'string' && conversationIdFromUrl.length >= 12) {
+    // Only set the conversation ID if we haven't initialized yet
+    if (!isInitialized) {
+      if (conversationIdFromUrl && 
+          conversationIdFromUrl !== 'undefined' && 
+          conversationIdFromUrl !== 'null' && 
+          conversationIdFromUrl !== 'messages' &&
+          typeof conversationIdFromUrl === 'string' && 
+          conversationIdFromUrl.length >= 12) {
+        
         setCurrentView('chat');
         setActiveConversationId(conversationIdFromUrl);
       } else {
-        handleBackToMessages();
+        setCurrentView('list');
+        setActiveConversationId(null);
       }
-    } else {
+      setIsInitialized(true);
+    }
+  }, [conversationIdFromUrl, isAuthChecked, currentUserId, isInitialized]);
+
+  // FIXED: Separate effect to handle URL changes after initialization
+  useEffect(() => {
+    if (!isInitialized) return;
+
+    // Handle URL changes after component is initialized
+    if (conversationIdFromUrl && 
+        conversationIdFromUrl !== 'undefined' && 
+        conversationIdFromUrl !== 'null' && 
+        conversationIdFromUrl !== 'messages' &&
+        typeof conversationIdFromUrl === 'string' && 
+        conversationIdFromUrl.length >= 12) {
+      
+      // Only update if the conversation ID actually changed
+      if (activeConversationId !== conversationIdFromUrl) {
+        setCurrentView('chat');
+        setActiveConversationId(conversationIdFromUrl);
+      }
+    } else if (conversationIdFromUrl === undefined && currentView === 'chat') {
+      // URL changed to messages list
       setCurrentView('list');
       setActiveConversationId(null);
     }
-
-    setIsInitialized(true);
-  }, [conversationIdFromUrl, isAuthChecked, currentUserId, handleBackToMessages]);
+  }, [conversationIdFromUrl, isInitialized, activeConversationId, currentView]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen((prev) => !prev);
   };
+
+  // FIXED: Use activeConversationId as the stable source of truth
+  const stableConversationId = activeConversationId;
+
+  // Debug logging
+  console.log('Debug Info:', {
+    conversationIdFromUrl,
+    activeConversationId,
+    stableConversationId,
+    currentView,
+    params,
+    isInitialized
+  });
 
   if (!isAuthChecked) {
     return (
@@ -172,13 +210,13 @@ const ShopMessages = () => {
 
         {/* Main Content */}
         <div className="flex-1 overflow-hidden bg-white">
-          {currentView === 'chat' && conversationId ? (
-            <div key={`chat-${conversationId}`} className="h-full">
-              <MessageChat
-                conversationId={conversationId}
-                onBack={handleBackToMessages}
-              />
-            </div>
+          {/* FIXED: Only render MessageChat if we have a stable conversation ID and are in chat view */}
+          {currentView === 'chat' && stableConversationId ? (
+            <MessageChat
+              key={stableConversationId} // Use conversation ID as key for proper re-mounting
+              conversationId={stableConversationId}
+              onBack={handleBackToMessages}
+            />
           ) : currentView === 'list' ? (
             <div className="h-full flex flex-col">
               {/* Messages Header */}
