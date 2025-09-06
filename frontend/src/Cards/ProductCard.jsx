@@ -28,14 +28,14 @@ const ProductCard = ({ product }) => {
       }
 
       if (typeof firstImage === 'object' && firstImage.url) {
-        return firstImage.url.startsWith('http') ? firstImage.url : `http://localhost:5000${firstImage.url}`;
+        return firstImage.url.startsWith('http') ? firstImage.url : `https://multivendor-m00n.onrender.com0${firstImage.url}`;
       }
 
       if (typeof firstImage === 'string') {
         if (firstImage.startsWith('/')) {
-          return `http://localhost:5000${firstImage}`;
+          return `https://multivendor-m00n.onrender.com${firstImage}`;
         }
-        return `http://localhost:5000/uploads/${firstImage}`;
+        return `https://multivendor-m00n.onrender.com/uploads/${firstImage}`;
       }
     }
 
@@ -286,5 +286,6 @@ const ProductCard = ({ product }) => {
     </>
   );
 };
+
 
 export default ProductCard;
