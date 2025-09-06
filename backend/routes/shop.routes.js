@@ -12,9 +12,10 @@ shopRouter.put("/update-payment-method",isSeller,updatePaymentMethodController)
 shopRouter.delete("/delete-payment-method", isSeller, deletePaymentMethodController);
 shopRouter.get("/seller/activation/:token", activateSeller);
 shopRouter.get("/shop-logout",ShopLogoutController);
-shopRouter.get("/get-seller", isSeller, (req, res) => {
+shopRouter.get("/get-seller", (req, res) => {
   res.json({ seller: req.seller }); 
 });
 shopRouter.put("/update-shop/:id", upload.fields([{ name: "avatar", maxCount: 1 }]), isSeller, updateShopController);
 
 export default shopRouter;
+
