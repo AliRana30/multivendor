@@ -237,7 +237,7 @@ const ShopMessages = () => {
               {/* Messages List */}
               <div className="flex-1 overflow-y-auto bg-gray-50">
                 <AllMessages 
-                  key={`messages-list-${currentUserId}`}
+                  key={`${currentUserId}`}
                   onSelectConversation={handleSelectConversation} 
                   currentUserId={currentUserId}
                 />

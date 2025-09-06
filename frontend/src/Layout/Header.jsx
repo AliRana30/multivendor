@@ -500,7 +500,7 @@ const Header = () => {
 
             <div className="flex-shrink-0">
               <Link
-                to={isCurrentlySeller ? "/dashboard" : "/create-shop"}
+                to={isCurrentlySeller ? `/shop/${seller?._id}` : "/create-shop"}
                 className="bg-black text-white px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-300 flex items-center space-x-2 hover:bg-gray-800 shadow-md"
               >
                 <FiShoppingBag size={16} />

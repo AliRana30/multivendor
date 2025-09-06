@@ -38,26 +38,24 @@ const MessageChat = ({ conversationId: propConversationId, onBack }) => {
   const currentUser = seller || user;
   const navigate = useNavigate();
 
-  // FIXED: Use propConversationId directly and don't reassign
   const conversationId = propConversationId;
 
-  // FIXED: Early return if no conversation ID
-  if (!conversationId) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center">
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No Conversation Selected</h3>
-          <p className="text-gray-600 mb-4">Please select a conversation to start messaging</p>
-          <button
-            onClick={onBack}
-            className="text-blue-600 hover:text-blue-700 bg-blue-50 px-4 py-2 rounded-lg"
-          >
-            Back to Messages
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // if (!propConversationId) {
+  //   return (
+  //     <div className="flex items-center justify-center h-full">
+  //       <div className="text-center">
+  //         <h3 className="text-lg font-medium text-gray-900 mb-2">No Conversation Selected</h3>
+  //         <p className="text-gray-600 mb-4">Please select a conversation to start messaging</p>
+  //         <button
+  //           onClick={()=>navigate('/shop-dashboard/all-messages')}
+  //           className="text-blue-600 hover:text-blue-700 bg-blue-50 px-4 py-2 rounded-lg"
+  //         >
+  //           Back to Messages
+  //         </button>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   useEffect(() => {
     if (currentUserId && !socket) {
@@ -112,10 +110,8 @@ const MessageChat = ({ conversationId: propConversationId, onBack }) => {
     }
   }, [currentUserId, conversationId]);
 
-  // FIXED: Only run effect when we have both required values and they're stable
   useEffect(() => {
     const fetchConversationData = async () => {
-      // Early return if we don't have the required data
       if (!conversationId || !currentUserId) {
         console.log('Missing required data:', { conversationId, currentUserId });
         setLoading(false);
@@ -131,7 +127,6 @@ const MessageChat = ({ conversationId: propConversationId, onBack }) => {
         let conversationData = null;
         let messagesData = [];
 
-        // Try to get specific conversation first
         try {
           const specificConvResponse = await api.get(`/conversation/${conversationId}`, {
             withCredentials: true,
@@ -145,13 +140,12 @@ const MessageChat = ({ conversationId: propConversationId, onBack }) => {
                               specificConvResponse.data.data ||
                               specificConvResponse.data;
             console.log('Extracted conversation data:', conversationData);
-            conversationDataRef.current = conversationData; // Store in ref
+            conversationDataRef.current = conversationData; 
           }
         } catch (specificError) {
           console.warn('Specific conversation fetch failed:', specificError.message);
         }
 
-        // Fallback: Get all conversations and find the one we need
         if (!conversationData) {
           try {
             const conversationEndpoint = seller
@@ -170,7 +164,7 @@ const MessageChat = ({ conversationId: propConversationId, onBack }) => {
 
               if (conversationData) {
                 console.log('Found conversation via fallback:', conversationData);
-                conversationDataRef.current = conversationData; // Store in ref
+                conversationDataRef.current = conversationData; 
               }
             }
           } catch (fallbackError) {
@@ -178,7 +172,6 @@ const MessageChat = ({ conversationId: propConversationId, onBack }) => {
           }
         }
 
-        // Create minimal conversation object if needed
         if (!conversationData && conversationId) {
           console.log('Creating minimal conversation object');
           conversationData = {
@@ -188,7 +181,7 @@ const MessageChat = ({ conversationId: propConversationId, onBack }) => {
             lastMessage: '',
             lastMessageId: null
           };
-          conversationDataRef.current = conversationData; // Store in ref
+          conversationDataRef.current = conversationData; 
         }
 
         // Fetch messages
@@ -204,7 +197,7 @@ const MessageChat = ({ conversationId: propConversationId, onBack }) => {
             console.log('Fetched messages:', messagesData.length);
             console.log('Messages data:', messagesData);
             
-            // Update conversation members if needed
+            // Update conversation members 
             if (conversationData && messagesData.length > 0 && conversationData.members.length === 1) {
               const otherParticipants = messagesData
                 .map(msg => msg.sender)
@@ -212,7 +205,7 @@ const MessageChat = ({ conversationId: propConversationId, onBack }) => {
               
               if (otherParticipants.length > 0) {
                 conversationData.members = [...new Set([currentUserId, ...otherParticipants])];
-                conversationDataRef.current = conversationData; // Update ref
+                conversationDataRef.current = conversationData;
               }
             }
           }
@@ -220,7 +213,6 @@ const MessageChat = ({ conversationId: propConversationId, onBack }) => {
           console.warn('Messages fetch failed:', messagesError.message);
         }
 
-        // Set state
         if (conversationData) {
           setConversation(conversationData.lastMessageId ? conversationData : {...conversationData, lastMessageId: null});
           const messagesToSet = Array.isArray(messagesData) ? messagesData : [];
@@ -254,13 +246,11 @@ const MessageChat = ({ conversationId: propConversationId, onBack }) => {
       }
     };
 
-    // FIXED: Only fetch when both values are present and valid
     if (conversationId && currentUserId && typeof conversationId === 'string' && conversationId.length >= 12) {
       fetchConversationData();
     }
-  }, [conversationId, currentUserId, seller]); // Removed unnecessary dependencies
+  }, [conversationId, currentUserId, seller]); 
 
-  // Debug log to track state changes
   useEffect(() => {
     console.log('Component state:', {
       propConversationId,
@@ -364,7 +354,6 @@ const MessageChat = ({ conversationId: propConversationId, onBack }) => {
 
         setMessages(prev => [...prev, messageData]);
 
-        // Use the conversation data from ref for socket emission
         const currentConversation = conversationDataRef.current || conversation;
         const otherMember = currentConversation?.members?.find(member => member !== currentUserId);
         if (otherMember && socket) {
@@ -469,16 +458,6 @@ const MessageChat = ({ conversationId: propConversationId, onBack }) => {
     );
   }
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-          <p>Loading conversation...</p>
-        </div>
-      </div>
-    );
-  }
 
   if (error) {
     return (
@@ -503,7 +482,7 @@ const MessageChat = ({ conversationId: propConversationId, onBack }) => {
       <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
         <div className="flex items-center gap-3">
           <button
-            onClick={()=>navigate("/shop-dashboard/all-messages")}
+            onBack={() => navigate('/shop-messages/all-messages')}
             className="p-2 hover:bg-gray-100 rounded-full text-black"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -549,76 +528,52 @@ const MessageChat = ({ conversationId: propConversationId, onBack }) => {
             </div>
           </div>
         ) : (
-          messages.map((message) => {
-            // Convert both to strings for comparison
-            const messageSender = String(message.sender);
-            const currentUserIdStr = String(currentUserId);
-            const isMyMessage = messageSender === currentUserIdStr;
-            
-            console.log('Message render check:', {
-              messageSender,
-              currentUserIdStr,
-              isMyMessage,
-              messageId: message._id
-            });
+        messages.map((message) => {
+  const messageSender = String(message.sender);
+  const currentUserIdStr = String(currentUserId);
+  const isMyMessage = messageSender === currentUserIdStr;
 
-            return (
-              <div
-                key={message._id}
-                className={`flex ${isMyMessage ? 'justify-end' : 'justify-start'}`}
-              >
-                <div
-                  className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
-                    isMyMessage
-                      ? 'bg-blue-600 text-white rounded-br-sm'
-                      : 'bg-gray-100 text-gray-900 rounded-bl-sm'
-                  }`}
-                >
-                  {/* Images */}
-                  {message.images && message.images.length > 0 && (
-                    <div className="mb-2 space-y-2">
-                      {message.images.map((image, index) => (
-                        <img
-                          key={index}
-                          src={typeof image === 'string' ? 
-                            `http://localhost:5000/uploads/${image}` : 
-                            image.url || `http://localhost:5000/uploads/${image}`
-                          }
-                          alt="Message attachment"
-                          className="max-w-full h-auto rounded-lg"
-                          onError={(e) => {
-                            e.target.src = '/placeholder-image.png';
-                          }}
-                        />
-                      ))}
-                    </div>
-                  )}
-                  
-                  {/* Text */}
-                  {message.text && (
-                    <p className="break-words">{message.text}</p>
-                  )}
-                  
-                  {/* Timestamp */}
-                  <div className={`text-xs mt-1 ${
-                    isMyMessage ? 'text-blue-100' : 'text-gray-500'
-                  }`}>
-                    {formatMessageTime(message.createdAt)}
-                    {isMyMessage && (
-                      <span className="ml-1">
-                        {message.isRead ? '✓✓' : '✓'}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })
+  return (
+    <div
+      key={message._id}
+      className={`flex ${isMyMessage ? 'justify-end' : 'justify-start'}`}
+    >
+      <div
+        className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
+          isMyMessage
+            ? 'bg-blue-600 text-white rounded-br-sm'
+            : 'bg-gray-100 text-gray-900 rounded-bl-sm'
+        }`}
+      >
+        {message.images && message.images.length > 0 && (
+          <div className="mb-2 space-y-2">
+            {message.images.map((img, idx) => (
+              <img
+                key={idx}
+                src={typeof img === "string" ? img : URL.createObjectURL(img)}
+                alt={`attachment-${idx}`}
+                className="rounded-lg max-h-40 object-cover"
+              />
+            ))}
+          </div>
         )}
-        <div ref={messagesEndRef} />
+
+        {message.text && (
+          <p className="whitespace-pre-wrap break-words">{message.text}</p>
+        )}
+
+        <p className={`text-xs mt-1 ${isMyMessage ? 'text-blue-100' : 'text-gray-500'}`}>
+          {formatMessageTime(message.createdAt)}
+        </p>
+      </div>
+    </div>
+  );
+})
+        )}
+<div ref={messagesEndRef} />
+
       </div>
 
-      {/* Selected Images Preview */}
       {selectedImages.length > 0 && (
         <div className="p-4 border-t border-gray-200">
           <div className="flex gap-2 overflow-x-auto">

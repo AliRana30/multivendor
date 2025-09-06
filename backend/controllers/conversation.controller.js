@@ -217,3 +217,32 @@ export const getConversationById = async (req, res) => {
     });
   }
 };
+
+export const deleteconversation = async(req,res)=>{
+    try {
+    const { conversationId } = req.params;
+    const userId = req.user._id;
+
+    const conversation = await Conversation.findOneAndDelete({
+      _id: conversationId,
+      members: { $in: [userId] }
+    });
+
+    if (!conversation) {
+      return res.status(404).json({
+        success: false,
+        message: "Conversation not found or no permission"
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Conversation deleted successfully"
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+}

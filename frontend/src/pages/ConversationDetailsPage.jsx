@@ -14,7 +14,7 @@ import {
 import api from '../components/axiosCongif';
 import MessageChat from '../Shop/ShopComponents/MessageChat';
 
-const ConversationDetailsPage = () => {
+const ConversationDetailsPage = ({onBack}) => {
   const navigate = useNavigate();
   const { seller } = useSelector((state) => state.seller);
   const { user } = useSelector((state) => state.user);
@@ -110,7 +110,7 @@ const ConversationDetailsPage = () => {
       });
       
       toast.success("Conversation deleted successfully");
-      navigate('/shop-dashboard/messages');
+      navigate('/products');
     } catch (error) {
       toast.error("Failed to delete conversation");
     }
@@ -189,7 +189,14 @@ const ConversationDetailsPage = () => {
 
   return (
     <div className="flex h-screen bg-gray-50">
+    
       <div className={`flex-1 flex flex-col ${showInfo ? 'lg:w-2/3' : 'w-full'}`}>
+         <button
+                  onClick={()=>navigate("/shop-dashboard/all-messages")}
+                  className="p-2 hover:bg-gray-100 rounded-full text-black"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </button>
         {showChat ? (
           <MessageChat 
             conversationId={conversationId} 

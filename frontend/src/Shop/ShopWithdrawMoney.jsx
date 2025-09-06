@@ -8,11 +8,9 @@ import { getAllOrders } from '../../redux/actions/order';
 import api from '../components/axiosCongif';
 
 const ShopWithdrawMoney = () => {
-  // Layout state
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   
-  // Modal and form state
   const [showAddBankModal, setShowAddBankModal] = useState(false);
   const [showPin, setShowPin] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState('');

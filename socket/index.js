@@ -166,10 +166,10 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 4000;
+const PORT = 4000;
 
 server.listen(PORT, () => {
-  console.log(`🚀 Socket.IO Server running on http://localhost:${PORT}`);
+  console.log(`Socket.IO Server running on http://localhost:${PORT}`);
 });
 
 process.on('SIGTERM', () => {

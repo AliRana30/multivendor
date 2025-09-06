@@ -107,7 +107,6 @@ const ProductDetailsCard = ({ product }) => {
   };
 
   //handle messages
-
   const handleMessage = async () => {
   try {
     if (!product?._id || !user?._id || !seller?._id) {

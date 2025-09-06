@@ -7,13 +7,11 @@ const initialState = {
   error: null,
   success: false,
   message: null,
-  // Review related states
   reviewLoading: false,
   reviewError: null,
   reviewSuccess: false,
   reviewMessage: null,
   reviews: [],
-  // All products from all sellers states
   allProducts: [],
   allProductsLoading: false,
   allProductsError: null,
