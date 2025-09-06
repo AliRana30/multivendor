@@ -124,7 +124,7 @@ const Navbar = () => {
                 <div className="flex items-center space-x-3">
                   <Link to="/profile">
                     <Avatar
-                      src={user?.avatar?.url ? `http://localhost:5000/uploads/${user?.avatar?.url}` : "/default-avatar.png"}
+                      src={user?.avatar?.url ? `https://multivendor-m00n.onrender.com/uploads/${user?.avatar?.url}` : "/default-avatar.png"}
                       className="cursor-pointer"
                       sx={{ width: 28, height: 28 }}
                     />
@@ -155,5 +155,6 @@ const Navbar = () => {
     </>
   );
 };
+
 
 export default Navbar;
