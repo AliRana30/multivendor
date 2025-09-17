@@ -1,5 +1,5 @@
 import { Order } from "../models/order.js";
-import { Shop } from "../models/shop.js"
+import { Shop } from "../models/shop.js";
 import WithDraw from "../models/withdraw.js";
 import { sendmail } from "../utils/sendMail.js";
 
@@ -343,6 +343,91 @@ MultiMart Team`
     return res.status(500).json({
       success: false,
       message: "Failed to accept withdrawal request.",
+      error: error.message
+    });
+  }
+};
+
+export const getSellerWithdrawals = async (req, res) => {
+  try {
+    const sellerId = req.seller?._id;
+
+    if (!sellerId) {
+      return res.status(400).json({
+        success: false,
+        message: "Seller authentication required."
+      });
+    }
+
+    // Find all withdrawal requests for this seller
+    const withdrawalRequests = await WithDraw.find({
+      'seller._id': sellerId
+    }).sort({ createdAt: -1 }); // Most recent first
+
+    // calculate the seller's current balance
+    const seller = await Shop.findById(sellerId);
+    if (!seller) {
+      return res.status(404).json({
+        success: false,
+        message: "Seller not found."
+      });
+    }
+
+    // Get delivered orders 
+    const deliveredOrders = await Order.find({
+      shop: sellerId,
+      orderStatus: 'delivered'
+    });
+
+    const totalEarnings = deliveredOrders.reduce((total, order) => {
+      return total + (order.totalPrice || 0);
+    }, 0);
+
+    // Calculate withdrawals by status
+    const completedWithdrawals = withdrawalRequests.filter(w => w.status === 'Completed');
+    const processingWithdrawals = withdrawalRequests.filter(w => w.status === 'Processing');
+    const rejectedWithdrawals = withdrawalRequests.filter(w => w.status === 'Rejected');
+
+    const totalWithdrawn = completedWithdrawals.reduce((total, withdrawal) => {
+      return total + (withdrawal.amount || 0);
+    }, 0);
+
+    const pendingWithdrawals = processingWithdrawals.reduce((total, withdrawal) => {
+      return total + (withdrawal.amount || 0);
+    }, 0);
+
+    const totalWithdrawalsAmount = withdrawalRequests
+      .filter(w => ['Completed', 'Processing'].includes(w.status))
+      .reduce((total, withdrawal) => {
+        return total + (withdrawal.amount || 0);
+      }, 0);
+
+    const availableBalance = Math.max(0, totalEarnings - totalWithdrawalsAmount);
+
+    return res.status(200).json({
+      success: true,
+      withdrawalRequests,
+      balanceInfo: {
+        totalEarnings,
+        totalWithdrawn,
+        pendingWithdrawals,
+        availableBalance,
+        revenueAfterFees: totalEarnings * 0.9,
+        availableRevenueAfterFees: availableBalance * 0.9
+      },
+      statistics: {
+        totalRequests: withdrawalRequests.length,
+        completedRequests: completedWithdrawals.length,
+        processingRequests: processingWithdrawals.length,
+        rejectedRequests: rejectedWithdrawals.length
+      }
+    });
+
+  } catch (error) {
+    console.error('Error fetching seller withdrawals:', error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch withdrawal requests",
       error: error.message
     });
   }

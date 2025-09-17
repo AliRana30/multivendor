@@ -1,5 +1,5 @@
 import express from 'express'
-import { createNewMessage, deleteMessage, getMessages, markMessagesAsRead } from '../controllers/message.controller.js';
+import { createNewMessage, deleteMessage, getMessages, markMessagesAsRead } from '../controllers/messageController.js';
 import { isAuthenticated, isSeller } from '../middlewares/auth.js';
 import { upload } from '../multer.js';
 

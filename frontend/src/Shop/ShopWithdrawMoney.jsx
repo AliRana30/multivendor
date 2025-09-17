@@ -243,7 +243,7 @@ const ShopWithdrawMoney = () => {
                 <h4 className="font-medium text-gray-800 truncate">{account.bankName}</h4>
                 <p className="text-sm text-gray-600 truncate">{account.accountHolderName}</p>
                 <p className="text-sm text-gray-500 font-mono">
-                  {"*".repeat(Math.max(0, account.accountNumber.length - 4)) + account.accountNumber.slice(-4)}
+                  {"*".repeat(Math.max(0, account.accountNumber?.length - 4)) + account.accountNumber.slice(-4)}
                 </p>
               </div>
               <button

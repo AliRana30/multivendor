@@ -81,7 +81,7 @@ const CheckOut = () => {
     return "/placeholder-image.png";
   };
 
-  // Enhanced cart with proper image format
+  // Enhanced cart 
   const enhancedCart = cart?.map(item => ({
     _id: item._id || item.id,
     shopId: item.shopId || item.shop?._id,
@@ -102,7 +102,6 @@ const CheckOut = () => {
   const totalAmount = Math.max(0, subtotal - discount);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
     if (!user) dispatch(loadUser());
     
     if (cart?.length > 0) {
@@ -110,6 +109,10 @@ const CheckOut = () => {
       shopIds.forEach(shopId => dispatch(getAllCoupons(shopId)));
     }
   }, [dispatch, user, cart]);
+
+  useEffect(()=>{
+   scrollTo(0,0);
+  },[])
 
   const handleUseDefaultAddress = () => {
     if (user?.addresses?.[0]) {

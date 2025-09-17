@@ -7,7 +7,7 @@ import {
   getEventController, 
   getAllEventsController,  
   updateEventStock 
-} from '../controllers/event.controller.js';
+} from '../controllers/eventController.js';
 import { isSeller } from '../middlewares/auth.js';
 
 export const eventRouter = express.Router();

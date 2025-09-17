@@ -25,7 +25,6 @@ const Navbar = () => {
   const { wishlist } = useSelector((state) => state.wishlist);
   const [openCart, setOpenCart] = useState(false);
   const [openWishList, setOpenWishList] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Calculate total cart items
   const totalCartItems = cart?.reduce((acc, item) => acc + item.quantity, 0) || 0;

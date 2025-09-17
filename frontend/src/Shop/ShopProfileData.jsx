@@ -80,7 +80,7 @@ const ShopProfileData = ({ isOwner }) => {
         <img 
           src={getImageUrl(item)} 
           alt={item.name} 
-          className="w-[120vh] h-[48vh] sm:h-80 lg:h-60 object-fit" 
+          className="w-[50vh] h-[40vh] sm:h-80 lg:h-60  flex-shrink-0" 
         />
         {type === 'event' && (
           <div className="absolute top-2 sm:top-3 right-2 sm:right-3 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
@@ -164,14 +164,14 @@ const ShopProfileData = ({ isOwner }) => {
             {user?.avatar?.url && (
               <div className="mb-2">
                 <img 
-                  src={`http://localhost:5000/${user.avatar.url}`} 
+                  src={`http://localhost:5000/${review?.user?.avatar?.url}`} 
                   alt="user_avatar" 
                   className="w-8 h-8 rounded-full object-cover"
                 />
               </div>
             )}
             <p className="text-xs sm:text-sm font-medium text-gray-900 mb-1">
-              {review.user?.name || user?.name || 'Anonymous'}
+              {review.user?.name || 'Anonymous'}
             </p>
             {review.comment && <p className="text-gray-700 mb-2 text-xs sm:text-sm">"{review.comment}"</p>}
             <div className="bg-gray-50 rounded-lg p-2">

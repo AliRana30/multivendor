@@ -1,9 +1,9 @@
 import path from "path";
-import usermodel from "../models/user.js";
 import { sendmail } from "../utils/sendMail.js";
 import { activationToken, authtoken } from "../utils/token.js";
 import bcrypt from "bcryptjs";
 import fs from 'fs'
+import usermodel from "../models/user.js";
 
 export const signup = async (req, res) => {
   try {

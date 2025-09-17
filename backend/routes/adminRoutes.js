@@ -1,5 +1,5 @@
 import express from 'express'
-import { getAllOrdersAdminController, getAllSellersAdminController, getAllUsersAdminController ,deleteUserController, deleteShopController, getAllProductsAdminController, getAllEventsAdminController, getAdminRevenue} from '../controllers/admin.controller.js'
+import { getAllOrdersAdminController, getAllSellersAdminController, getAllUsersAdminController ,deleteUserController, deleteShopController, getAllProductsAdminController, getAllEventsAdminController, getAdminRevenue} from '../controllers/adminController.js'
 import { isAdmin } from '../middlewares/auth.js'
 
 export const adminRouter = express.Router()

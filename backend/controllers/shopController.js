@@ -1,9 +1,8 @@
 import fs from "fs";
-import { Shop } from "../models/shop.js";
-import { Order } from "../models/order.js";
 import { activationToken, authtoken } from "../utils/token.js";
 import { sendmail } from "../utils/sendMail.js";
 import bcrypt from 'bcryptjs'
+import { Shop } from "../models/shop.js";
 
 export const shopController = async (req, res) => {
   try {
@@ -148,15 +147,9 @@ export const ShopLogoutController = async (req, res) => {
 
 export const updateShopController = async (req, res) => {
    try {
-      console.log('Request params:', req.params);
-      console.log('Request body:', req.body);
-      console.log('Request files:', req.files);
       
       const { name, email, address, phoneNumber, zipCode } = req.body;
       const shopId = req.params.id;
-
-      console.log('Shop ID from params:', shopId);
-      console.log('Shop ID type:', typeof shopId);
 
       if (!shopId || !shopId.match(/^[0-9a-fA-F]{24}$/)) {
          return res.status(400).json({

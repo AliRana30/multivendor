@@ -1,5 +1,5 @@
-import { Shop } from "../models/shop.js";
 import { Event } from "../models/event.js";
+import { Shop } from "../models/shop.js";
 
 export const EventController = async (req, res) => {
   try {

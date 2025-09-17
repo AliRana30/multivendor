@@ -42,7 +42,7 @@ const ShopLogin = () => {
         if (res.data.token) {
           Cookies.set("seller_token", res.data.token)
         }
-        toast.success("Login Successful! Redirecting...")
+        toast.success("Login Successful!")
         setTimeout(() => {
           navigate(`/shop/${res.data.seller._id}`, { replace: true })
         }, 1500)
@@ -56,7 +56,7 @@ const ShopLogin = () => {
       if (error.response?.status === 401) {
         toast.error("Invalid email or password")
       } else if (error.response?.status === 400) {
-        toast.error(error.response.data?.message || "Invalid request")
+        toast.error(error.response.data?.message || "Invalid credentials")
       } else if (error.response?.data?.message) {
         toast.error(error.response.data.message)
       } else {

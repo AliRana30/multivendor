@@ -45,7 +45,6 @@ const OrderDetailsPage = () => {
 
   const dispatch = useDispatch();
   
-  // State for status update
   const [selectedStatus, setSelectedStatus] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [updating, setUpdating] = useState(false);
@@ -160,15 +159,12 @@ const OrderDetailsPage = () => {
   const isAdmin = () => {
     if (!user || !user.role) return false;
     const role = user.role.toString().toLowerCase().trim();
-    console.log('User role:', role); // Debug log
     return role === 'admin';
   };
 
   useEffect(() => {
     if (id) {
       dispatch(getOrderById(id));
-      console.log('User role check:', user?.role?.toString());
-      console.log('Is admin:', isAdmin());
     }
   }, [dispatch, id, user]);
 
@@ -177,6 +173,10 @@ const OrderDetailsPage = () => {
       setSelectedStatus(order.orderStatus);
     }
   }, [order]);
+
+  useEffect(()=>{
+   scrollTo(0,0)
+  },[])
 
   if (loading) {
     return <Loader />;

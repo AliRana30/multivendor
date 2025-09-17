@@ -58,7 +58,7 @@ const ShopDashboard = () => {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  const recentTransactions = seller?.transactions?.slice(-5) || []
+  const recentTransactions = seller?.transactions?.slice(0,5) || []
 
   const StatCard = ({ title, value, subtitle, gradient, icon, extraInfo }) => (
     <div className={`bg-gradient-to-br ${gradient} rounded-xl p-4 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105`}>

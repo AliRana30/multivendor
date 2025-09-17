@@ -1,5 +1,5 @@
 import express from 'express'
-import { createReview, deleteController, getAllProductsController, getproductController, getProductReviews, productController, updateProductStockController, updateReview } from '../controllers/product.controller.js'
+import { createReview, deleteController, getAllProductsController, getproductController, getProductReviews, productController, updateProductStockController, updateReview } from '../controllers/productController.js'
 import { upload } from '../multer.js'
 import { isAuthenticated, isSeller } from '../middlewares/auth.js'
 

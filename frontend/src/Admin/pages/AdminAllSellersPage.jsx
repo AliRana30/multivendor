@@ -257,7 +257,7 @@ const AdminAllSellersPage = () => {
               <div className="flex justify-center items-center h-64">
                 <Loader />
               </div>)
-             : error && (
+             : (
              
               <div className="bg-white rounded-xl shadow-lg overflow-hidden h-full flex flex-col">
                 {/* Header section */}

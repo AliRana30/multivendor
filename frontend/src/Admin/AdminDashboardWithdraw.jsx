@@ -382,9 +382,10 @@ const AdminDashboardWithdraw = () => {
     completed: withdrawalRequests.filter((r) => r.status === "Completed")
       .length,
     rejected: withdrawalRequests.filter((r) => r.status === "Rejected").length,
-    totalAmount: withdrawalRequests.reduce(
-      (acc, r) => acc + (r.amount || 0),
-      0
+    totalAmount: withdrawalRequests
+    .filter((r) => r.status === "Completed")
+    .reduce(
+      (acc, r) => acc + (r.amount || 0), 0
     ),
     completedAmount: withdrawalRequests
       .filter((r) => r.status === "Completed")

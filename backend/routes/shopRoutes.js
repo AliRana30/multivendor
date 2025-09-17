@@ -1,7 +1,7 @@
 import express from "express";
 import { upload } from "../multer.js";
 import { activateSeller } from "../utils/token.js";
-import { deletePaymentMethodController, shopController, ShopLoginController, ShopLogoutController, updatePaymentMethodController, updateShopController } from "../controllers/shop.controller.js";
+import { deletePaymentMethodController, shopController, ShopLoginController, ShopLogoutController, updatePaymentMethodController, updateShopController } from "../controllers/shopController.js";
 import { isSeller } from "../middlewares/auth.js";
 
 const shopRouter = express.Router();

@@ -1,5 +1,5 @@
 import express from 'express'
-import { conversationController, deleteconversation, getConversationById, getMessagesByConversationId, getSellerConversations, getUserConversations, updateLastMessage } from '../controllers/conversation.controller.js'
+import { conversationController, deleteconversation, getConversationById, getMessagesByConversationId, getSellerConversations, getUserConversations, updateLastMessage } from '../controllers/conversationController.js'
 import {isAuthenticated, isSeller} from '../middlewares/auth.js'
 
 export const conversationRoute = express.Router()

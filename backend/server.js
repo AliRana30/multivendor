@@ -4,18 +4,18 @@ import mongodb from "./utils/db.js"
 import cookieParser from "cookie-parser";
 import cors from "cors"
 import bodyParser from 'body-parser'
-import userRouter from "./routes/user.routes.js";
 import path from "path";
 import { fileURLToPath } from "url";
-import shopRouter from "./routes/shop.routes.js";
-import { productRouter } from "./routes/product.routes.js";
-import { eventRouter } from "./routes/event.routes.js";
-import { couponRouter } from "./routes/coupon.routes.js";
-import { orderRouter } from "./routes/order.routes.js";
-import { conversationRoute } from "./routes/conversation.routes.js";
-import { messageRouter } from "./routes/message.routes.js";
-import { adminRouter } from "./routes/admin.routes.js";
-import { withdrawRouter } from "./routes/withdraw.routes.js";
+import userRouter from "./routes/userRoutes.js";
+import shopRouter from "./routes/shopRoutes.js";
+import { productRouter } from "./routes/productRoutes.js";
+import { eventRouter } from "./routes/eventRoutes.js";
+import { couponRouter } from "./routes/couponRoutes.js";
+import { orderRouter } from "./routes/orderRoutes.js";
+import { conversationRoute } from "./routes/conversationRoutes.js";
+import { messageRouter } from "./routes/messageRoutes.js";
+import { adminRouter } from "./routes/adminRoutes.js";
+import { withdrawRouter } from "./routes/withdrawRoutes.js";
 
 const app =express()
 

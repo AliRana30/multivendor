@@ -91,7 +91,7 @@ const ProductDetailsCard = ({ product }) => {
       const response = await api.post('/create-new-conversation', {
         groupTitle: `${product?._id}_${user?._id}_${product?.shop?._id}`, 
         userId: user?._id,
-        sellerId: product?.shop?._id,
+        sellerId: product?.shopId,
       });
       toast.dismiss(loadingToast);
 
@@ -175,7 +175,7 @@ const ProductDetailsCard = ({ product }) => {
   const getSellerName = () => {
     if (product.shop) {
       if (typeof product.shop === 'object') {
-        return product.shop.name || product.shop.shopname || "Unknown Seller";
+        return product.shop.name || "Unknown Seller";
       }
       if (typeof product.shop === 'string') {
         return product.shop;
@@ -185,14 +185,13 @@ const ProductDetailsCard = ({ product }) => {
   };
 
   const getSellerAvatar = () => {
-    if (product.shop && typeof product.shop === 'object' && product.shop.avatar?.url) {
-      return `http://localhost:5000/${product.shop.avatar.url}`;
-    }
-    if (seller?.avatar?.url) {
-      return `http://localhost:5000/${seller.avatar.url}`;
-    }
-    return null;
-  };
+  if (product.shopLogo) {
+    return `http://localhost:5000/${product.shopLogo}`;
+  }
+  return null;
+};
+
+
 
   const getSellerId = () => {
     if (product.shop && typeof product.shop === 'object') {
@@ -457,10 +456,7 @@ const ProductDetailsCard = ({ product }) => {
             )}
           </div>
           
-          <div className="flex items-center text-sm text-green-600">
-            <HiOutlineBadgeCheck className="w-4 h-4 mr-1" />
-            <span>Free shipping on orders over $50</span>
-          </div>
+        
         </div>
 
         <div className="space-y-4">
@@ -521,38 +517,12 @@ const ProductDetailsCard = ({ product }) => {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-gray-200">
-          <div className="flex items-center gap-3 text-sm text-gray-600">
-            <FiTruck className="w-5 h-5 text-green-600" />
-            <div>
-              <div className="font-medium text-gray-900">Free Shipping</div>
-              <div>Orders over $50</div>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-3 text-sm text-gray-600">
-            <FiRefreshCw className="w-5 h-5 text-blue-600" />
-            <div>
-              <div className="font-medium text-gray-900">Easy Returns</div>
-              <div>30-day policy</div>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-3 text-sm text-gray-600">
-            <FiShield className="w-5 h-5 text-purple-600" />
-            <div>
-              <div className="font-medium text-gray-900">Warranty</div>
-              <div>1 year coverage</div>
-            </div>
-          </div>
-        </div>
-
         {product.shop && typeof product.shop === "object" && (
           <div className="bg-blue-50 rounded-xl p-4">
             <div className="flex items-center justify-between">
               <div>
                 <div className="font-medium text-gray-900">
-                  Sold by {product.shop.name || product.shop.shopname || "Unknown Shop"}
+                  Sold by {product.shop.name || "Unknown Shop"}
                 </div>
                 <div className="text-sm text-gray-600">
                   Verified seller

@@ -1,6 +1,6 @@
 import express from 'express'
 import { isSeller } from '../middlewares/auth.js';
-import { createOrderController, deleteOrderController, getAllOrdersController, getOrderByIdController, getUserOrdersController, orderRefundController, updateOrderStatusController, } from '../controllers/order.controller.js';
+import { createOrderController, deleteOrderController, getAllOrdersController, getOrderByIdController, getUserOrdersController, orderRefundController, updateOrderStatusController, } from '../controllers/orderController.js';
 
 export const orderRouter = express.Router();
 

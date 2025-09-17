@@ -453,7 +453,7 @@ const MessageChat = ({ conversationId: propConversationId, onBack }) => {
               <h3 className="font-medium text-gray-900">
                 {otherUserInfo?.name ||
                   otherUserInfo?.shopName ||
-                  `${isSeller ? "Customer" : "Shop"} ${conversationId?.slice(-8)}`}
+                  `${isSeller ? user?.name : "Shop"}`}
               </h3>
               <p className="text-sm text-gray-500">
                 {otherParticipant && isUserOnline(otherParticipant) ? "Online" : "Offline"} •

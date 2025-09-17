@@ -3,7 +3,7 @@ import { Search, Filter, MessageCircle, Clock, CheckCircle2, User, Store } from 
 
 const UserMessages = ({
   messages = [],
-  currentUserId ,
+  currentUserId,
   isSeller = false,
   otherUserInfo = null,
 }) => {
@@ -11,10 +11,9 @@ const UserMessages = ({
   const [filterType, setFilterType] = useState("all") 
   const [sortBy, setSortBy] = useState("newest") 
 
-
-  useEffect(()=>{
-    console.log(currentUserId)
-  },[])
+  useEffect(() => {
+    console.log("Current User ID:", currentUserId)
+  }, [currentUserId])
   
   const filteredMessages = useMemo(() => {
     const filtered = messages.filter((message) => {
@@ -48,7 +47,7 @@ const UserMessages = ({
     const total = messages.length
     const sent = messages.filter((msg) => String(msg.sender) === String(currentUserId)).length
     const received = total - sent
-    const unread = messages.filter((msg) => !msg.isRead).length
+    const unread = messages.filter((msg) => !msg.isRead && String(msg.sender) !== String(currentUserId)).length
 
     return { total, sent, received, unread }
   }, [messages, currentUserId])
@@ -90,9 +89,10 @@ const UserMessages = ({
     return "No content"
   }
 
+  // Fix: Better check for logged in user
   if (!currentUserId) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex items-center justify-center h-64 bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="text-center text-gray-500">
           <MessageCircle className="w-12 h-12 mx-auto mb-2 text-gray-300" />
           <p>Please log in to view messages</p>
@@ -113,7 +113,7 @@ const UserMessages = ({
             </div>
             <div>
               <h3 className="font-medium text-gray-900">
-                {otherUserInfo?.name || otherUserInfo?.shopName || "Conversation"}
+                {otherUserInfo?.name || otherUserInfo?.shopName || "Messages"}
               </h3>
               <p className="text-sm text-gray-500">{isSeller ? "Customer Messages" : "Seller Messages"}</p>
             </div>
@@ -124,25 +124,21 @@ const UserMessages = ({
           </div>
         </div>
 
-        {/* Statistics Cards */}
+        {/* Simplified Statistics Cards */}
         <div className="grid grid-cols-4 gap-3">
           <div className="bg-blue-50 p-3 rounded-lg text-center">
-            <MessageCircle className="w-5 h-5 text-blue-600 mx-auto mb-1" />
             <p className="text-lg font-semibold text-blue-900">{stats.total}</p>
             <p className="text-xs text-blue-600">Total</p>
           </div>
           <div className="bg-green-50 p-3 rounded-lg text-center">
-            <User className="w-5 h-5 text-green-600 mx-auto mb-1" />
             <p className="text-lg font-semibold text-green-900">{stats.sent}</p>
             <p className="text-xs text-green-600">Sent</p>
           </div>
           <div className="bg-purple-50 p-3 rounded-lg text-center">
-            <Store className="w-5 h-5 text-purple-600 mx-auto mb-1" />
             <p className="text-lg font-semibold text-purple-900">{stats.received}</p>
             <p className="text-xs text-purple-600">Received</p>
           </div>
           <div className="bg-orange-50 p-3 rounded-lg text-center">
-            <Clock className="w-5 h-5 text-orange-600 mx-auto mb-1" />
             <p className="text-lg font-semibold text-orange-900">{stats.unread}</p>
             <p className="text-xs text-orange-600">Unread</p>
           </div>
@@ -215,11 +211,11 @@ const UserMessages = ({
                   <div className="flex items-start gap-3">
                     {/* Message Direction Indicator */}
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium ${
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-medium ${
                         isMyMessage ? (isSeller ? "bg-green-500" : "bg-blue-500") : "bg-gray-400"
                       }`}
                     >
-                      {isMyMessage ? "You" : isSeller ? "C" : "S"}
+                      {isMyMessage ? "Me" : (isSeller ? "C" : "S")}
                     </div>
 
                     {/* Message Content */}
@@ -231,7 +227,7 @@ const UserMessages = ({
                             : otherUserInfo?.name || otherUserInfo?.shopName || (isSeller ? "Customer" : "Seller")}
                         </p>
                         <div className="flex items-center gap-2">
-                          {!message.isRead && <div className="w-2 h-2 bg-blue-500 rounded-full"></div>}
+                          {!message.isRead && !isMyMessage && <div className="w-2 h-2 bg-blue-500 rounded-full"></div>}
                           <span className="text-xs text-gray-500">{formatMessageTime(message.createdAt)}</span>
                         </div>
                       </div>
