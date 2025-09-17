@@ -197,7 +197,7 @@ const ProductDetailsCard = ({ product }) => {
     if (product.shop && typeof product.shop === 'object') {
       return product.shop._id;
     }
-    return seller?._id;
+    return product.shop._id;
   };
 
   const discountPercentage = getDiscountPercentage();
@@ -261,7 +261,7 @@ const ProductDetailsCard = ({ product }) => {
           </div>
 
           <div>
-            {getSellerId() && (
+            {
               <Link to={`/shop/${getSellerId()}`}>
                 {getSellerAvatar() && (
                   <img
@@ -271,7 +271,7 @@ const ProductDetailsCard = ({ product }) => {
                   />
                 )}
               </Link>
-            )}
+            }
             <button
               className="text-white bg-black p-4 rounded-xl"
               onClick={handleMessage}

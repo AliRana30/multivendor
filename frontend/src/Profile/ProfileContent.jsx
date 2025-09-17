@@ -510,6 +510,7 @@ const ProfileContent = ({ option }) => {
     setReviewComment("");
     setHoverRating(0);
     setShowReviewModal(true);
+    setIsReviewed(true);
   };
 
   useEffect(() => {
@@ -635,7 +636,7 @@ const ProfileContent = ({ option }) => {
                           </span>
                         )}
                       </span>
-                      {order.orderStatus === "delivered" && !order.isReviewed && (
+                      {order.orderStatus === "delivered" && !isReviewed && (
                         <button
                           onClick={() => handleWriteReview(item)}
                           className="bg-blue-600 text-white text-xs px-3 py-1 rounded hover:bg-blue-700 transition-colors"

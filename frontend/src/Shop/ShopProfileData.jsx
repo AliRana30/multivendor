@@ -161,15 +161,7 @@ const ShopProfileData = ({ isOwner }) => {
                 {review.createdAt ? new Date(review.createdAt).toLocaleDateString() : 'Recently'}
               </span>
             </div>
-            {user?.avatar?.url && (
-              <div className="mb-2">
-                <img 
-                  src={`http://localhost:5000/${review?.user?.avatar?.url}`} 
-                  alt="user_avatar" 
-                  className="w-8 h-8 rounded-full object-cover"
-                />
-              </div>
-            )}
+        
             <p className="text-xs sm:text-sm font-medium text-gray-900 mb-1">
               {review.user?.name || 'Anonymous'}
             </p>

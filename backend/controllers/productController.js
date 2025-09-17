@@ -1,7 +1,6 @@
 import { Order } from "../models/order.js";
 import { Product } from "../models/product.js";
 import { Shop } from "../models/shop.js";
-import usermodel from "../models/user.js";
 
 export const productController = async (req, res) => {
   try {
@@ -168,7 +167,7 @@ export const createReview = async (req, res) => {
   try {
     const { rating, comment, user } = req.body;
     const { id } = req.params;
-    const userId = await usermodel.findById(user._id);
+    const userId = req.user?.id || req.user?._id || user;
 
     if (!rating || rating < 1 || rating > 5) {
       return res.status(400).json({
@@ -213,7 +212,7 @@ export const createReview = async (req, res) => {
     console.log("Checking user orders for productId:", id);
 
     const userOrders = await Order.find({
-      user: userId,
+      user: user.name,
       orderStatus: "delivered",
       "items.product": id,
     });
@@ -230,13 +229,13 @@ export const createReview = async (req, res) => {
       });
     }
 
-    // Create new review (removed existing review check)
+    // Create new review 
     const newReview = {
-      user: userId,
+      user: user.name || userId,
       rating: Number(rating),
       comment: comment?.trim() || "",
       productId: id,
-      createdAt: new Date(), // Added timestamp to distinguish between multiple reviews
+      createdAt: new Date(), 
     };
 
     product.reviews.push(newReview);
