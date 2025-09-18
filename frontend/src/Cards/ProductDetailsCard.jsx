@@ -184,22 +184,6 @@ const ProductDetailsCard = ({ product }) => {
     return seller?.name || seller?.shopname || "Unknown Seller";
   };
 
-  const getSellerAvatar = () => {
-  if (product.shopLogo) {
-    return `http://localhost:5000/${product.shopLogo}`;
-  }
-  return null;
-};
-
-
-
-  const getSellerId = () => {
-    if (product.shop && typeof product.shop === 'object') {
-      return product.shop._id;
-    }
-    return product.shop._id;
-  };
-
   const discountPercentage = getDiscountPercentage();
   const images = product.images && Array.isArray(product.images) && product.images.length > 0 
     ? product.images 
@@ -261,17 +245,6 @@ const ProductDetailsCard = ({ product }) => {
           </div>
 
           <div>
-            {
-              <Link to={`/shop/${getSellerId()}`}>
-                {getSellerAvatar() && (
-                  <img
-                    src={getSellerAvatar()}
-                    alt="Shop Avatar"
-                    className="rounded-xl w-24 h-24 object-cover mb-4 hover:opacity-80 transition-opacity"
-                  />
-                )}
-              </Link>
-            }
             <button
               className="text-white bg-black p-4 rounded-xl"
               onClick={handleMessage}

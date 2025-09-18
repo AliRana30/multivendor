@@ -1,4 +1,3 @@
-import React from "react";
 import { IoMdClose } from "react-icons/io";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -8,7 +7,7 @@ const Cart = ({ openCart, setOpenCart }) => {
   const { cart } = useSelector((state) => state.cart);
 
   const totalPrice = cart?.reduce((acc, item) => {
-    return acc + (item.discountPrice || item.originalPrice) * item.quantity;
+    return acc + (item.discountPrice ) * item.quantity;
   }, 0) || 0;
 
   const totalItems = cart?.reduce((acc, item) => acc + item.quantity, 0) || 0;

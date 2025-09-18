@@ -7,7 +7,7 @@ import ShopSettings from "./ShopSettings"
 import { getAllProducts } from "../../redux/actions/product"
 
 const ShopInfo = ({ isOwner }) => {
-  const { seller } = useSelector((state) => state.seller)
+  const { seller ,isSeller} = useSelector((state) => state.seller)
   const { products } = useSelector((state) => state.product)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const navigate = useNavigate()
@@ -122,7 +122,7 @@ const ShopInfo = ({ isOwner }) => {
             </div>
           </div>
 
-          {isOwner && (
+          {isOwner && isSeller && (
             <div className="pt-3 sm:pt-4 border-t border-gray-100 space-y-2 sm:space-y-3">
               <button
                 className="w-full text-blue-600 hover:text-blue-700 text-xs sm:text-sm font-medium py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors duration-200 border border-blue-200 relative z-10"

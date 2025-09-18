@@ -206,14 +206,14 @@ const ProductCard = ({ product }) => {
           <button 
             onClick={addToCartHandler}
             disabled={product.stock === 0}
-            className={`flex-1 font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg flex items-center justify-center gap-3 ${
+            className={`mt-4 mb-3 flex-1 font-semibold py-2 px-1 rounded-sm transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg flex items-center justify-center gap-3 ${
               product.stock === 0
                 ? 'bg-gray-400 text-white cursor-not-allowed opacity-60'
                 : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white'
             }`}
           >
-            <BsCartPlus className="text-lg" />
-            <span>{product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}</span>
+            <BsCartPlus className="text-sm" />
+            <span className="text-sm">{product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}</span>
           </button>
           
         </div>
