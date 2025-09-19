@@ -26,10 +26,7 @@ const Navbar = () => {
   const [openCart, setOpenCart] = useState(false);
   const [openWishList, setOpenWishList] = useState(false);
 
-  // Calculate total cart items
   const totalCartItems = cart?.reduce((acc, item) => acc + item.quantity, 0) || 0;
-  
-  // Calculate total wishlist items
   const totalWishlistItems = wishlist?.length || 0;
 
   const handleCategorySelect = (e) => {
@@ -42,8 +39,8 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await api.get("/logout");
       toast.success("Logged out successfully");
+      await api.get("/logout");
       navigate("/login");
       window.location.reload(true);
     } catch (error) {
@@ -53,11 +50,10 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="hidden lg:block bg-blue-600 shadow-md sticky top-0 z-30 ">
+      <nav className="hidden lg:block bg-blue-600 shadow-md sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-14">
             
-            {/* Left - Category Dropdown */}
             <div className="relative">
               <select
                 onChange={handleCategorySelect}
@@ -74,7 +70,6 @@ const Navbar = () => {
               </select>
             </div>
 
-            {/* Center - Nav Links */}
             <div className="flex space-x-8">
               {navItems.map((item, i) => (
                 <Link
@@ -87,24 +82,21 @@ const Navbar = () => {
               ))}
             </div>
 
-            {/* Right - Icons */}
-            <div className="flex items-center space-x-5 ">
+            <div className="flex items-center space-x-5">
               
-              {/* Wishlist */}
-              <div className="relaative">
+              <div className="relative">
                 <FiHeart
                   size={20}
                   onClick={() => setOpenWishList(true)}
                   className="cursor-pointer text-white hover:text-red-300 transition-colors"
                 />
                 {totalWishlistItems > 0 && (
-                  <span className="absolute top-[8px] right-[24vh] bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
                     {totalWishlistItems > 99 ? '99+' : totalWishlistItems}
                   </span>
                 )}
               </div>
 
-              {/* Cart */}
               <div className="relative">
                 <FiShoppingCart
                   size={20}
@@ -118,7 +110,6 @@ const Navbar = () => {
                 )}
               </div>
 
-              {/* User Profile/Login */}
               {isAuthenticated ? (
                 <div className="flex items-center space-x-3">
                   <Link to="/profile">
@@ -148,7 +139,6 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Sidebars */}
       <Cart openCart={openCart} setOpenCart={setOpenCart} />
       <WishList openWishList={openWishList} setOpenWishList={setOpenWishList} />
     </>

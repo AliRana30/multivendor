@@ -81,10 +81,16 @@ const Header = () => {
   const { allProducts } = useSelector((state) => state.product);
   const { isAuthenticated, user } = useSelector((state) => state.user);
   const { cart } = useSelector((state) => state.cart);
+  const { wishlist } = useSelector((state) => state.wishlist);
 
   const totalCartItems = useMemo(() => 
     cart?.reduce((acc, item) => acc + item.quantity, 0) || 0, 
     [cart]
+  );
+
+  const totalWishlistItems = useMemo(() => 
+    wishlist?.length || 0, 
+    [wishlist]
   );
 
   const Products = useMemo(() => {
@@ -122,7 +128,6 @@ const Header = () => {
     };
   }, []);
 
-  // Utility functions
   const getProductImageUrl = useCallback((product) => {
     if (product.image_Url && typeof product.image_Url === 'string') {
       return product.image_Url;
@@ -158,7 +163,6 @@ const Header = () => {
       .trim();
   }, []);
 
-  // handleSearch
   const handleSearch = useCallback((term) => {
     setSearchTerm(term);
 
@@ -210,7 +214,6 @@ const Header = () => {
     setMobileSearchOpen(false);
   }, []);
 
-  // Search Component 
   const SearchComponent = ({ isMobile = false, onClose = null }) => (
     <div className={`relative ${isMobile ? 'w-full' : 'flex-1 max-w-2xl'}`}>
       <motion.div className="relative">
@@ -267,7 +270,6 @@ const Header = () => {
         </div>
       </motion.div>
 
-      {/* Search Results */}
       <AnimatePresence>
         {searchData.length > 0 && (
           <motion.div
@@ -375,7 +377,6 @@ const Header = () => {
         )}
       </AnimatePresence>
 
-      {/* No Results */}
       <AnimatePresence>
         {searchTerm.length > 0 && searchData.length === 0 && !isSearchFocused && (
           <motion.div
@@ -398,7 +399,6 @@ const Header = () => {
     </div>
   );
 
-   // main header
   return (
     <>
       <motion.header 
@@ -415,7 +415,6 @@ const Header = () => {
         
         <div className="relative max-w-7xl mx-auto py-2 px-4 sm:px-6 lg:px-8">
           
-          {/* Mobile Layout */}
           <div className="flex lg:hidden items-center justify-between h-14">
             <motion.button
               onClick={() => setMobileMenuOpen(true)}
@@ -450,11 +449,16 @@ const Header = () => {
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setOpenWishList(true)}
-                className="p-2 text-gray-700"
+                className="relative p-2 text-gray-700"
                 type="button"
                 aria-label="Wishlist"
               >
                 <FiHeart size={20} />
+                {totalWishlistItems > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-medium min-w-4">
+                    {totalWishlistItems > 99 ? '99+' : totalWishlistItems}
+                  </span>
+                )}
               </motion.button>
 
               <motion.button
@@ -474,7 +478,6 @@ const Header = () => {
             </div>
           </div>
 
-          {/* Desktop Layout */}
           <div className="hidden lg:flex items-center justify-between gap-6 h-16">
             <motion.div
               className="flex-shrink-0"
@@ -506,7 +509,6 @@ const Header = () => {
         </div>
       </motion.header>
 
-      {/* Mobile Search Modal */}
       <AnimatePresence>
         {mobileSearchOpen && (
           <motion.div
@@ -542,7 +544,6 @@ const Header = () => {
         )}
       </AnimatePresence>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -585,7 +586,6 @@ const Header = () => {
                   </Link>
                 </div>
 
-                {/* Categories */}
                 <div className="mb-6">
                   <select
                     onChange={(e) => handleCategorySelect(e.target.value)}
@@ -601,7 +601,6 @@ const Header = () => {
                   </select>
                 </div>
 
-                {/* Navigation Links */}
                 <div className="space-y-2 mb-6">
                   {navItems.map((item, i) => (
                     <motion.div
@@ -621,7 +620,6 @@ const Header = () => {
                   ))}
                 </div>
 
-                {/* Auth Section */}
                 <div className="border-t border-gray-200 pt-6">
                   {isAuthenticated ? (
                     <div className="space-y-2">
@@ -666,7 +664,6 @@ const Header = () => {
         )}
       </AnimatePresence>
 
-      {/* Sidebars */}
       <Cart openCart={openCart} setOpenCart={setOpenCart} />
       <WishList openWishList={openWishList} setOpenWishList={setOpenWishList} />
 

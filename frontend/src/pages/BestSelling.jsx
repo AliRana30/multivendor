@@ -63,6 +63,9 @@ const BestSelling = () => {
     <div className="w-full p-4 mt-10 md:px-10 overflow-x-hidden bg-gray-100" style={{margin: 0, padding: 0}}>
       <div className="mb-6 mt-10">
         <h1 className="text-3xl font-bold text-black dark:text-white text-center">Best Selling</h1>
+         <p className="text-center text-gray-600 mt-2">
+            Discover Best Selling products from our sellers
+          </p>
       </div>
       
       {data && data.length > 0 ? (

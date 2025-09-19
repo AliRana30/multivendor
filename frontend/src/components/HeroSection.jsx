@@ -26,7 +26,7 @@ const HeroSection = () => {
       <img
         src="./home.jpg"
         alt="Hero"
-        className="w-full h-full object-cover"
+        className="w-full h-full object-cover blur-sm"
       />
       <div className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center text-white bg-black bg-opacity-40">
         <h1 className="text-4xl md:text-6xl font-bold mb-4 min-h-[1.2em]">
