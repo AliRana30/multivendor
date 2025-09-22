@@ -64,7 +64,7 @@ const ProfileSideBar = () => {
             {/* Admin Dashboard Button - Mobile */}
             {isAdmin() && (
               <Link to="/admin/dashboard" className="flex-shrink-0">
-                <div className="h-10 px-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg flex items-center justify-center transition-all duration-200 shadow-md group relative">
+                <div className="h-10 px-3 bg-black text-white rounded-lg flex items-center justify-center transition-all duration-200 shadow-md group relative">
                   <FaCog className="text-sm" />
                   <span className="ml-1.5 text-xs font-medium xs:inline">Admin</span>
                   
@@ -131,7 +131,7 @@ const ProfileSideBar = () => {
           {/* Admin Dashboard Button - Desktop */}
           {isAdmin() && (
             <Link to="/admin/dashboard" className="block">
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg p-2.5 text-center transition-all duration-200 transform hover:scale-[1.02] shadow-md">
+              <div className="bg-black text-white rounded-lg p-2.5 text-center transition-all duration-200 transform hover:scale-[1.02] shadow-md">
                 <div className="flex items-center justify-center gap-2">
                   <FaCog className="text-sm" />
                   <span className="font-medium text-sm">Admin Dashboard</span>

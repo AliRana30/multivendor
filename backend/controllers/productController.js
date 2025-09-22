@@ -165,9 +165,10 @@ export const updateProductStockController = async (req, res) => {
 
 export const createReview = async (req, res) => {
   try {
-    const { rating, comment, user } = req.body;
+    const { rating, comment, user: requestUser } = req.body;
     const { id } = req.params;
-    const userId = req.user?.id || req.user?._id || user;
+    
+    const userId = req.user?.id || req.user?._id;
 
     if (!rating || rating < 1 || rating > 5) {
       return res.status(400).json({
@@ -190,16 +191,8 @@ export const createReview = async (req, res) => {
       });
     }
 
-    console.log("Attempting to find product with ID:", id);
-
     // Check if product exists
     const product = await Product.findById(id);
-
-    console.log("Product found:", product ? "YES" : "NO");
-    if (product) {
-      console.log("Product name:", product.name);
-      console.log("Product _id:", product._id);
-    }
 
     if (!product) {
       return res.status(404).json({
@@ -208,19 +201,28 @@ export const createReview = async (req, res) => {
       });
     }
 
-    // Check if user has purchased this product
-    console.log("Checking user orders for productId:", id);
+    // Check if user has already reviewed this product
+    const existingReview = product.reviews.find(
+      review => review.user.toString() === userId.toString()
+    );
+
+    if (existingReview) {
+      return res.status(400).json({
+        success: false,
+        message: "You have already reviewed this product",
+      });
+    }
+
+    // Check if user has purchased this product and it's delivered
+    console.log("Checking user orders for userId:", userId, "productId:", id);
 
     const userOrders = await Order.find({
-      user: user.name,
+      user: userId, 
       orderStatus: "delivered",
-      "items.product": id,
+      "items.product": id, 
     });
 
-    console.log("Found orders:", userOrders.length);
-    if (userOrders.length > 0) {
-      console.log("First order items:", userOrders[0].items);
-    }
+    console.log("Found delivered orders:", userOrders.length);
 
     if (userOrders.length === 0) {
       return res.status(403).json({
@@ -231,7 +233,7 @@ export const createReview = async (req, res) => {
 
     // Create new review 
     const newReview = {
-      user: user.name || userId,
+      user: userId, 
       rating: Number(rating),
       comment: comment?.trim() || "",
       productId: id,
@@ -267,30 +269,38 @@ export const createReview = async (req, res) => {
 
 // Get all reviews for a product
 export const getProductReviews = async (req, res) => {
-  const { id: productId } = req.params;
+  try {
+    const { id: productId } = req.params;
 
-  const product = await Product.findById(productId).populate({
-    path: "reviews.user",
-    select: "name avatar",
-  });
+    const product = await Product.findById(productId).populate({
+      path: "reviews.user",
+      select: "name avatar",
+    });
 
-  if (!product) {
-    return res.status(404).json({
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    const sortedReviews = product.reviews.sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
+
+    res.status(200).json({
+      success: true,
+      reviews: sortedReviews,
+      totalReviews: product.numOfReviews || 0,
+      averageRating: product.rating || 0,
+    });
+  } catch (error) {
+    console.error("Get product reviews error:", error);
+    res.status(500).json({
       success: false,
-      message: "Product not found",
+      message: error.message || "Internal server error",
     });
   }
-
-  const sortedReviews = product.reviews.sort(
-    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-  );
-
-  res.status(200).json({
-    success: true,
-    reviews: sortedReviews,
-    totalReviews: product.numOfReviews,
-    averageRating: product.rating,
-  });
 };
 
 // Update a review
