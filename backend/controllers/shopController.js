@@ -112,8 +112,8 @@ export const ShopLoginController = async(req,res)=>{
 
     res.cookie("seller_token", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "Lax",
+      secure: true,
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -389,4 +389,5 @@ export const deletePaymentMethodController = async (req, res) => {
     });
   }
 };
+
 
