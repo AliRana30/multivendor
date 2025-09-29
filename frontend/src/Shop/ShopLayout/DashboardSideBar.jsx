@@ -9,6 +9,7 @@ import {
 import {
   FaRegAddressCard,
   FaProductHunt,
+  FaShoppingBag,
 } from "react-icons/fa";
 import {
   FiShoppingBag,
@@ -77,8 +78,8 @@ const DashboardSideBar = ({ isCollapsed }) => {
           </div>
         ) : (
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-lg">S</span>
+            <div className="ml-4">
+              <FaShoppingBag/>
             </div>
             <div>
               <h2 className="text-lg font-bold text-gray-800">Shop Dashboard</h2>

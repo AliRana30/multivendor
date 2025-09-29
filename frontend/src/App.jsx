@@ -9,7 +9,6 @@ import Events from "./pages/Events";
 import FAQ from "./pages/FAQ";
 import { useDispatch, useSelector } from "react-redux";
 import Header from "./Layout/Header";
-import Navbar from "./Layout/Navbar";
 import Footer from "./Layout/Footer";
 import Products from "./pages/Products/Products";
 import ProductDetails from "./pages/Products/ProductDetails";
@@ -66,15 +65,14 @@ function App() {
   );
 
   // current user
-  const getCurrentUser = async () => {
+const getCurrentUser = async () => {
     try {
       const res = await api.get("/get-user", {
         withCredentials: true,
         headers: {
           "Content-Type": "application/json",
         },
-      });
-   
+      });   
       dispatch({ type: "LoadUserSuccess", payload: res.data.user });
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -106,7 +104,7 @@ function App() {
     if (isSeller === true) {
       navigate("/shop");
     }
-  }, []);
+  },[]);
 
   return (
     <>
@@ -115,9 +113,6 @@ function App() {
         
         {/* Header */}
         {!shouldHideHeaderFooter && <Header />}
-
-        {/* Navbar */}
-        {!shouldHideHeaderFooter && <Navbar />}
       </div>
       
       <Routes>

@@ -85,13 +85,13 @@ const ProfileSideBar = () => {
                   transition-all duration-200 hover:transform hover:scale-105
                   ${
                     active === option.name
-                      ? 'bg-gradient-to-r from-red-50 to-pink-50 text-red-600 shadow-sm border border-red-100'
+                      ? 'bg-black text-white shadow-sm border border-black'
                       : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                   }
-                  ${option.name === 'Logout' ? 'hover:bg-red-50 hover:text-red-600' : ''}
+                  ${option.name === 'Logout' ? 'hover:bg-red-50 hover:text-white' : ''}
                 `}
               >
-                <span className={`text-base sm:text-lg ${active === option.name ? 'text-red-500' : 'text-gray-500'}`}>
+                <span className={`text-base sm:text-lg ${active === option.name ? 'text-white' : 'text-gray-500'}`}>
                   {option.icon}
                 </span>
                 
@@ -104,7 +104,7 @@ const ProfileSideBar = () => {
                 </div>
 
                 {active === option.name && (
-                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-red-500 rounded-full" />
+                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-black rounded-full" />
                 )}
               </button>
             ))}
@@ -152,19 +152,19 @@ const ProfileSideBar = () => {
                   transition-all duration-200 hover:transform hover:scale-[1.01]
                   ${
                     active === option.name
-                      ? 'bg-gradient-to-r from-red-50 to-pink-50 text-red-600 font-medium shadow-sm border border-red-100'
+                      ? 'bg-black text-white font-medium shadow-sm border border-red-100'
                       : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                   }
-                  ${option.name === 'Logout' ? 'hover:bg-red-50 hover:text-red-600' : ''}
+                  ${option.name === 'Logout' ? 'hover:bg-black hover:text-white' : ''}
                 `}
               >
-                <span className={`text-lg ${active === option.name ? 'text-red-500' : 'text-gray-500'}`}>
+                <span className={`text-lg ${active === option.name ? 'text-white' : 'text-gray-500'}`}>
                   {option.icon}
                 </span>
                 <span className="font-medium">{option.name}</span>
                 
                 {active === option.name && (
-                  <div className="ml-auto w-2 h-2 bg-red-500 rounded-full" />
+                  <div className="ml-auto w-2 h-2 bg-white rounded-full" />
                 )}
               </button>
             ))}

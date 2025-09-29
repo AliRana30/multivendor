@@ -89,11 +89,17 @@ const Products = ({ showAllProducts = true }) => {
   }
 
   return (
-    <div className="p-4 w-full overflow-x-hidden bg-gray-100">
+    <div className="p-4 w-full overflow-x-hidden bg-gray-50">
       <div className="m-10">
-        <h1 className="text-3xl font-bold text-black dark:text-white text-center">
-          {showAllProducts || !seller?._id ? "All Products" : `${seller?.name || 'Seller'}'s Products`}
-        </h1>
+         <div className="justify-center text-center mb-6">
+            <p className="text-sm font-medium text-gray-500 tracking-[0.15em] uppercase mb-4 font-mono">
+              Best Products
+            </p>
+            <h1 className="text-3xl md:text-4xl font-light text-gray-900 leading-[0.9] mb-6 ">
+              All Products
+            </h1>
+            <div className="w-20 h-[1px] bg-gray-900 mx-auto"></div>
+          </div>
         {(showAllProducts || !seller?._id) && (
           <p className="text-center text-gray-600 mt-2">
             Discover products from all our amazing sellers

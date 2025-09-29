@@ -6,9 +6,12 @@ import Loader from "../components/Loader";
 import toast from "react-hot-toast";
 import { createOrder } from "../../redux/actions/order";
 import { updateProductStock } from "../../redux/actions/product";
+import { useNavigate } from "react-router-dom";
 
 const CheckOut = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const { cart } = useSelector((state) => state.cart);
   const { user, loading } = useSelector((state) => state.user);
   const { coupons } = useSelector((state) => state.coupon);
@@ -313,7 +316,7 @@ const CheckOut = () => {
           <h3 className="text-xl font-semibold text-yellow-800 mb-2">Cart is Empty</h3>
           <p className="text-yellow-700 mb-4">Add items to your cart before checkout.</p>
           <button
-            onClick={() => window.location.href = "/"}
+            onClick={() => navigate("/")}
             className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition-colors"
           >
             Continue Shopping

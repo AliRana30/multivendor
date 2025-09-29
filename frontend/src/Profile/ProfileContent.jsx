@@ -213,8 +213,6 @@ const ProfileContent = ({ option }) => {
       }
     }
 
-    console.log(JSON.stringify(updateData, null, 2));
-
     try {
       const result = await dispatch(updateUserInfo(updateData));
 
@@ -466,43 +464,52 @@ const ProfileContent = ({ option }) => {
   };
 
   // Handle review submission
-  const handleReviewSubmit = async () => {
-    if (!currentReviewProduct || reviewRating === 0) {
-      toast.error("Please select a rating");
+// Handle review submission - Matching your original structure
+const handleReviewSubmit = async () => {
+  if (!currentReviewProduct || reviewRating === 0) {
+    toast.error("Please select a rating");
+    return;
+  }
+  
+  if (!user || !user._id) {
+    toast.error("User not authenticated");
+    return;
+  }
+  
+  try {
+    const productId = currentReviewProduct.product?._id || currentReviewProduct._id;
+    
+    if (!productId) {
+      toast.error("Product ID not found");
       return;
     }
-    try {
-      const productId =
-        currentReviewProduct.product?._id || currentReviewProduct._id;
-      if (!productId) {
-        toast.error("Product ID not found");
-        return;
-      }
 
-      const reviewData = {
-        user: user._id,
-        rating: reviewRating,
-        comment: reviewComment.trim(),
-        id: productId,
-      };
 
-      const result = await dispatch(createProductReview(reviewData));
+    const reviewData = {
+      user: user._id, 
+      rating: reviewRating,
+      comment: reviewComment.trim(),
+      id: productId, 
+    };
 
-      if (result?.success) {
-        toast.success("Review submitted successfully!");
-        setShowReviewModal(false);
-        setCurrentReviewProduct(null);
-        setReviewRating(0);
-        setReviewComment("");
-        setHoverRating(0);
-        setIsReviewed(true);
-      } else {
-        toast.error(result?.error || "Failed to submit review");
-      }
-    } catch (error) {
-      toast.error("Failed to submit review");
+
+    const result = await dispatch(createProductReview(reviewData));
+
+    if (result?.success) {
+      toast.success("Review submitted successfully!");
+      setShowReviewModal(false);
+      setCurrentReviewProduct(null);
+      setReviewRating(0);
+      setReviewComment("");
+      setHoverRating(0);
+      setIsReviewed(true);
+    } else {
+      toast.error(result?.error || "Failed to submit review");
     }
-  };
+  } catch (error) {
+    toast.error("Failed to submit review");
+  }
+};
   // Handle write review 
   const handleWriteReview = (item) => {
     setCurrentReviewProduct(item);
@@ -684,8 +691,7 @@ const ProfileContent = ({ option }) => {
                 <div className="border-t pt-3 text-sm">
                   {order.coupon?.code && (
                     <p>
-                      <strong>Coupon:</strong> {order.coupon.code} (
-                      {order.coupon.discountPercent}% off)
+                      <strong>Coupon:</strong> {order.coupon.code}
                     </p>
                   )}
                   {order.deliveredAt && (
@@ -1178,7 +1184,7 @@ const TrackOrders = () => {
           <h2 className="text-xl font-bold">Manage Addresses</h2>
           <button
             onClick={() => setShowAddForm(!showAddForm)}
-            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors"
+            className="bg-black text-white px-4 py-2 rounded hover:bg-red-700 transition-colors"
           >
             {showAddForm ? "Cancel" : "Add New Address"}
           </button>
@@ -1426,7 +1432,7 @@ const TrackOrders = () => {
                 type="button"
                 onClick={handleAvatarClick}
                 disabled={isUpdatingAvatar}
-                className="absolute bottom-0 right-0 bg-red-600 text-white p-2 rounded-full hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="absolute bottom-0 right-0 bg-black text-white p-2 rounded-full hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Change avatar"
               >
                 {isUpdatingAvatar ? (
@@ -1613,7 +1619,7 @@ const TrackOrders = () => {
             </div>
             <button
               type="submit"
-              className="bg-red-600 text-white px-4 py-2 rounded mt-2 w-fit col-span-full"
+              className="bg-black text-white px-4 py-2 rounded mt-2 w-fit col-span-full"
             >
               Update Profile
             </button>

@@ -12,7 +12,7 @@ import {
   CiMoneyBill,
 } from "react-icons/ci";
 import { Link, useLocation } from "react-router-dom";
-import { BsCalendarEvent, BsFillPeopleFill } from "react-icons/bs";
+import { BsCalendarEvent, BsFillPeopleFill, BsPerson } from "react-icons/bs";
 
 const navItems = [
   { label: "Dashboard", path: "/admin/dashboard", icon: <MdOutlineDashboard />, color: "blue" },
@@ -64,10 +64,10 @@ const AdminSideBar = ({ isCollapsed }) => {
           </div>
         ) : (
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-lg">A</span>
-            </div>
-            <div>
+             <div className="ml-2">
+                <BsPerson/>
+              </div>
+            <div className="justify-center flex flex-col">
               <h2 className="text-lg font-bold text-gray-800">Admin Dashboard</h2>
               <p className="text-xs text-gray-500">Manage Everything</p>
             </div>

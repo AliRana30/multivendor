@@ -1,6 +1,7 @@
 import { Order } from "../models/order.js";
 import { Product } from "../models/product.js";
 import { Shop } from "../models/shop.js";
+import usermodel from "../models/user.js";
 
 export const productController = async (req, res) => {
   try {
@@ -165,10 +166,31 @@ export const updateProductStockController = async (req, res) => {
 
 export const createReview = async (req, res) => {
   try {
-    const { rating, comment, user: requestUser } = req.body;
+    const { rating, comment, user } = req.body;
     const { id } = req.params;
+
+    let userId;
+    if (typeof user === 'string') {
+      userId = user;
+    } else if (user && user._id) {
+      userId = user._id;
+    } else if (req.user && req.user.id) {
+      userId = req.user.id;
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "User ID not provided or invalid format",
+      });
+    }
     
-    const userId = req.user?.id || req.user?._id;
+    const userDetails = await usermodel.findById(userId);
+    
+    if (!userDetails) {
+      return res.status(400).json({
+        success: false,
+        message: "User not found",
+      });
+    }
 
     if (!rating || rating < 1 || rating > 5) {
       return res.status(400).json({
@@ -184,13 +206,6 @@ export const createReview = async (req, res) => {
       });
     }
 
-    if (!userId) {
-      return res.status(400).json({
-        success: false,
-        message: "User authentication required",
-      });
-    }
-
     // Check if product exists
     const product = await Product.findById(id);
 
@@ -201,9 +216,8 @@ export const createReview = async (req, res) => {
       });
     }
 
-    // Check if user has already reviewed this product
     const existingReview = product.reviews.find(
-      review => review.user.toString() === userId.toString()
+      review => review.userId && review.userId.toString() === userId.toString()
     );
 
     if (existingReview) {
@@ -214,7 +228,6 @@ export const createReview = async (req, res) => {
     }
 
     // Check if user has purchased this product and it's delivered
-    console.log("Checking user orders for userId:", userId, "productId:", id);
 
     const userOrders = await Order.find({
       user: userId, 
@@ -222,18 +235,15 @@ export const createReview = async (req, res) => {
       "items.product": id, 
     });
 
-    console.log("Found delivered orders:", userOrders.length);
-
     if (userOrders.length === 0) {
       return res.status(403).json({
         success: false,
         message: "You can only review products you have purchased and received",
       });
     }
-
-    // Create new review 
     const newReview = {
-      user: userId, 
+      user: userDetails.name, 
+      userId: userId, 
       rating: Number(rating),
       comment: comment?.trim() || "",
       productId: id,
@@ -259,7 +269,6 @@ export const createReview = async (req, res) => {
       review: newReview,
     });
   } catch (error) {
-    console.error("Create review error:", error);
     res.status(500).json({
       success: false,
       message: error.message || "Internal server error",

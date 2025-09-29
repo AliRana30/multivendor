@@ -1,12 +1,8 @@
-import Header from "../Layout/Header";
-import Navbar from "../Layout/Navbar";
 import HeroSection from "../components/HeroSection";
 import Categories from "../components/Categories";
-import BestDeals from "../components/BestDeals";
 import FeaturedSection from "../components/FeaturedSection";
 import Events from "../components/Events";
 import Sponsored from "../components/Sponsored";
-import Footer from "../Layout/Footer";
 import BestSelling from "./BestSelling";
 
 const Home = () => {

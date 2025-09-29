@@ -104,65 +104,78 @@ const ProductCard = ({ product }) => {
 
   return (
     <>
-      <div className="group relative bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col h-full min-h-[400px] sm:min-h-[400px]">
+      
+      <div className="group relative bg-white border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col h-full min-h-[450px]">
 
+        {/* Discount Badge */}
         {discountPercentage > 0 && (
-          <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded">
+          <div className="absolute top-4 left-4 z-10 bg-red-500 text-white text-xs font-semibold px-3 py-1.5 mono">
             -{discountPercentage}%
           </div>
         )}
 
-        {/* Image */}
-        <div className="relative overflow-hidden bg-gray-50 h-40 sm:h-48 flex-shrink-0">
+        {/* Product Image */}
+        <div className="relative overflow-hidden bg-gray-50 h-56 flex-shrink-0">
           <Link to={`/products/${productSlug}`} state={{ productId: product._id }}>
             <img
               src={getImageUrl(product)}
               alt={product.name}
-              className="w-full h-full object-contain p-3 sm:p-4 group-hover:scale-105 transition-transform duration-300"
+              className="w-full h-full object-contain p-6 group-hover:scale-105 transition-transform duration-500"
               onError={(e) => {
                 e.target.src = '/placeholder-image.png';
               }}
             />
           </Link>
+
+          {/* Action Buttons */}
+          <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <button 
+              onClick={handleWishlistToggle} 
+              className="bg-white/95 backdrop-blur-sm p-2.5 shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-100"
+            >
+              {isInWishlist ? (
+                <AiFillHeart className="text-red-500 text-lg" />
+              ) : (
+                <AiOutlineHeart className="text-gray-600 text-lg hover:text-red-500 transition-colors" />
+              )}
+            </button>
+            <button 
+              onClick={() => setShowDetails(true)} 
+              className="bg-white/95 backdrop-blur-sm p-2.5 shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-100"
+            >
+              <FiEye className="text-gray-600 text-lg hover:text-blue-500 transition-colors" />
+            </button>
+            <button 
+              onClick={addToCartHandler} 
+              disabled={product.stock === 0}
+              className={`bg-white/95 backdrop-blur-sm p-2.5 shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-100 ${
+                product.stock === 0 ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+            >
+              <BsCartPlus className={`text-lg transition-colors ${
+                product.stock === 0 ? 'text-gray-400' : 'text-gray-600 hover:text-green-500'
+              }`} />
+            </button>
+          </div>
         </div>
 
-        {/* Actions */}
-        <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex flex-col gap-1 sm:gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          <button onClick={handleWishlistToggle} className="bg-white p-1.5 sm:p-2 rounded-full shadow-md hover:shadow-lg transition-shadow">
-            {isInWishlist ? (
-              <AiFillHeart className="text-red-500 text-base sm:text-lg" />
-            ) : (
-              <AiOutlineHeart className="text-gray-600 text-base sm:text-lg hover:text-red-500 transition-colors" />
-            )}
-          </button>
-          <button onClick={() => setShowDetails(true)} className="bg-white p-1.5 sm:p-2 rounded-full shadow-md hover:shadow-lg transition-shadow">
-            <FiEye className="text-gray-600 text-base sm:text-lg hover:text-blue-500 transition-colors" />
-          </button>
-          <button onClick={addToCartHandler} disabled={product.stock === 0}
-            className={`bg-white p-1.5 sm:p-2 rounded-full shadow-md hover:shadow-lg transition-shadow ${
-              product.stock === 0 ? 'opacity-50 cursor-not-allowed' : ''
-            }`}>
-            <BsCartPlus className={`text-base sm:text-lg transition-colors ${
-              product.stock === 0 ? 'text-gray-400' : 'text-gray-600 hover:text-green-500'
-            }`} />
-          </button>
-        </div>
-
-        <div className="p-3 sm:p-4 space-y-2 sm:space-y-3 flex-grow flex flex-col">
+        {/* Product Information */}
+        <div className="p-6 space-y-4 flex-grow flex flex-col">
+          {/* Product Name */}
           <Link to={`/products/${productSlug}`} state={{ productId: product._id }}>
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900 line-clamp-2 hover:text-blue-600 transition-colors duration-200 leading-tight">
+            <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 hover:text-blue-600 transition-colors duration-200 leading-relaxed">
               {product.name}
             </h3>
           </Link>
 
-          {/* Ratings */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-xs sm:text-sm">
-            <div className="flex items-center gap-1 sm:gap-2">
-              <div className="flex items-center">
+          {/* Ratings & Reviews */}
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, i) => (
                   <FiStar
                     key={i}
-                    className={`w-3 h-3 sm:w-4 sm:h-4 ${
+                    className={`w-4 h-4 ${
                       i < Math.round(averageRating)
                         ? "text-yellow-400 fill-current"
                         : "text-gray-300"
@@ -170,68 +183,65 @@ const ProductCard = ({ product }) => {
                   />
                 ))}
               </div>
-              <span className="text-gray-600">
-                ({averageRating > 0 ? averageRating.toFixed(1) : '0.0'})
+              <span className="text-sm font-medium text-gray-700">
+                {averageRating > 0 ? averageRating.toFixed(1) : '0.0'}
               </span>
             </div>
-            <div className="flex items-center text-gray-500 gap-2 sm:gap-1">
-              <span className="hidden sm:inline">•</span>
+            
+            <div className="flex items-center gap-4 text-sm text-gray-500">
               <span>{reviewCount} {reviewCount === 1 ? 'review' : 'reviews'}</span>
-              <span>•</span>
+              <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
               <span>{product.sold_out || 0} sold</span>
             </div>
           </div>
 
-          {/* Price */}
-          <div className="flex items-center justify-between flex-wrap gap-2">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-lg sm:text-2xl font-bold text-gray-900">
-                  ${product.discountPrice || product.originalPrice || 0}
+          {/* Pricing */}
+          <div className="space-y-3 flex-grow">
+            <div className="flex items-baseline gap-3">
+              <span className="text-2xl font-bold text-gray-900">
+                ${product.discountPrice || product.originalPrice || 0}
+              </span>
+              {product.originalPrice && product.discountPrice && product.originalPrice !== product.discountPrice && (
+                <span className="text-lg text-gray-500 line-through font-medium">
+                  ${product.originalPrice}
                 </span>
-                {product.originalPrice && product.discountPrice && product.originalPrice !== product.discountPrice && (
-                  <span className="text-sm text-gray-500 line-through">
-                    ${product.originalPrice}
-                  </span>
-                )}
-              </div>
-              <div className="flex items-center text-xs text-green-600">
-                <HiOutlineBadgeCheck className="w-3 h-3 mr-1" />
-                <span>Free shipping</span>
-              </div>
+              )}
+            </div>
+            
+            <div className="flex items-center text-sm text-green-600 font-medium">
+              <HiOutlineBadgeCheck className="w-4 h-4 mr-2" />
+              <span>Free shipping</span>
             </div>
           </div>
-          
- <div className="flex flex-col sm:flex-row gap-4">
-          <button 
-            onClick={addToCartHandler}
-            disabled={product.stock === 0}
-            className={`mt-4 mb-3 flex-1 font-semibold py-2 px-1 rounded-sm transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg flex items-center justify-center gap-3 ${
-              product.stock === 0
-                ? 'bg-gray-400 text-white cursor-not-allowed opacity-60'
-                : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white'
-            }`}
-          >
-            <BsCartPlus className="text-sm" />
-            <span className="text-sm">{product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}</span>
-          </button>
-          
+
+          {/* Add to Cart Button */}
+          <div className="pt-4 border-t border-gray-100">
+            <button 
+              onClick={addToCartHandler}
+              disabled={product.stock === 0}
+              className={`w-full font-semibold py-2 px-2 transition-all duration-300 hover:shadow-lg flex items-center justify-center gap-3 ${
+                product.stock === 0
+                  ? 'bg-gray-400 text-white cursor-not-allowed opacity-60'
+                  : 'bg-black text-white hover:scale-[1.02] active:scale-[0.98]'
+              }`}
+            >
+              <BsCartPlus className="text-lg" />
+              <span>{product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}</span>
+            </button>
+          </div>
         </div>
-        </div>
-        
       </div>
 
-
-
+      {/* Product Details Modal */}
       {showDetails && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg max-w-6xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-4">
-              <div className="flex justify-between items-center mb-4">
+        <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-white shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
                 <h2 className="text-2xl font-bold text-gray-900">Product Details</h2>
                 <button 
                   onClick={() => setShowDetails(false)}
-                  className="text-gray-500 hover:text-gray-700 text-2xl"
+                  className="text-gray-500 hover:text-gray-700 text-3xl font-light w-8 h-8 flex items-center justify-center hover:bg-gray-100 transition-colors duration-200"
                 >
                   ×
                 </button>

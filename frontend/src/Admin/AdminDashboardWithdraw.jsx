@@ -13,7 +13,6 @@ import api from "../components/axiosCongif";
 import AdminHeader from "./Components/AdminHeader";
 import AdminSideBar from "./Components/AdminSideBar";
 
-// Confirmation Modal Component
 const ConfirmationModal = ({
   isOpen,
   onClose,
@@ -32,10 +31,10 @@ const ConfirmationModal = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+      <div className="relative bg-white rounded-lg shadow-sm border border-gray-100 max-w-md w-full mx-4 transform transition-all">
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+            <h3 className="text-lg font-light text-gray-900">{title}</h3>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -46,13 +45,13 @@ const ConfirmationModal = ({
           </div>
 
           <div className="mb-6">
-            <p className="text-gray-600 whitespace-pre-line">{message}</p>
+            <p className="text-gray-600 font-light whitespace-pre-line">{message}</p>
             {showInput && (
               <textarea
                 value={inputValue}
                 onChange={(e) => onInputChange(e.target.value)}
                 placeholder={inputPlaceholder}
-                className="mt-4 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                className="mt-4 w-full p-3 border border-gray-100 rounded-lg focus:ring-1 focus:ring-gray-300 focus:border-gray-300 resize-none font-light"
                 rows={3}
                 disabled={loading}
               />
@@ -63,17 +62,17 @@ const ConfirmationModal = ({
             <button
               onClick={onClose}
               disabled={loading}
-              className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+              className="px-4 py-2 text-gray-600 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 font-light"
             >
               Cancel
             </button>
             <button
               onClick={onConfirm}
               disabled={loading || (showInput && !inputValue.trim())}
-              className={`px-6 py-2 text-white rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2 ${
+              className={`px-6 py-2 text-white rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2 font-light ${
                 type === "accept"
-                  ? "bg-green-600 hover:bg-green-700"
-                  : "bg-red-600 hover:bg-red-700"
+                  ? "bg-gray-900 hover:bg-gray-800"
+                  : "bg-gray-900 hover:bg-gray-800"
               }`}
             >
               {loading && (
@@ -103,7 +102,6 @@ const AdminDashboardWithdraw = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Modal states
   const [confirmModal, setConfirmModal] = useState({
     isOpen: false,
     type: "accept",
@@ -348,18 +346,17 @@ const AdminDashboardWithdraw = () => {
   };
 
   const getStatusBadge = (status) => {
-    const baseClasses =
-      "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium";
+    const baseClasses = "inline-flex items-center px-3 py-1 rounded-full text-xs font-light";
 
     switch (status) {
       case "Processing":
-        return `${baseClasses} bg-yellow-100 text-yellow-800`;
+        return `${baseClasses} bg-orange-50 text-orange-600 border border-orange-100`;
       case "Completed":
-        return `${baseClasses} bg-green-100 text-green-800`;
+        return `${baseClasses} bg-emerald-50 text-emerald-600 border border-emerald-100`;
       case "Rejected":
-        return `${baseClasses} bg-red-100 text-red-800`;
+        return `${baseClasses} bg-gray-100 text-gray-600 border border-gray-200`;
       default:
-        return `${baseClasses} bg-gray-100 text-gray-800`;
+        return `${baseClasses} bg-gray-50 text-gray-600 border border-gray-100`;
     }
   };
 
@@ -395,6 +392,32 @@ const AdminDashboardWithdraw = () => {
       .reduce((acc, r) => acc + (r.amount || 0), 0),
   };
 
+  const StatCard = ({ title, value, subtitle, icon, color = "gray" }) => (
+    <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <p className="text-gray-500 font-light text-sm tracking-wide mb-2">{title}</p>
+          <p className="text-2xl font-light text-gray-900 mb-1">{value}</p>
+          {subtitle && (
+            <p className="text-gray-500 font-light text-xs">{subtitle}</p>
+          )}
+        </div>
+        <div className={`p-3 rounded-lg ${
+          color === 'blue' ? 'bg-blue-50 text-blue-600' :
+          color === 'green' ? 'bg-green-50 text-green-600' :
+          color === 'purple' ? 'bg-purple-50 text-purple-600' :
+          color === 'orange' ? 'bg-orange-50 text-orange-600' :
+          color === 'cyan' ? 'bg-cyan-50 text-cyan-600' :
+          color === 'emerald' ? 'bg-emerald-50 text-emerald-600' :
+          color === 'indigo' ? 'bg-indigo-50 text-indigo-600' :
+          'bg-gray-50 text-gray-600'
+        }`}>
+          {icon}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-gray-50">
       <AdminHeader onToggleSidebar={toggleSidebar} isMobile={isMobile} />
@@ -423,419 +446,383 @@ const AdminDashboardWithdraw = () => {
 
         <div
           className={`
-          flex-1 p-4 lg:p-6 pt-20 min-h-screen
+          flex-1 min-h-screen
           ${isMobile ? "ml-0" : isSidebarOpen ? "ml-0" : "ml-0"}
         `}
         >
-          {loading ? (
-            <div className="flex justify-center items-center h-64">
-              <Loader className="w-8 h-8 animate-spin text-blue-600" />
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {/* Header Section */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 lg:p-6">
-                <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-                  <div className="flex items-start gap-3">
-                    <div className="p-2 bg-blue-100 rounded-lg">
-                      <CreditCard className="w-6 h-6 text-blue-600" />
-                    </div>
-                    <div>
-                      <h1 className="text-xl lg:text-2xl font-bold text-gray-900">
-                        Withdrawal Management
-                      </h1>
-                      <p className="text-sm text-gray-600 mt-1">
-                        Review and process seller withdrawal requests (
-                        {withdrawalRequests.length} total)
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Revenue Cards */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 min-w-0">
-                    <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg p-3 text-white">
-                      <div className="text-xs opacity-90">Total Revenue</div>
-                      <div className="text-base lg:text-lg font-bold truncate">
-                        {formatCurrency(revenueStats.totalRevenue)}
-                      </div>
-                    </div>
-                    <div className="bg-gradient-to-r from-blue-500 to-cyan-600 rounded-lg p-3 text-white">
-                      <div className="text-xs opacity-90">Order Commission</div>
-                      <div className="text-base lg:text-lg font-bold truncate">
-                        {formatCurrency(revenueStats.orderCommission)}
-                      </div>
-                    </div>
-                    <div className="bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg p-3 text-white">
-                      <div className="text-xs opacity-90">
-                        Withdrawal Commission
-                      </div>
-                      <div className="text-base lg:text-lg font-bold truncate">
-                        {formatCurrency(revenueStats.withdrawalCommission)}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+          <div className="max-w-7xl mx-auto px-4 md:px-10 py-20">
+            {loading ? (
+              <div className="flex justify-center items-center h-64">
+                <Loader className="w-8 h-8 animate-spin text-gray-400" />
               </div>
-
-              {/* Stats Cards */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
-                <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white shadow-lg">
-                  <div className="text-blue-100 text-xs lg:text-sm">
-                    Total Requests
-                  </div>
-                  <div className="text-xl lg:text-2xl font-bold">
-                    {stats.total}
-                  </div>
-                  <div className="text-blue-100 text-xs mt-1 truncate">
-                    {formatCurrency(stats.totalAmount)}
-                  </div>
-                </div>
-
-                <div className="bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl p-4 text-white shadow-lg">
-                  <div className="text-yellow-100 text-xs lg:text-sm">
-                    Processing
-                  </div>
-                  <div className="text-xl lg:text-2xl font-bold">
-                    {stats.processing}
-                  </div>
-                  <div className="text-yellow-100 text-xs mt-1 truncate">
-                    {formatCurrency(stats.pendingAmount)} pending
+            ) : (
+              <div className="space-y-12">
+                <div className="text-center">
+                  <div className="inline-block">
+                    <p className="text-sm font-medium text-gray-500 tracking-[0.15em] uppercase mb-2 font-mono">
+                      Financial Management
+                    </p>
+                    <h1 className="text-3xl md:text-4xl font-light text-gray-900 leading-[0.9] mb-6">
+                      Withdrawal Management
+                    </h1>
+                    <div className="w-20 h-[1px] bg-gray-900 mx-auto"></div>
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl p-4 text-white shadow-lg">
-                  <div className="text-green-100 text-xs lg:text-sm">
-                    Completed
-                  </div>
-                  <div className="text-xl lg:text-2xl font-bold">
-                    {stats.completed}
-                  </div>
-                  <div className="text-green-100 text-xs mt-1 truncate">
-                    {formatCurrency(stats.completedAmount)} paid
+                <div className="bg-white rounded-lg p-8 shadow-sm border border-gray-100">
+                  <div className="text-center space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto pt-6 border-t border-gray-100">
+                      <div className="text-center">
+                        <p className="text-gray-500 font-light text-sm">Total Revenue</p>
+                        <p className="text-lg font-medium text-gray-900">{formatCurrency(revenueStats.totalRevenue)}</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-gray-500 font-light text-sm">Order Commission</p>
+                        <p className="text-lg font-medium text-gray-900">{formatCurrency(revenueStats.orderCommission)}</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-gray-500 font-light text-sm">Withdrawal Commission</p>
+                        <p className="text-lg font-medium text-gray-900">{formatCurrency(revenueStats.withdrawalCommission)}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-red-500 to-pink-600 rounded-xl p-4 text-white shadow-lg">
-                  <div className="text-red-100 text-xs lg:text-sm">
-                    Rejected
-                  </div>
-                  <div className="text-xl lg:text-2xl font-bold">
-                    {stats.rejected}
-                  </div>
-                  <div className="text-red-100 text-xs mt-1 truncate">
-                    Commission saved
-                  </div>
-                </div>
-              </div>
-
-              {/* Filter Tabs */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 lg:p-6">
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {[
-                    { key: "all", label: "All", count: stats.total },
-                    {
-                      key: "processing",
-                      label: "Processing",
-                      count: stats.processing,
-                    },
-                    {
-                      key: "completed",
-                      label: "Completed",
-                      count: stats.completed,
-                    },
-                    {
-                      key: "rejected",
-                      label: "Rejected",
-                      count: stats.rejected,
-                    },
-                  ].map((tab) => (
-                    <button
-                      key={tab.key}
-                      onClick={() => {
-                        setFilter(tab.key);
-                        setCurrentPage(1);
-                      }}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
-                        filter === tab.key
-                          ? "bg-blue-600 text-white shadow-lg"
-                          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                      }`}
-                    >
-                      {tab.label}
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs ${
-                          filter === tab.key ? "bg-white/20" : "bg-white/60"
-                        }`}
-                      >
-                        {tab.count}
-                      </span>
-                    </button>
-                  ))}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <StatCard 
+                    title="Total Requests" 
+                    value={stats.total}
+                    subtitle={formatCurrency(stats.totalAmount)}
+                    color="blue"
+                    icon={<CreditCard className="w-6 h-6" />}
+                  />
+                  
+                  <StatCard 
+                    title="Processing" 
+                    value={stats.processing}
+                    subtitle={`${formatCurrency(stats.pendingAmount)} pending`}
+                    color="orange"
+                    icon={
+                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd"/>
+                      </svg>
+                    }
+                  />
+                  
+                  <StatCard 
+                    title="Completed" 
+                    value={stats.completed}
+                    subtitle={`${formatCurrency(stats.completedAmount)} paid`}
+                    color="emerald"
+                    icon={
+                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
+                      </svg>
+                    }
+                  />
+                  
+                  <StatCard 
+                    title="Rejected" 
+                    value={stats.rejected}
+                    subtitle="Commission saved"
+                    color="gray"
+                    icon={
+                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"/>
+                      </svg>
+                    }
+                  />
                 </div>
 
-                {/* Desktop Table View */}
-                <div className="hidden lg:block overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-gray-50 border-b border-gray-200">
-                      <tr>
-                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase">
-                          Seller Details
-                        </th>
-                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase">
-                          Bank Account
-                        </th>
-                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase">
-                          Amount & Commission
-                        </th>
-                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase">
-                          Status
-                        </th>
-                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase">
-                          Date
-                        </th>
-                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {paginatedRequests.length === 0 ? (
+                <div className="bg-white rounded-lg shadow-sm border border-gray-100">
+                  <div className="p-8 border-b border-gray-100">
+                    <div className="flex flex-wrap gap-3">
+                      {[
+                        { key: "all", label: "All", count: stats.total },
+                        { key: "processing", label: "Processing", count: stats.processing },
+                        { key: "completed", label: "Completed", count: stats.completed },
+                        { key: "rejected", label: "Rejected", count: stats.rejected },
+                      ].map((tab) => (
+                        <button
+                          key={tab.key}
+                          onClick={() => {
+                            setFilter(tab.key);
+                            setCurrentPage(1);
+                          }}
+                          className={`px-4 py-2 rounded-lg font-light transition-colors flex items-center gap-2 ${
+                            filter === tab.key
+                              ? "bg-gray-900 text-white"
+                              : "bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-100"
+                          }`}
+                        >
+                          {tab.label}
+                          <span className={`px-2 py-1 rounded-full text-xs ${
+                            filter === tab.key ? "bg-white/20" : "bg-white/60"
+                          }`}>
+                            {tab.count}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="hidden lg:block overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="border-b border-gray-100">
                         <tr>
-                          <td colSpan="6" className="px-6 py-12 text-center">
-                            <div className="text-gray-500">
-                              {filter === "all"
-                                ? "No withdrawal requests found"
-                                : `No ${filter} withdrawal requests`}
-                            </div>
-                          </td>
+                          <th className="px-8 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Seller Details
+                          </th>
+                          <th className="px-8 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Bank Account
+                          </th>
+                          <th className="px-8 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Amount & Commission
+                          </th>
+                          <th className="px-8 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Status
+                          </th>
+                          <th className="px-8 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Date
+                          </th>
+                          <th className="px-8 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Actions
+                          </th>
                         </tr>
-                      ) : (
-                        paginatedRequests.map((request) => (
-                          <tr key={request._id} className="hover:bg-gray-50">
-                            <td className="px-6 py-4">
-                              <div className="text-sm font-medium text-gray-900">
-                                {request.seller?.name ||
-                                  request.seller?.shopName ||
-                                  "Unknown Shop"}
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-50">
+                        {paginatedRequests.length === 0 ? (
+                          <tr>
+                            <td colSpan="6" className="px-8 py-12 text-center">
+                              <div className="text-gray-500 font-light">
+                                {filter === "all"
+                                  ? "No withdrawal requests found"
+                                  : `No ${filter} withdrawal requests`}
                               </div>
-                              <div className="text-sm text-gray-500">
-                                {request.seller?.email || "No email"}
-                              </div>
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className="text-sm text-gray-900">
-                                {request.withdrawMethod?.bankName ||
-                                  "Unknown Bank"}
-                              </div>
-                              <div className="text-sm text-gray-500">
-                                {request.withdrawMethod?.accountHolderName ||
-                                  "Unknown Holder"}
-                              </div>
-                            </td>
-
-                            <td className="px-6 py-4">
-                              <div className="text-sm font-bold text-gray-900">
-                                {formatCurrency(request.amount)}
-                              </div>
-                              <div className="text-xs text-green-600">
-                                Your Commission:{" "}
-                                {formatCurrency(request.amount * 0.1)}
-                              </div>
-                            </td>
-                            <td className="px-6 py-4">
-                              <span className={getStatusBadge(request.status)}>
-                                {request.status}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 text-sm text-gray-500">
-                              {formatDate(request.createdAt)}
-                            </td>
-                            <td className="px-6 py-4">
-                              {request.status === "Processing" && (
-                                <div className="flex gap-2">
-                                  <button
-                                    onClick={() => openAcceptModal(request)}
-                                    disabled={processingId === request._id}
-                                    className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 disabled:opacity-50"
-                                  >
-                                    Accept
-                                  </button>
-                                  <button
-                                    onClick={() => openRejectModal(request)}
-                                    disabled={processingId === request._id}
-                                    className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 disabled:opacity-50"
-                                  >
-                                    Reject
-                                  </button>
-                                </div>
-                              )}
                             </td>
                           </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Mobile Card View */}
-                <div className="lg:hidden space-y-4">
-                  {paginatedRequests.length === 0 ? (
-                    <div className="text-center py-12 text-gray-500">
-                      {filter === "all"
-                        ? "No withdrawal requests found"
-                        : `No ${filter} withdrawal requests`}
-                    </div>
-                  ) : (
-                    paginatedRequests.map((request) => (
-                      <div
-                        key={request._id}
-                        className="border border-gray-200 rounded-lg p-4 space-y-3"
-                      >
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-start gap-3">
-                            <div className="p-2 bg-blue-50 rounded-lg">
-                              <User className="w-4 h-4 text-blue-600" />
-                            </div>
-                            <div className="min-w-0">
-                              <div className="text-sm font-medium text-gray-900 truncate">
-                                {request.seller?.name ||
-                                  request.seller?.shopName ||
-                                  "Unknown Shop"}
-                              </div>
-                              <div className="text-xs text-gray-500 truncate">
-                                {request.seller?.email || "No email"}
-                              </div>
-                            </div>
-                          </div>
-                          <span className={getStatusBadge(request.status)}>
-                            {request.status}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                          <Building className="w-4 h-4 text-gray-400" />
-                          <div className="min-w-0 flex-1">
-                            <div className="text-sm text-gray-900">
-                              {request.withdrawMethods?.[0]?.bankName ||
-                                "Unknown Bank"}
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              {request.withdrawMethods?.[0]
-                                ?.accountHolderName || "Unknown Holder"}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                          <DollarSign className="w-4 h-4 text-gray-400" />
-                          <div className="flex-1">
-                            <div className="text-sm font-bold text-gray-900">
-                              {formatCurrency(request.amount)}
-                            </div>
-                            <div className="text-xs text-green-600">
-                              Your Commission:{" "}
-                              {formatCurrency(request.amount * 0.1)}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                          <Calendar className="w-4 h-4 text-gray-400" />
-                          <div className="text-xs text-gray-500">
-                            {formatDate(request.createdAt)}
-                          </div>
-                        </div>
-
-                        {request.status === "Processing" && (
-                          <div className="flex gap-2 pt-2">
-                            <button
-                              onClick={() => openAcceptModal(request)}
-                              disabled={processingId === request._id}
-                              className="flex-1 bg-green-600 text-white py-2 rounded text-sm hover:bg-green-700 disabled:opacity-50"
-                            >
-                              Accept
-                            </button>
-                            <button
-                              onClick={() => openRejectModal(request)}
-                              disabled={processingId === request._id}
-                              className="flex-1 bg-red-600 text-white py-2 rounded text-sm hover:bg-red-700 disabled:opacity-50"
-                            >
-                              Reject
-                            </button>
-                          </div>
+                        ) : (
+                          paginatedRequests.map((request) => (
+                            <tr key={request._id} className="hover:bg-gray-50/50 transition-colors">
+                              <td className="px-8 py-6">
+                                <div className="font-light text-gray-900">
+                                  {request.seller?.name ||
+                                    request.seller?.shopName ||
+                                    "Unknown Shop"}
+                                </div>
+                                <div className="text-sm text-gray-500 font-light">
+                                  {request.seller?.email || "No email"}
+                                </div>
+                              </td>
+                              <td className="px-8 py-6">
+                                <div className="font-light text-gray-900">
+                                  {request.withdrawMethod?.bankName ||
+                                    "Unknown Bank"}
+                                </div>
+                                <div className="text-sm text-gray-500 font-light">
+                                  {request.withdrawMethod?.accountHolderName ||
+                                    "Unknown Holder"}
+                                </div>
+                              </td>
+                              <td className="px-8 py-6">
+                                <div className="font-medium text-gray-900">
+                                  {formatCurrency(request.amount)}
+                                </div>
+                                <div className="text-xs text-emerald-600 font-light">
+                                  Commission: {formatCurrency(request.amount * 0.1)}
+                                </div>
+                              </td>
+                              <td className="px-8 py-6">
+                                <span className={getStatusBadge(request.status)}>
+                                  {request.status}
+                                </span>
+                              </td>
+                              <td className="px-8 py-6 text-sm text-gray-500 font-light">
+                                {formatDate(request.createdAt)}
+                              </td>
+                              <td className="px-8 py-6">
+                                {request.status === "Processing" && (
+                                  <div className="flex gap-3">
+                                    <button
+                                      onClick={() => openAcceptModal(request)}
+                                      disabled={processingId === request._id}
+                                      className="bg-gray-900 text-white px-4 py-2 rounded-lg font-light hover:bg-gray-800 disabled:opacity-50 transition-colors"
+                                    >
+                                      Accept
+                                    </button>
+                                    <button
+                                      onClick={() => openRejectModal(request)}
+                                      disabled={processingId === request._id}
+                                      className="border border-gray-200 text-gray-600 px-4 py-2 rounded-lg font-light hover:bg-gray-50 disabled:opacity-50 transition-colors"
+                                    >
+                                      Reject
+                                    </button>
+                                  </div>
+                                )}
+                              </td>
+                            </tr>
+                          ))
                         )}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="lg:hidden p-8 space-y-6">
+                    {paginatedRequests.length === 0 ? (
+                      <div className="text-center py-12 text-gray-500 font-light">
+                        {filter === "all"
+                          ? "No withdrawal requests found"
+                          : `No ${filter} withdrawal requests`}
                       </div>
-                    ))
+                    ) : (
+                      paginatedRequests.map((request) => (
+                        <div
+                          key={request._id}
+                          className="border border-gray-100 rounded-lg p-6 space-y-4 hover:shadow-md transition-all duration-300"
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-start gap-3">
+                              <div className="p-2 bg-gray-50 rounded-lg border border-gray-100">
+                                <User className="w-4 h-4 text-gray-600" />
+                              </div>
+                              <div className="min-w-0">
+                                <div className="font-light text-gray-900 truncate">
+                                  {request.seller?.name ||
+                                    request.seller?.shopName ||
+                                    "Unknown Shop"}
+                                </div>
+                                <div className="text-xs text-gray-500 font-light truncate">
+                                  {request.seller?.email || "No email"}
+                                </div>
+                              </div>
+                            </div>
+                            <span className={getStatusBadge(request.status)}>
+                              {request.status}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-3">
+                            <Building className="w-4 h-4 text-gray-400" />
+                            <div className="min-w-0 flex-1">
+                              <div className="font-light text-gray-900">
+                                {request.withdrawMethods?.[0]?.bankName ||
+                                  "Unknown Bank"}
+                              </div>
+                              <div className="text-sm text-gray-500 font-light">
+                                {request.withdrawMethods?.[0]
+                                  ?.accountHolderName || "Unknown Holder"}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3">
+                            <DollarSign className="w-4 h-4 text-gray-400" />
+                            <div className="flex-1">
+                              <div className="font-medium text-gray-900">
+                                {formatCurrency(request.amount)}
+                              </div>
+                              <div className="text-xs text-emerald-600 font-light">
+                                Commission: {formatCurrency(request.amount * 0.1)}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3">
+                            <Calendar className="w-4 h-4 text-gray-400" />
+                            <div className="text-xs text-gray-500 font-light">
+                              {formatDate(request.createdAt)}
+                            </div>
+                          </div>
+
+                          {request.status === "Processing" && (
+                            <div className="flex gap-3 pt-2 border-t border-gray-100">
+                              <button
+                                onClick={() => openAcceptModal(request)}
+                                disabled={processingId === request._id}
+                                className="flex-1 bg-gray-900 text-white py-3 rounded-lg font-light hover:bg-gray-800 disabled:opacity-50 transition-colors"
+                              >
+                                Accept
+                              </button>
+                              <button
+                                onClick={() => openRejectModal(request)}
+                                disabled={processingId === request._id}
+                                className="flex-1 border border-gray-200 text-gray-600 py-3 rounded-lg font-light hover:bg-gray-50 disabled:opacity-50 transition-colors"
+                              >
+                                Reject
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  {totalPages > 1 && (
+                    <div className="flex flex-col sm:flex-row items-center justify-between p-8 border-t border-gray-100 gap-4">
+                      <div className="text-sm text-gray-500 font-light">
+                        Showing {startIndex + 1} to{" "}
+                        {Math.min(
+                          startIndex + itemsPerPage,
+                          filteredRequests.length
+                        )}{" "}
+                        of {filteredRequests.length} requests
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() =>
+                            setCurrentPage((prev) => Math.max(prev - 1, 1))
+                          }
+                          disabled={currentPage === 1}
+                          className="px-4 py-2 border border-gray-100 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-50 font-light transition-colors"
+                        >
+                          Previous
+                        </button>
+
+                        <div className="flex gap-1">
+                          {Array.from(
+                            { length: Math.min(5, totalPages) },
+                            (_, i) => {
+                              const pageNum = i + Math.max(1, currentPage - 2);
+                              if (pageNum > totalPages) return null;
+
+                              return (
+                                <button
+                                  key={pageNum}
+                                  onClick={() => setCurrentPage(pageNum)}
+                                  className={`px-4 py-2 rounded-lg font-light transition-colors ${
+                                    currentPage === pageNum
+                                      ? "bg-gray-900 text-white"
+                                      : "border border-gray-100 text-gray-600 hover:bg-gray-50"
+                                  }`}
+                                >
+                                  {pageNum}
+                                </button>
+                              );
+                            }
+                          )}
+                        </div>
+
+                        <button
+                          onClick={() =>
+                            setCurrentPage((prev) =>
+                              Math.min(prev + 1, totalPages)
+                            )
+                          }
+                          disabled={currentPage === totalPages}
+                          className="px-4 py-2 border border-gray-100 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-50 font-light transition-colors"
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </div>
                   )}
                 </div>
-
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
-                    <div className="text-sm text-gray-700">
-                      Showing {startIndex + 1} to{" "}
-                      {Math.min(
-                        startIndex + itemsPerPage,
-                        filteredRequests.length
-                      )}{" "}
-                      of {filteredRequests.length} requests
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() =>
-                          setCurrentPage((prev) => Math.max(prev - 1, 1))
-                        }
-                        disabled={currentPage === 1}
-                        className="px-3 py-2 border border-gray-300 rounded text-gray-600 hover:bg-gray-100 disabled:opacity-50 text-sm"
-                      >
-                        Previous
-                      </button>
-
-                      <div className="flex gap-1">
-                        {Array.from(
-                          { length: Math.min(5, totalPages) },
-                          (_, i) => {
-                            const pageNum = i + Math.max(1, currentPage - 2);
-                            if (pageNum > totalPages) return null;
-
-                            return (
-                              <button
-                                key={pageNum}
-                                onClick={() => setCurrentPage(pageNum)}
-                                className={`px-3 py-2 rounded text-sm ${
-                                  currentPage === pageNum
-                                    ? "bg-blue-600 text-white"
-                                    : "border border-gray-300 text-gray-600 hover:bg-gray-100"
-                                }`}
-                              >
-                                {pageNum}
-                              </button>
-                            );
-                          }
-                        )}
-                      </div>
-
-                      <button
-                        onClick={() =>
-                          setCurrentPage((prev) =>
-                            Math.min(prev + 1, totalPages)
-                          )
-                        }
-                        disabled={currentPage === totalPages}
-                        className="px-3 py-2 border border-gray-300 rounded text-gray-600 hover:bg-gray-100 disabled:opacity-50 text-sm"
-                      >
-                        Next
-                      </button>
-                    </div>
-                  </div>
-                )}
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Confirmation Modal */}
       <ConfirmationModal
         isOpen={confirmModal.isOpen}
         onClose={closeModal}

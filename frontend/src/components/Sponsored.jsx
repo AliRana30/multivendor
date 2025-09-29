@@ -1,4 +1,3 @@
-
 const brandLogos = [
   "https://logos-world.net/wp-content/uploads/2020/04/Sony-Logo.png",
   "https://logos-world.net/wp-content/uploads/2020/08/Dell-Logo-1989-2016.png",
@@ -9,27 +8,53 @@ const brandLogos = [
 
 const Sponsored = () => {
   return (
-    <div className="w-full  py-10 px-5 mb-12 rounded-xl overflow-hidden mt-2">
-      <h1 className="text-2xl font-semibold mb-6 text-center text-gray-800">
-        Sponsored Brands
-      </h1>
+    <div className="w-full py-20 px-4 md:px-10 bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 md:px-10">
+        {/* Header Section */}
+        <div className="mb-16 text-center">
+          <div className="inline-block">
+            <p className="text-sm font-medium text-gray-500 tracking-[0.15em] uppercase mb-4 font-mono">
+              Trusted Partners
+            </p>
+            <h1 className="text-4xl md:text-5xl font-light text-gray-900 leading-[0.9] mb-6">
+              Sponsored Brands
+            </h1>
+            <div className="w-16 h-[1px] bg-gray-900 mx-auto"></div>
+          </div>
+          <p className="text-gray-600 mt-8 max-w-xl mx-auto text-lg leading-relaxed font-light">
+            Partnering with world-class brands to bring you exceptional quality
+          </p>
+        </div>
 
-      {/* Carousel Container */}
-      <div className="relative w-full overflow-hidden bg-white">
-        <div className="flex animate-scroll whitespace-nowrap">
-          {[...brandLogos, ...brandLogos].map((logo, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-center px-10 py-4"
-              style={{ minWidth: "200px" }}
-            >
-              <img
-                src={logo}
-                alt={`Brand ${index}`}
-                className="w-[150px] h-auto object-contain grayscale hover:grayscale-0 transition duration-300"
-              />
-            </div>
-          ))}
+        {/* Carousel Container */}
+        <div className="relative w-full overflow-hidden">
+          <div className="absolute left-0 top-0 w-20 h-full bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none"></div>
+          <div className="absolute right-0 top-0 w-20 h-full bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none"></div>
+          
+          <div className="flex animate-scroll whitespace-nowrap py-8">
+            {[...brandLogos, ...brandLogos].map((logo, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-center px-12"
+                style={{ minWidth: "200px" }}
+              >
+                <div className="w-32 h-16 flex items-center justify-center bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+                  <img
+                    src={logo}
+                    alt={`Brand ${index}`}
+                    className="max-w-24 max-h-12 object-contain filter grayscale hover:grayscale-0 transition-all duration-500 opacity-70 hover:opacity-100"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom text */}
+        <div className="text-center mt-12">
+          <p className="text-gray-500 font-light text-sm tracking-wide">
+            And many more trusted brands in our network
+          </p>
         </div>
       </div>
 
@@ -41,7 +66,10 @@ const Sponsored = () => {
             100% { transform: translateX(-50%); }
           }
           .animate-scroll {
-            animation: scroll 25s linear infinite;
+            animation: scroll 30s linear infinite;
+          }
+          .animate-scroll:hover {
+            animation-play-state: paused;
           }
         `}
       </style>

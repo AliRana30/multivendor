@@ -35,8 +35,12 @@ const ProductSchema = new mongoose.Schema({
   ],
   reviews: [
     {
-      user : {
-        type: String,
+      user: {
+        type: String, // This will now store the user's name
+        required: true
+      },
+      userId: {
+        type: mongoose.Schema.Types.ObjectId, // Store ObjectId reference for backend operations
         ref: "User",
         required: true
       },
@@ -47,16 +51,23 @@ const ProductSchema = new mongoose.Schema({
       comment: {
         type: String,
       },
-      productId : {
+      productId: {
         type: String,
       },
-      createdAt :{
-        type : Date,
-        default : Date.now()
+      createdAt: {
+        type: Date,
+        default: Date.now
       }
     },
   ],
-
+  rating: {
+    type: Number,
+    default: 0
+  },
+  numOfReviews: {
+    type: Number,
+    default: 0
+  },
   shopId: {
     type: String,
     required: true,
@@ -66,17 +77,16 @@ const ProductSchema = new mongoose.Schema({
     required: true,
   },
   shopLogo: {
-  type: String,
-  required: true,
-},
-
+    type: String,
+    required: true,
+  },
   sold_out: {
     type: Number,
     default: 0,
   },
   createdAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
 });
 

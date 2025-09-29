@@ -338,7 +338,7 @@ const ShopWithdrawMoney = () => {
         disabled={!bankAccounts.length}
         className={`w-full py-3 px-4 rounded-md font-medium transition-colors ${
           bankAccounts.length
-            ? 'bg-blue-600 text-white hover:bg-blue-700'
+            ? 'bg-black text-white'
             : 'bg-gray-300 text-gray-500 cursor-not-allowed'
         }`}
       >

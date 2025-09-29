@@ -1,11 +1,12 @@
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from 'react-redux';
 
 const HeroSection = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const [displayText, setDisplayText] = useState("");
   const fullText = "Discover Products from Multiple Vendors";
-  const typingSpeed = 30; 
+  const typingSpeed = 30;
 
   useEffect(() => {
     let currentIndex = 0;
@@ -29,15 +30,16 @@ const HeroSection = () => {
         className="w-full h-full object-cover blur-sm"
       />
       <div className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center text-white bg-black bg-opacity-40">
-        <h1 className="text-4xl md:text-6xl font-bold mb-4 min-h-[1.2em]">
+        <h1 className="text-4xl md:text-6xl mb-4 min-h-[1.2em]">
           {displayText}
           <span className="animate-pulse">|</span>
         </h1>
         <button
           onClick={() => navigate("/products")}
-          className="bg-black text-white px-6 py-2 rounded-md text-lg hover:bg-gray-800 hover:text-gray-200 transition-all duration-300 transform hover:scale-105"
+          className="mt-14 group relative px-6 py-2 bg-white text-black text-lg font-semibold tracking-wider transition-all duration-500 hover:bg-black hover:text-white border-2 border-white hover:border-white overflow-hidden"
         >
-          Shop Now
+          <span className="relative z-10">Shop Now</span>
+          <div className="absolute inset-0 bg-black transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
         </button>
       </div>
     </div>

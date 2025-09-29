@@ -6,7 +6,7 @@ import api from "../components/axiosCongif";
 
 const Signup = () => {
   const [fullName, setFullName] = useState("");
-  const [email, setEmail]     = useState("");
+  const [email, setEmail]  = useState("");
   const [password, setPassword] = useState("");
   const [avatar, setAvatar]   = useState(null);
   const [showPassword, setShowPassword] = useState(false);

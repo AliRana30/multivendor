@@ -37,9 +37,17 @@ const FAQ = () => {
   };
 
   return (
-    <div className="p-4 w-full overflow-x-hidden bg-gray-100" style={{margin : 0 , padding : 0}}>
+    <div className="p-4 w-full overflow-x-hidden bg-gray-50" style={{margin : 0 , padding : 0}}>
    
-      <h2 className="text-3xl font-bold mb-6 text-gray-800 m-10">Frequently Asked Questions</h2>
+        <div className="justify-center text-center mb-6 mt-16">
+            <p className="text-sm font-medium text-gray-500 tracking-[0.15em] uppercase mb-4 font-mono">
+              FAQ
+            </p>
+            <h1 className="text-3xl md:text-4xl font-light text-gray-900 leading-[0.9] mb-6 ">
+              Frequently Asked Questions
+            </h1>
+            <div className="w-20 h-[1px] bg-gray-900 mx-auto"></div>
+          </div>
       <div className="space-y-4 m-10">
         {faqs.map((faq, index) => (
           <div

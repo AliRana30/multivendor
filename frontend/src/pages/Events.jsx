@@ -1,40 +1,33 @@
 import { useDispatch, useSelector } from 'react-redux';
 import EventCard from '../Cards/EventCard';
 import { useEffect } from 'react';
-import { getAllEvents, getAllEventsFromAllSellers } from '../../redux/actions/event';
+import { getAllEventsFromAllSellers } from '../../redux/actions/event';
 
 const Events = () => {
-  // Get both event states
   const { 
-    events, 
-    loading, 
-    error,
     allEvents,
     allEventsLoading,
     allEventsError 
   } = useSelector((state) => state.event);
   
-  const { seller } = useSelector((state) => state.seller); 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // Always fetch all events from all sellers
     if (!allEvents || allEvents.length === 0) {
       dispatch(getAllEventsFromAllSellers());
     }
   }, [dispatch, allEvents]);
 
-  // Use allEvents data and loading/error states
   const currentEvents = allEvents;
   const currentLoading = allEventsLoading;
   const currentError = allEventsError;
 
   if (currentLoading) {
     return (
-      <div className="p-4 w-full overflow-x-hidden bg-gray-100 flex justify-center items-center min-h-[400px]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading events...</p>
+      <div className="w-full py-20 px-4 md:px-10 bg-gray-50 flex justify-center items-center min-h-[400px]">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin"></div>
+          <p className="text-gray-600 font-light tracking-wide">Loading events</p>
         </div>
       </div>
     );
@@ -42,15 +35,20 @@ const Events = () => {
 
   if (currentError) {
     return (
-      <div className="p-4 w-full overflow-x-hidden bg-gray-100">
-        <div className="text-center text-red-500 py-10">
-          <p className="text-lg">Error loading events</p>
-          <p className="text-sm">{currentError}</p>
+      <div className="w-full py-20 px-4 md:px-10 bg-gray-50">
+        <div className="text-center max-w-md mx-auto">
+          <div className="mb-6">
+            <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-8 h-8 bg-red-100 rounded-full"></div>
+            </div>
+            <h3 className="text-xl font-medium text-gray-900 mb-2">Something went wrong</h3>
+            <p className="text-gray-500 text-sm leading-relaxed">{currentError}</p>
+          </div>
           <button 
             onClick={() => dispatch(getAllEventsFromAllSellers())}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+            className="px-8 py-3 bg-gray-900 text-white hover:bg-gray-800 transition-colors duration-200 font-medium tracking-wide"
           >
-            Retry
+            Try Again
           </button>
         </div>
       </div>
@@ -58,20 +56,37 @@ const Events = () => {
   }
 
   return (
-    <div className="p-4 w-full overflow-x-hidden bg-gray-100" style={{ margin: 0, padding: 0 }}>
-      <h1 className="text-3xl font-bold text-black mb-10 text-center mt-10">Popular Events</h1>
+    <div className="w-full py-20 px-4 md:px-10 bg-gray-50" style={{ margin: 0, padding: 0 }}>
+      <div className="max-w-7xl mx-auto px-4 md:px-10 py-20">
+        {/* Header Section */}
+        <div className="mb-16 text-center">
+          <div className="inline-block">
+            <p className="text-sm font-medium text-gray-500 tracking-[0.15em] uppercase mb-4 font-mono">
+              Limited Time
+            </p>
+            <h1 className="text-3xl md:text-4xl font-light text-gray-900 leading-[0.9] mb-6 ">
+              Popular Events
+            </h1>
+            <div className="w-20 h-[1px] bg-gray-900 mx-auto"></div>
+          </div>
+          <p className="text-gray-600 mt-8 max-w-2xl mx-auto text-lg leading-relaxed font-light">
+            Don't miss out on exclusive deals and special offers from our premium events
+          </p>
+        </div>
 
-      <div className="grid grid-cols-1 gap-6 px-4 mb-10">
         {currentEvents && currentEvents.length > 0 ? (
-          <>
+          <div className="grid grid-cols-1 gap-8 mb-16">
             {currentEvents.map((event, index) => (
               <EventCard key={event._id || `event-${index}`} event={event} />
             ))}
-          </>
+          </div>
         ) : (
-          <div className="text-center text-gray-500 py-10">
-            <p className="text-lg">No events available at the moment</p>
-            <p className="text-sm">Check back later for exciting deals!</p>
+          <div className="text-center py-20">
+            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-8">
+              <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+            </div>
+            <h3 className="text-2xl font-light text-gray-900 mb-3">No events available</h3>
+            <p className="text-gray-500 font-light text-lg">Check back later for exciting deals and special offers</p>
           </div>
         )}
       </div>

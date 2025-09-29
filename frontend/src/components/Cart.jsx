@@ -62,7 +62,7 @@ const Cart = ({ openCart, setOpenCart }) => {
               {/* Total */}
               <div className="flex justify-between items-center mb-4">
                 <span className="text-lg font-medium text-gray-900">Total:</span>
-                <span className="text-xl font-bold text-blue-600">
+                <span className="text-xl font-bold text-black">
                   ${totalPrice.toFixed(2)}
                 </span>
               </div>
@@ -71,7 +71,7 @@ const Cart = ({ openCart, setOpenCart }) => {
               <Link to="/checkout">
                 <button
                   onClick={() => setOpenCart(false)}
-                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300"
+                  className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300"
                 >
                   Checkout
                 </button>

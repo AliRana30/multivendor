@@ -95,7 +95,7 @@ const WishList = ({ openWishList, setOpenWishList }) => {
                         {item.stock > 0 ? 'In Stock' : 'Out of Stock'}
                       </span>
                       <button 
-                        className="text-red-500 hover:text-red-700 text-sm font-medium transition-colors"
+                        className="text-black text-sm font-medium transition-colors"
                         onClick={() => handleRemoveFromWishlist(item._id)}
                       >
                         Remove

@@ -66,14 +66,15 @@ const Events = () => {
     <div className="w-full bg-gray-50 min-h-screen mt-20">
       {/* Header Section */}
       <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 text-center mb-2">
-            Popular Events
-          </h1>
-          <p className="text-gray-600 text-center max-w-2xl mx-auto">
-            Discover amazing deals and limited-time offers from our featured events
-          </p>
-        </div>
+         <div className="justify-center text-center mb-6">
+            <p className="text-sm font-medium text-gray-500 tracking-[0.15em] uppercase mb-4 font-mono mt-5">
+              Limited Time
+            </p>
+            <h1 className="text-3xl md:text-4xl font-light text-gray-900 leading-[0.9] mb-6 ">
+              Popular Events
+            </h1>
+            <div className="w-20 h-[1px] bg-gray-900 mx-auto"></div>
+          </div>
       </div>
 
       {/* Events Grid */}
