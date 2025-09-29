@@ -1,6 +1,6 @@
-import Conversation from "../models/Conversation.js";
+import Conversation from "../models/conversation.js";
 import fs from 'fs';
-import Message from "../models/Message.js";
+import Message from "../models/message.js";
 
 // Create new message
 export const createNewMessage = async (req, res) => {
@@ -405,4 +405,5 @@ export const deleteMessage = async (req, res) => {
       message: "Internal server error"
     });
   }
+
 };
