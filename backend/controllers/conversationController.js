@@ -1,5 +1,5 @@
-import Conversation from "../models/Conversation.js";
-import Message from "../models/Message.js"; 
+import Conversation from "../models/conversation.js";
+import Message from "../models/message.js"; 
 import mongoose from 'mongoose'; 
 
 export const conversationController = async (req, res) => { 
@@ -326,4 +326,5 @@ export const getMessagesByConversationId = async (req, res) => {
     });
   }
 };
+
 
