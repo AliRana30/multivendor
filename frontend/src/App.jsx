@@ -55,7 +55,6 @@ function App() {
     "/login",
     "/signup", 
     "/create-shop",
-    "/shop",
     "/dashboard",
     "/admin"
   ];
