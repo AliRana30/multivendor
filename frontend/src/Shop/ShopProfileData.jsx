@@ -59,10 +59,10 @@ const ShopProfileData = ({ isOwner }) => {
     
     if (typeof firstImage === 'string') {
       if (firstImage.startsWith('http')) return firstImage;
-      return firstImage.startsWith('/') ? `http://https://multivendors-7cy2.onrender.com${firstImage}` : `http://https://multivendors-7cy2.onrender.com/uploads/${firstImage}`;
+      return firstImage.startsWith('/') ? `https://multivendors-7cy2.onrender.com${firstImage}` : `https://multivendors-7cy2.onrender.com/uploads/${firstImage}`;
     }
     
-    return firstImage?.url?.startsWith('http') ? firstImage.url : `http://https://multivendors-7cy2.onrender.com${firstImage?.url || ''}`;
+    return firstImage?.url?.startsWith('http') ? firstImage.url : `https://multivendors-7cy2.onrender.com${firstImage?.url || ''}`;
   };
 
   const StarRating = ({ rating, size = 'w-4 h-4' }) => (
@@ -315,3 +315,4 @@ const ShopProfileData = ({ isOwner }) => {
 
 
 export default ShopProfileData;
+
