@@ -47,7 +47,7 @@ import UserMessages from "./pages/UserMessages";
 function App() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isSeller } = useSelector((state) => state.seller);
+  const { isSeller , seller} = useSelector((state) => state.seller);
   const location = useLocation();
   const currentPath = location.pathname;
 
@@ -101,7 +101,7 @@ const getCurrentUser = async () => {
     getCurrentSeller();
 
     if (isSeller === true) {
-      navigate("/shop");
+       navigate(`/shop/${seller._id}`, { replace: true });
     }
   },[isSeller, navigate]);
 
