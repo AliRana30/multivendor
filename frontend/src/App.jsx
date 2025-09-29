@@ -102,12 +102,9 @@ useEffect(() => {
 
 useEffect(() => {
   if (isSeller && seller?._id) {
-    const sellerPaths = ["/shop-dashboard"];
-    const isSellerRoute = sellerPaths.some(path =>
-      location.pathname.startsWith(path)
-    );
+    const authPages = ["/login", "/signup", "/shop-login", "/create-shop"];
 
-    if (!isSellerRoute) {
+    if (authPages.includes(location.pathname)) {
       navigate(`/shop/${seller._id}`, { replace: true });
     }
   }
