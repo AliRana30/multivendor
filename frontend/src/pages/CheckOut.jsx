@@ -78,7 +78,7 @@ const CheckOut = () => {
     
     if (typeof imageUrl === "string") {
       if (imageUrl.startsWith("http")) return imageUrl;
-      return imageUrl.startsWith("/") ? `http://localhost:5000${imageUrl}` : `http://localhost:5000/uploads/${imageUrl}`;
+      return imageUrl.startsWith("/") ? `https://multivendors-7cy2.onrender.com${imageUrl}` : `https://multivendors-7cy2.onrender.com/uploads/${imageUrl}`;
     }
     
     return "/placeholder-image.png";
@@ -635,3 +635,4 @@ const CheckOut = () => {
 };
 
 export default CheckOut;
+
