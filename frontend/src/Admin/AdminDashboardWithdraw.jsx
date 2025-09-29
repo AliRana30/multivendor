@@ -32,9 +32,9 @@ const ConfirmationModal = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="relative bg-white rounded-lg shadow-sm border border-gray-100 max-w-md w-full mx-4 transform transition-all">
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-light text-gray-900">{title}</h3>
+            <h3 className="text-base sm:text-lg font-light text-gray-900">{title}</h3>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -45,31 +45,31 @@ const ConfirmationModal = ({
           </div>
 
           <div className="mb-6">
-            <p className="text-gray-600 font-light whitespace-pre-line">{message}</p>
+            <p className="text-sm sm:text-base text-gray-600 font-light whitespace-pre-line">{message}</p>
             {showInput && (
               <textarea
                 value={inputValue}
                 onChange={(e) => onInputChange(e.target.value)}
                 placeholder={inputPlaceholder}
-                className="mt-4 w-full p-3 border border-gray-100 rounded-lg focus:ring-1 focus:ring-gray-300 focus:border-gray-300 resize-none font-light"
+                className="mt-4 w-full p-3 border border-gray-100 rounded-lg focus:ring-1 focus:ring-gray-300 focus:border-gray-300 resize-none font-light text-sm"
                 rows={3}
                 disabled={loading}
               />
             )}
           </div>
 
-          <div className="flex gap-3 justify-end">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-end">
             <button
               onClick={onClose}
               disabled={loading}
-              className="px-4 py-2 text-gray-600 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 font-light"
+              className="w-full sm:w-auto px-4 py-2 text-gray-600 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 font-light text-sm"
             >
               Cancel
             </button>
             <button
               onClick={onConfirm}
               disabled={loading || (showInput && !inputValue.trim())}
-              className={`px-6 py-2 text-white rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2 font-light ${
+              className={`w-full sm:w-auto px-6 py-2 text-white rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2 font-light text-sm ${
                 type === "accept"
                   ? "bg-gray-900 hover:bg-gray-800"
                   : "bg-gray-900 hover:bg-gray-800"
@@ -346,7 +346,7 @@ const AdminDashboardWithdraw = () => {
   };
 
   const getStatusBadge = (status) => {
-    const baseClasses = "inline-flex items-center px-3 py-1 rounded-full text-xs font-light";
+    const baseClasses = "inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs font-light";
 
     switch (status) {
       case "Processing":
@@ -393,16 +393,16 @@ const AdminDashboardWithdraw = () => {
   };
 
   const StatCard = ({ title, value, subtitle, icon, color = "gray" }) => (
-    <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
+    <div className="bg-white rounded-lg p-4 sm:p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
       <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <p className="text-gray-500 font-light text-sm tracking-wide mb-2">{title}</p>
-          <p className="text-2xl font-light text-gray-900 mb-1">{value}</p>
+        <div className="flex-1 min-w-0">
+          <p className="text-gray-500 font-light text-xs sm:text-sm tracking-wide mb-2">{title}</p>
+          <p className="text-xl sm:text-2xl font-light text-gray-900 mb-1 truncate">{value}</p>
           {subtitle && (
-            <p className="text-gray-500 font-light text-xs">{subtitle}</p>
+            <p className="text-gray-500 font-light text-xs truncate">{subtitle}</p>
           )}
         </div>
-        <div className={`p-3 rounded-lg ${
+        <div className={`p-2 sm:p-3 rounded-lg flex-shrink-0 ${
           color === 'blue' ? 'bg-blue-50 text-blue-600' :
           color === 'green' ? 'bg-green-50 text-green-600' :
           color === 'purple' ? 'bg-purple-50 text-purple-600' :
@@ -412,7 +412,9 @@ const AdminDashboardWithdraw = () => {
           color === 'indigo' ? 'bg-indigo-50 text-indigo-600' :
           'bg-gray-50 text-gray-600'
         }`}>
-          {icon}
+          <div className="w-5 h-5 sm:w-6 sm:h-6">
+            {icon}
+          </div>
         </div>
       </div>
     </div>
@@ -444,57 +446,52 @@ const AdminDashboardWithdraw = () => {
           />
         )}
 
-        <div
-          className={`
-          flex-1 min-h-screen
-          ${isMobile ? "ml-0" : isSidebarOpen ? "ml-0" : "ml-0"}
-        `}
-        >
-          <div className="max-w-7xl mx-auto px-4 md:px-10 py-20">
+        <div className="flex-1 min-h-screen">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 py-16 sm:py-20">
             {loading ? (
               <div className="flex justify-center items-center h-64">
                 <Loader className="w-8 h-8 animate-spin text-gray-400" />
               </div>
             ) : (
-              <div className="space-y-12">
+              <div className="space-y-8 sm:space-y-12">
                 <div className="text-center">
                   <div className="inline-block">
-                    <p className="text-sm font-medium text-gray-500 tracking-[0.15em] uppercase mb-2 font-mono">
+                    <p className="text-xs sm:text-sm font-medium text-gray-500 tracking-[0.15em] uppercase mb-2 font-mono">
                       Financial Management
                     </p>
-                    <h1 className="text-3xl md:text-4xl font-light text-gray-900 leading-[0.9] mb-6">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 leading-[0.9] mb-4 sm:mb-6">
                       Withdrawal Management
                     </h1>
-                    <div className="w-20 h-[1px] bg-gray-900 mx-auto"></div>
+                    <div className="w-16 sm:w-20 h-[1px] bg-gray-900 mx-auto"></div>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-lg p-8 shadow-sm border border-gray-100">
-                  <div className="text-center space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto pt-6 border-t border-gray-100">
+                <div className="bg-white rounded-lg p-4 sm:p-6 md:p-8 shadow-sm border border-gray-100">
+                  <div className="text-center space-y-4 sm:space-y-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-2xl mx-auto pt-4 sm:pt-6 border-t border-gray-100">
                       <div className="text-center">
-                        <p className="text-gray-500 font-light text-sm">Total Revenue</p>
-                        <p className="text-lg font-medium text-gray-900">{formatCurrency(revenueStats.totalRevenue)}</p>
+                        <p className="text-gray-500 font-light text-xs sm:text-sm">Total Revenue</p>
+                        <p className="text-base sm:text-lg font-medium text-gray-900">{formatCurrency(revenueStats.totalRevenue)}</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-gray-500 font-light text-sm">Order Commission</p>
-                        <p className="text-lg font-medium text-gray-900">{formatCurrency(revenueStats.orderCommission)}</p>
+                        <p className="text-gray-500 font-light text-xs sm:text-sm">Order Commission</p>
+                        <p className="text-base sm:text-lg font-medium text-gray-900">{formatCurrency(revenueStats.orderCommission)}</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-gray-500 font-light text-sm">Withdrawal Commission</p>
-                        <p className="text-lg font-medium text-gray-900">{formatCurrency(revenueStats.withdrawalCommission)}</p>
+                        <p className="text-gray-500 font-light text-xs sm:text-sm">Withdrawal Commission</p>
+                        <p className="text-base sm:text-lg font-medium text-gray-900">{formatCurrency(revenueStats.withdrawalCommission)}</p>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                   <StatCard 
                     title="Total Requests" 
                     value={stats.total}
                     subtitle={formatCurrency(stats.totalAmount)}
                     color="blue"
-                    icon={<CreditCard className="w-6 h-6" />}
+                    icon={<CreditCard className="w-full h-full" />}
                   />
                   
                   <StatCard 
@@ -503,7 +500,7 @@ const AdminDashboardWithdraw = () => {
                     subtitle={`${formatCurrency(stats.pendingAmount)} pending`}
                     color="orange"
                     icon={
-                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-full h-full" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd"/>
                       </svg>
                     }
@@ -515,7 +512,7 @@ const AdminDashboardWithdraw = () => {
                     subtitle={`${formatCurrency(stats.completedAmount)} paid`}
                     color="emerald"
                     icon={
-                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-full h-full" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
                       </svg>
                     }
@@ -527,7 +524,7 @@ const AdminDashboardWithdraw = () => {
                     subtitle="Commission saved"
                     color="gray"
                     icon={
-                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-full h-full" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"/>
                       </svg>
                     }
@@ -535,8 +532,8 @@ const AdminDashboardWithdraw = () => {
                 </div>
 
                 <div className="bg-white rounded-lg shadow-sm border border-gray-100">
-                  <div className="p-8 border-b border-gray-100">
-                    <div className="flex flex-wrap gap-3">
+                  <div className="p-4 sm:p-6 md:p-8 border-b border-gray-100">
+                    <div className="flex flex-wrap gap-2 sm:gap-3">
                       {[
                         { key: "all", label: "All", count: stats.total },
                         { key: "processing", label: "Processing", count: stats.processing },
@@ -549,14 +546,14 @@ const AdminDashboardWithdraw = () => {
                             setFilter(tab.key);
                             setCurrentPage(1);
                           }}
-                          className={`px-4 py-2 rounded-lg font-light transition-colors flex items-center gap-2 ${
+                          className={`px-3 sm:px-4 py-2 rounded-lg font-light transition-colors flex items-center gap-2 text-xs sm:text-sm ${
                             filter === tab.key
                               ? "bg-gray-900 text-white"
                               : "bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-100"
                           }`}
                         >
                           {tab.label}
-                          <span className={`px-2 py-1 rounded-full text-xs ${
+                          <span className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs ${
                             filter === tab.key ? "bg-white/20" : "bg-white/60"
                           }`}>
                             {tab.count}
@@ -570,22 +567,22 @@ const AdminDashboardWithdraw = () => {
                     <table className="w-full">
                       <thead className="border-b border-gray-100">
                         <tr>
-                          <th className="px-8 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-4 md:px-8 py-4 md:py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Seller Details
                           </th>
-                          <th className="px-8 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-4 md:px-8 py-4 md:py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Bank Account
                           </th>
-                          <th className="px-8 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-4 md:px-8 py-4 md:py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Amount & Commission
                           </th>
-                          <th className="px-8 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-4 md:px-8 py-4 md:py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Status
                           </th>
-                          <th className="px-8 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-4 md:px-8 py-4 md:py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Date
                           </th>
-                          <th className="px-8 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-4 md:px-8 py-4 md:py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Actions
                           </th>
                         </tr>
@@ -593,8 +590,8 @@ const AdminDashboardWithdraw = () => {
                       <tbody className="bg-white divide-y divide-gray-50">
                         {paginatedRequests.length === 0 ? (
                           <tr>
-                            <td colSpan="6" className="px-8 py-12 text-center">
-                              <div className="text-gray-500 font-light">
+                            <td colSpan="6" className="px-4 md:px-8 py-12 text-center">
+                              <div className="text-gray-500 font-light text-sm">
                                 {filter === "all"
                                   ? "No withdrawal requests found"
                                   : `No ${filter} withdrawal requests`}
@@ -604,56 +601,56 @@ const AdminDashboardWithdraw = () => {
                         ) : (
                           paginatedRequests.map((request) => (
                             <tr key={request._id} className="hover:bg-gray-50/50 transition-colors">
-                              <td className="px-8 py-6">
-                                <div className="font-light text-gray-900">
+                              <td className="px-4 md:px-8 py-4 md:py-6">
+                                <div className="font-light text-gray-900 text-sm">
                                   {request.seller?.name ||
                                     request.seller?.shopName ||
                                     "Unknown Shop"}
                                 </div>
-                                <div className="text-sm text-gray-500 font-light">
+                                <div className="text-xs sm:text-sm text-gray-500 font-light">
                                   {request.seller?.email || "No email"}
                                 </div>
                               </td>
-                              <td className="px-8 py-6">
-                                <div className="font-light text-gray-900">
+                              <td className="px-4 md:px-8 py-4 md:py-6">
+                                <div className="font-light text-gray-900 text-sm">
                                   {request.withdrawMethod?.bankName ||
                                     "Unknown Bank"}
                                 </div>
-                                <div className="text-sm text-gray-500 font-light">
+                                <div className="text-xs sm:text-sm text-gray-500 font-light">
                                   {request.withdrawMethod?.accountHolderName ||
                                     "Unknown Holder"}
                                 </div>
                               </td>
-                              <td className="px-8 py-6">
-                                <div className="font-medium text-gray-900">
+                              <td className="px-4 md:px-8 py-4 md:py-6">
+                                <div className="font-medium text-gray-900 text-sm">
                                   {formatCurrency(request.amount)}
                                 </div>
                                 <div className="text-xs text-emerald-600 font-light">
                                   Commission: {formatCurrency(request.amount * 0.1)}
                                 </div>
                               </td>
-                              <td className="px-8 py-6">
+                              <td className="px-4 md:px-8 py-4 md:py-6">
                                 <span className={getStatusBadge(request.status)}>
                                   {request.status}
                                 </span>
                               </td>
-                              <td className="px-8 py-6 text-sm text-gray-500 font-light">
+                              <td className="px-4 md:px-8 py-4 md:py-6 text-xs sm:text-sm text-gray-500 font-light">
                                 {formatDate(request.createdAt)}
                               </td>
-                              <td className="px-8 py-6">
+                              <td className="px-4 md:px-8 py-4 md:py-6">
                                 {request.status === "Processing" && (
-                                  <div className="flex gap-3">
+                                  <div className="flex gap-2">
                                     <button
                                       onClick={() => openAcceptModal(request)}
                                       disabled={processingId === request._id}
-                                      className="bg-gray-900 text-white px-4 py-2 rounded-lg font-light hover:bg-gray-800 disabled:opacity-50 transition-colors"
+                                      className="bg-gray-900 text-white px-3 py-1.5 rounded-lg font-light hover:bg-gray-800 disabled:opacity-50 transition-colors text-xs sm:text-sm"
                                     >
                                       Accept
                                     </button>
                                     <button
                                       onClick={() => openRejectModal(request)}
                                       disabled={processingId === request._id}
-                                      className="border border-gray-200 text-gray-600 px-4 py-2 rounded-lg font-light hover:bg-gray-50 disabled:opacity-50 transition-colors"
+                                      className="border border-gray-200 text-gray-600 px-3 py-1.5 rounded-lg font-light hover:bg-gray-50 disabled:opacity-50 transition-colors text-xs sm:text-sm"
                                     >
                                       Reject
                                     </button>
@@ -667,9 +664,9 @@ const AdminDashboardWithdraw = () => {
                     </table>
                   </div>
 
-                  <div className="lg:hidden p-8 space-y-6">
+                  <div className="lg:hidden p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6">
                     {paginatedRequests.length === 0 ? (
-                      <div className="text-center py-12 text-gray-500 font-light">
+                      <div className="text-center py-12 text-gray-500 font-light text-sm">
                         {filter === "all"
                           ? "No withdrawal requests found"
                           : `No ${filter} withdrawal requests`}
@@ -678,15 +675,15 @@ const AdminDashboardWithdraw = () => {
                       paginatedRequests.map((request) => (
                         <div
                           key={request._id}
-                          className="border border-gray-100 rounded-lg p-6 space-y-4 hover:shadow-md transition-all duration-300"
+                          className="border border-gray-100 rounded-lg p-4 sm:p-6 space-y-3 sm:space-y-4 hover:shadow-md transition-all duration-300"
                         >
-                          <div className="flex items-start justify-between">
-                            <div className="flex items-start gap-3">
-                              <div className="p-2 bg-gray-50 rounded-lg border border-gray-100">
-                                <User className="w-4 h-4 text-gray-600" />
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex items-start gap-2 sm:gap-3 min-w-0 flex-1">
+                              <div className="p-1.5 sm:p-2 bg-gray-50 rounded-lg border border-gray-100 flex-shrink-0">
+                                <User className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600" />
                               </div>
-                              <div className="min-w-0">
-                                <div className="font-light text-gray-900 truncate">
+                              <div className="min-w-0 flex-1">
+                                <div className="font-light text-gray-900 truncate text-sm sm:text-base">
                                   {request.seller?.name ||
                                     request.seller?.shopName ||
                                     "Unknown Shop"}
@@ -701,24 +698,23 @@ const AdminDashboardWithdraw = () => {
                             </span>
                           </div>
 
-                          <div className="flex items-center gap-3">
-                            <Building className="w-4 h-4 text-gray-400" />
+                          <div className="flex items-center gap-2 sm:gap-3">
+                            <Building className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0" />
                             <div className="min-w-0 flex-1">
-                              <div className="font-light text-gray-900">
-                                {request.withdrawMethods?.[0]?.bankName ||
+                              <div className="font-light text-gray-900 text-sm sm:text-base">
+                                {request.withdrawMethod?.bankName ||
                                   "Unknown Bank"}
                               </div>
-                              <div className="text-sm text-gray-500 font-light">
-                                {request.withdrawMethods?.[0]
-                                  ?.accountHolderName || "Unknown Holder"}
+                              <div className="text-xs sm:text-sm text-gray-500 font-light truncate">
+                                {request.withdrawMethod?.accountHolderName || "Unknown Holder"}
                               </div>
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-3">
-                            <DollarSign className="w-4 h-4 text-gray-400" />
+                          <div className="flex items-center gap-2 sm:gap-3">
+                            <DollarSign className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0" />
                             <div className="flex-1">
-                              <div className="font-medium text-gray-900">
+                              <div className="font-medium text-gray-900 text-sm sm:text-base">
                                 {formatCurrency(request.amount)}
                               </div>
                               <div className="text-xs text-emerald-600 font-light">
@@ -727,26 +723,26 @@ const AdminDashboardWithdraw = () => {
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-3">
-                            <Calendar className="w-4 h-4 text-gray-400" />
+                          <div className="flex items-center gap-2 sm:gap-3">
+                            <Calendar className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0" />
                             <div className="text-xs text-gray-500 font-light">
                               {formatDate(request.createdAt)}
                             </div>
                           </div>
 
                           {request.status === "Processing" && (
-                            <div className="flex gap-3 pt-2 border-t border-gray-100">
+                            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-2 border-t border-gray-100">
                               <button
                                 onClick={() => openAcceptModal(request)}
                                 disabled={processingId === request._id}
-                                className="flex-1 bg-gray-900 text-white py-3 rounded-lg font-light hover:bg-gray-800 disabled:opacity-50 transition-colors"
+                                className="flex-1 bg-gray-900 text-white py-2.5 sm:py-3 rounded-lg font-light hover:bg-gray-800 disabled:opacity-50 transition-colors text-sm"
                               >
                                 Accept
                               </button>
                               <button
                                 onClick={() => openRejectModal(request)}
                                 disabled={processingId === request._id}
-                                className="flex-1 border border-gray-200 text-gray-600 py-3 rounded-lg font-light hover:bg-gray-50 disabled:opacity-50 transition-colors"
+                                className="flex-1 border border-gray-200 text-gray-600 py-2.5 sm:py-3 rounded-lg font-light hover:bg-gray-50 disabled:opacity-50 transition-colors text-sm"
                               >
                                 Reject
                               </button>
@@ -758,8 +754,8 @@ const AdminDashboardWithdraw = () => {
                   </div>
 
                   {totalPages > 1 && (
-                    <div className="flex flex-col sm:flex-row items-center justify-between p-8 border-t border-gray-100 gap-4">
-                      <div className="text-sm text-gray-500 font-light">
+                    <div className="flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 md:p-8 border-t border-gray-100 gap-4">
+                      <div className="text-xs sm:text-sm text-gray-500 font-light text-center sm:text-left">
                         Showing {startIndex + 1} to{" "}
                         {Math.min(
                           startIndex + itemsPerPage,
@@ -767,13 +763,13 @@ const AdminDashboardWithdraw = () => {
                         )}{" "}
                         of {filteredRequests.length} requests
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 flex-wrap justify-center">
                         <button
                           onClick={() =>
                             setCurrentPage((prev) => Math.max(prev - 1, 1))
                           }
                           disabled={currentPage === 1}
-                          className="px-4 py-2 border border-gray-100 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-50 font-light transition-colors"
+                          className="px-3 sm:px-4 py-2 border border-gray-100 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-50 font-light transition-colors text-xs sm:text-sm"
                         >
                           Previous
                         </button>
@@ -789,7 +785,7 @@ const AdminDashboardWithdraw = () => {
                                 <button
                                   key={pageNum}
                                   onClick={() => setCurrentPage(pageNum)}
-                                  className={`px-4 py-2 rounded-lg font-light transition-colors ${
+                                  className={`px-3 sm:px-4 py-2 rounded-lg font-light transition-colors text-xs sm:text-sm ${
                                     currentPage === pageNum
                                       ? "bg-gray-900 text-white"
                                       : "border border-gray-100 text-gray-600 hover:bg-gray-50"
@@ -809,7 +805,7 @@ const AdminDashboardWithdraw = () => {
                             )
                           }
                           disabled={currentPage === totalPages}
-                          className="px-4 py-2 border border-gray-100 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-50 font-light transition-colors"
+                          className="px-3 sm:px-4 py-2 border border-gray-100 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-50 font-light transition-colors text-xs sm:text-sm"
                         >
                           Next
                         </button>
