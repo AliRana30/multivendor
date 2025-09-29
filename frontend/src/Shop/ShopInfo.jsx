@@ -65,7 +65,7 @@ const ShopInfo = ({ isOwner }) => {
         <div className="flex justify-center mb-4 sm:mb-6">
           {seller?.avatar?.url ? (
             <img
-              src={`http://localhost:5000/${seller.avatar.url}`}
+              src={`http://https://multivendors-7cy2.onrender.com/${seller.avatar.url}`}
               alt="Shop Avatar"
               className="w-16 sm:w-20 h-16 sm:h-20 rounded-full object-cover border-4 border-gray-100 shadow-sm"
             />
@@ -157,3 +157,4 @@ const ShopInfo = ({ isOwner }) => {
 }
 
 export default ShopInfo
+
