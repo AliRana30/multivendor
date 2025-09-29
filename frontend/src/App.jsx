@@ -95,15 +95,24 @@ const getCurrentUser = async () => {
       dispatch({ type: "LoadSellerFail", payload: error.message });
     }
   };
+useEffect(() => {
+  getCurrentUser();
+  getCurrentSeller();
+}, []);
 
-  useEffect(() => {
-    getCurrentUser();
-    getCurrentSeller();
+useEffect(() => {
+  if (isSeller && seller?._id) {
+    const sellerPaths = ["/shop-dashboard"];
+    const isSellerRoute = sellerPaths.some(path =>
+      location.pathname.startsWith(path)
+    );
 
-    if (isSeller === true) {
-       navigate(`/shop/${seller._id}`);
+    if (!isSellerRoute) {
+      navigate(`/shop/${seller._id}`, { replace: true });
     }
-  },[isSeller , seller , navigate]);
+  }
+}, [isSeller, seller, navigate, location.pathname]);
+
 
   return (
     <>
