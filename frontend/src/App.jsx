@@ -102,7 +102,7 @@ useEffect(() => {
 
 useEffect(() => {
   if (isSeller && seller?._id) {
-    const authPages = ["/login", "/signup", "/shop-login", "/create-shop"];
+    const authPages = ["/shop-login", "/create-shop"];
 
     if (authPages.includes(location.pathname)) {
       navigate(`/shop/${seller._id}`, { replace: true });
