@@ -101,9 +101,9 @@ const getCurrentUser = async () => {
     getCurrentSeller();
 
     if (isSeller === true) {
-       navigate(`/shop/${seller._id}`, { replace: true });
+       navigate(`/shop/${seller._id}`);
     }
-  },[isSeller, navigate]);
+  },[isSeller , seller , navigate]);
 
   return (
     <>
