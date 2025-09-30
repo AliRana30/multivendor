@@ -141,13 +141,13 @@ const Header = () => {
       }
       
       if (typeof firstImage === 'object' && firstImage.url) {
-        return firstImage.url.startsWith('http') ? firstImage.url : `http://localhost:5000${firstImage.url}`;
+        return firstImage.url.startsWith('http') ? firstImage.url : `https://multivendors-7cy2.onrender.com${firstImage.url}`;
       }
       
       if (typeof firstImage === 'string') {
         return firstImage.startsWith('/') 
-          ? `http://localhost:5000${firstImage}`
-          : `http://localhost:5000/uploads/${firstImage}`;
+          ? `https://multivendors-7cy2.onrender.com${firstImage}`
+          : `https://multivendors-7cy2.onrender.com/uploads/${firstImage}`;
       }
     }
     
@@ -755,5 +755,6 @@ const Header = () => {
     </>
   );
 };
+
 
 export default Header;
