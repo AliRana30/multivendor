@@ -77,9 +77,9 @@ const OrderDetailsPage = () => {
         return imageObj;
       }
       if (imageObj.startsWith("/")) {
-        return `http://localhost:5000${imageObj}`;
+        return `https://multivendors-7cy2.onrender.com0${imageObj}`;
       }
-      return `http://localhost:5000/uploads/${imageObj}`;
+      return `https://multivendors-7cy2.onrender.com/uploads/${imageObj}`;
     }
 
     return "/placeholder-image.png";
@@ -671,5 +671,6 @@ const OrderDetailsPage = () => {
     </div>
   );
 };
+
 
 export default OrderDetailsPage;
