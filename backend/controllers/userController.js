@@ -32,7 +32,7 @@ export const signup = async (req, res) => {
     };
 
     const token = activationToken(userData);
-    const activationLink = `http://localhost:5173/activation/${token}`;
+    const activationLink = `https://multimarts.vercel.app/activation/${token}`;
 
     await sendmail({
       email: email,
@@ -402,3 +402,4 @@ export const updateUserPassword = async (req, res) => {
   }
 
 }
+
