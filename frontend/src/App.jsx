@@ -53,10 +53,12 @@ function App() {
 
   const hideHeaderFooterPaths = [
     "/login",
-    "/signup", 
+    "/signup",
+    "/shop-login",
     "/create-shop",
     "/dashboard",
-    "/admin"
+    "/admin/dashboard",
+    "/shop/:id",
   ];
 
   const shouldHideHeaderFooter = hideHeaderFooterPaths.some(path => 
