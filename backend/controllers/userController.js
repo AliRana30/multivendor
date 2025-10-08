@@ -115,10 +115,11 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
   try {
-    res.cookie("token", null, {
-      expires: new Date(Date.now()),
-      httpOnly: true,
-    });
+   res.clearCookie("token", {
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+});
 
     res.status(201).json({message : "Logout Successful"})
   } catch (error) {
@@ -402,4 +403,5 @@ export const updateUserPassword = async (req, res) => {
   }
 
 }
+
 
