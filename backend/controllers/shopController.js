@@ -136,8 +136,7 @@ export const ShopLoginController = async(req,res)=>{
 
 export const ShopLogoutController = async (req, res) => {
   try {
-    res.cookie("token", null, {
-  expires: new Date(Date.now()),
+    res.clearCookie("token", {
   httpOnly: true,
   secure: true,
   sameSite: "none",
@@ -394,6 +393,7 @@ export const deletePaymentMethodController = async (req, res) => {
     });
   }
 };
+
 
 
 
