@@ -44,7 +44,6 @@ const ProfileSideBar = () => {
         await api.get('/logout');
         toast.success('Logged out successfully');
         navigate('/');
-        window.location.reload(true);
         scrollTo(0, 0);
       } catch (error) {
         toast.error('Logout failed. Try again.');
@@ -155,7 +154,7 @@ const ProfileSideBar = () => {
                       ? 'bg-black text-white font-medium shadow-sm border border-red-100'
                       : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                   }
-                  ${option.name === 'Logout' ? 'hover:bg-black hover:text-white' : ''}
+                  ${option.name === 'Logout' ? 'text-white bg-black' : ''}
                 `}
               >
                 <span className={`text-lg ${active === option.name ? 'text-white' : 'text-gray-500'}`}>
@@ -228,5 +227,6 @@ const ProfileSideBar = () => {
     </div>
   );
 };
+
 
 export default ProfileSideBar;
