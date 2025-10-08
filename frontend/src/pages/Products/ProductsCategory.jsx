@@ -385,7 +385,7 @@ const ProductsCategory = () => {
                         className={`w-full h-10 font-medium text-sm rounded-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-md flex items-center justify-center gap-2 ${
                           product.stock === 0
                             ? "bg-gray-400 text-white cursor-not-allowed opacity-60"
-                            : "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                            : "bg-black text-white"
                         }`}
                         onClick={() => addToCartHandler(product)}
                       >
@@ -440,3 +440,4 @@ const ProductsCategory = () => {
 
 
 export default ProductsCategory;
+
