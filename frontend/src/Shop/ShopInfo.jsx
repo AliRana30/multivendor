@@ -20,8 +20,6 @@ const ShopInfo = ({ isOwner }) => {
     try {
       setIsLoggingOut(true)
       const { data } = await api.get("/shop-logout", { withCredentials: true })
-      window.location.reload()
-
       if (data.success) {
         toast.success(data.message || "Logged out successfully")
         Cookies.remove("seller_token")
@@ -157,5 +155,6 @@ const ShopInfo = ({ isOwner }) => {
 }
 
 export default ShopInfo
+
 
 
