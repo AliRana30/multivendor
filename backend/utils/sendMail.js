@@ -10,10 +10,11 @@ export const sendmail = async (options) => {
       subject: options.subject,
       html: `<p>${options.message}</p>`,
     });
-
     console.log("Email sent successfully ✅");
   } catch (error) {
+    console.log("Resend key loaded:", !!process.env.RESEND_API_KEY);
     console.error("Email sending failed ❌", error);
   }
 };
+
 
