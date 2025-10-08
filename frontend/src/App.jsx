@@ -58,7 +58,7 @@ function App() {
     "/create-shop",
     "/dashboard",
     "/admin/dashboard",
-    "/shop/:id",
+    "/shop-dashboard",
   ];
 
   const shouldHideHeaderFooter = hideHeaderFooterPaths.some(path => 
