@@ -5,10 +5,10 @@ export const sendmail = async (options) => {
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     await resend.emails.send({
-      from: "noreply@yourdomain.com", // 👈 Replace with your verified domain sender
+      from: "noreply@multimarts.vercel.app", 
       to: options.email,
       subject: options.subject,
-      html: `<p>${options.message}</p>`, // or use HTML templates if you prefer
+      html: `<p>${options.message}</p>`,
     });
 
     console.log("Email sent successfully ✅");
@@ -16,3 +16,4 @@ export const sendmail = async (options) => {
     console.error("Email sending failed ❌", error);
   }
 };
+
