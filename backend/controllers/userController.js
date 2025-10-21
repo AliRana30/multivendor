@@ -9,27 +9,17 @@ export const signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // Check if user already exists
     const existingUser = await usermodel.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({
-        success: false,
-        message: "User already exists",
-      });
+      return res.status(400).json({ success: false, message: "User already exists" });
     }
 
-    // Check file upload
-    const filename = req.file?.filename;
-    if (!filename) {
-      return res.status(400).json({
-        success: false,
-        message: "No file uploaded",
-      });
-    }
-
+    const filename = req.file?.filename || "default.png";
     const filePath = `/uploads/${filename}`;
-    
-    // Create new user
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     const newUser = new usermodel({
       name,
       email,
@@ -39,9 +29,10 @@ export const signup = async (req, res) => {
         url: filePath,
       },
     });
+
     await newUser.save();
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       message: "User registered successfully",
       user: {
@@ -49,18 +40,13 @@ export const signup = async (req, res) => {
         name: newUser.name,
         email: newUser.email,
         avatar: newUser.avatar,
-        role: newUser.role || "user",
       },
     });
 
   } catch (error) {
-  console.error("Signup error full:", error);
-  return res.status(500).json({
-    success: false,
-    message: error.message,
-    stack: error.stack,
-  });
-}
+    console.error("Signup error:", error);
+    res.status(500).json({ success: false, message: "Signup failed" });
+  }
 };
 
 export const login = async (req, res) => {
@@ -419,6 +405,7 @@ export const updateUserPassword = async (req, res) => {
   }
 
 }
+
 
 
 
