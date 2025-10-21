@@ -36,7 +36,7 @@ const Signup = () => {
       await api.post("/signup", form, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      toast.success(`Signup successful, check your Gmail ${email} to activate your account`);
+      toast.success(`Signup successful`);
       setFullName("");
       setEmail("");
       setPassword("");
@@ -191,3 +191,4 @@ const Signup = () => {
 };
 
 export default Signup;
+
