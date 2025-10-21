@@ -28,11 +28,7 @@ export const signup = async (req, res) => {
     }
 
     const filePath = `/uploads/${filename}`;
-
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
+    
     // Create new user
     const newUser = new usermodel({
       name,
@@ -422,6 +418,7 @@ export const updateUserPassword = async (req, res) => {
   }
 
 }
+
 
 
 
