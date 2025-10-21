@@ -79,7 +79,7 @@ export const login = async (req, res) => {
     }
 
     // Find user and include password
-    const user = await usermodel.findOne({ email });
+    const user = await usermodel.findOne({ email }).select("+password");
 
     if (!user) {
       return res.status(401).json({
@@ -422,6 +422,7 @@ export const updateUserPassword = async (req, res) => {
   }
 
 }
+
 
 
 
