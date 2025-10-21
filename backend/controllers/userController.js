@@ -54,12 +54,13 @@ export const signup = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Signup error:", error.message);
-    return res.status(500).json({
-      success: false,
-      message: "Can't create user. Please try again.",
-    });
-  }
+  console.error("Signup error full:", error);
+  return res.status(500).json({
+    success: false,
+    message: error.message,
+    stack: error.stack,
+  });
+}
 };
 
 export const login = async (req, res) => {
@@ -418,6 +419,7 @@ export const updateUserPassword = async (req, res) => {
   }
 
 }
+
 
 
 
