@@ -9,44 +9,60 @@ export const signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
+    // Check if user already exists
     const existingUser = await usermodel.findOne({ email });
     if (existingUser) {
-      return res.status(400).json("User already exists");
+      return res.status(400).json({
+        success: false,
+        message: "User already exists",
+      });
     }
 
+    // Check file upload
     const filename = req.file?.filename;
     if (!filename) {
-      return res.status(400).json("No file uploaded");
+      return res.status(400).json({
+        success: false,
+        message: "No file uploaded",
+      });
     }
 
     const filePath = `/uploads/${filename}`;
 
-    const userData = {
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create new user
+    const newUser = new usermodel({
       name,
       email,
-      password,
+      password: hashedPassword,
       avatar: {
         public_id: filename,
         url: filePath,
       },
-    };
-
-    const token = activationToken(userData);
-    const activationLink = `https://multimarts.vercel.app/activation/${token}`;
-
-    await sendmail({
-      email: email,
-      subject: "Activate Your Account",
-      message: `Hello ${name}, click here to activate your account: ${activationLink}`,
     });
+    await newUser.save();
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
-      message: `Check your email ${email} to activate your account.`,
+      message: "User registered successfully",
+      user: {
+        _id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        avatar: newUser.avatar,
+        role: newUser.role || "user",
+      },
     });
+
   } catch (error) {
     console.error("Signup error:", error.message);
-    res.status(500).json("Can't create user");
+    return res.status(500).json({
+      success: false,
+      message: "Can't create user. Please try again.",
+    });
   }
 };
 
@@ -403,5 +419,6 @@ export const updateUserPassword = async (req, res) => {
   }
 
 }
+
 
 
