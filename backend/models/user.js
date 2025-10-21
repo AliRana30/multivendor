@@ -68,25 +68,6 @@ const userSchema = new mongoose.Schema({
  resetPasswordTime: Date,
 });
 
-userSchema.pre("save", async function (next) {
-  if(this.isModified("password")){
-    this.password = await bcrypt.hash(this.password, 10);
-  }
-  
-  if (this.addresses && this.addresses.length > 0) {
-    this.addresses.forEach(addr => {
-      if (addr.address && !addr.address1) {
-        addr.address1 = addr.address;
-      }
-      if (addr.address1 && !addr.address) {
-        addr.address = addr.address1;
-      }
-    });
-  }
-  
-  next();
-});
-
 // jwt token
 userSchema.methods.getJwtToken = function () {
   return jwt.sign({ id: this._id}, process.env.JWT_SECRET_KEY,{
@@ -100,5 +81,6 @@ userSchema.methods.comparePassword = async function (enteredPassword) {
 };
 
 const usermodel = mongoose.model("User", userSchema);
+
 
 export default usermodel
