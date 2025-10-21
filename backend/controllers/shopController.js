@@ -8,6 +8,7 @@ export const shopController = async (req, res) => {
   try {
     const { name, email, password, address, phoneNumber, zipCode } = req.body;
 
+    // check for file upload
     if (!req.file) {
       return res.status(400).json({
         success: false,
@@ -18,13 +19,13 @@ export const shopController = async (req, res) => {
     const filename = req.file.filename;
     const fileUrl = `uploads/${filename}`;
 
+    // required fields validation
     const requiredFields = { name, email, password, address, phoneNumber, zipCode };
     for (const key in requiredFields) {
       if (!requiredFields[key]) {
         fs.unlink(`uploads/${filename}`, (err) => {
           if (err) console.error("File delete error:", err);
         });
-
         return res.status(400).json({
           success: false,
           message: `Missing required field: ${key}`,
@@ -32,49 +33,53 @@ export const shopController = async (req, res) => {
       }
     }
 
-    const avatar = {
-      url: fileUrl,
-      public_id: filename,
-    };
+    // check if shop already exists
+    const existingShop = await Shop.findOne({ email });
+    if (existingShop) {
+      fs.unlink(`uploads/${filename}`, (err) => {
+        if (err) console.error("File delete error:", err);
+      });
+      return res.status(400).json({
+        success: false,
+        message: "Shop with this email already exists",
+      });
+    }
 
-    const seller = {
+    // hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // create new shop
+    const newShop = new Shop({
       name,
       email,
-      password,
-      avatar,
+      password: hashedPassword,
+      avatar: {
+        url: fileUrl,
+        public_id: filename,
+      },
       address,
       phoneNumber,
       zipCode,
-    };
+    });
 
-    const existingShops = await Shop.find({ email });
+    await newShop.save();
 
-    if (existingShops.length === 0) {
-      const token = activationToken(seller);
-      const activationLink = `http://localhost:5173/seller/activation/${token}`;
-
-      await sendmail({
-        email,
-        subject: "Activate Your Account",
-        message: `Hello ${name}, click here to activate your shop account: ${activationLink}`,
-      });
-
-      return res.status(201).json({
-        success: true,
-        message: "Activation link sent to your email!",
-      });
-    } else {
-      const newShop = new Shop(seller);
-      await newShop.save();
-
-      return res.status(201).json({
-        success: true,
-        message: "Shop created without activation as email already exists.",
-        shop: newShop,
-      });
-    }
+    return res.status(201).json({
+      success: true,
+      message: "Shop registered successfully!",
+      shop: {
+        _id: newShop._id,
+        name: newShop.name,
+        email: newShop.email,
+        phoneNumber: newShop.phoneNumber,
+        address: newShop.address,
+        zipCode: newShop.zipCode,
+        avatar: newShop.avatar,
+      },
+    });
   } catch (error) {
     console.error("Shop creation error:", error.message);
+
     if (req.file?.filename) {
       fs.unlink(`uploads/${req.file.filename}`, (err) => {
         if (err) console.error("File delete error:", err);
@@ -393,6 +398,7 @@ export const deletePaymentMethodController = async (req, res) => {
     });
   }
 };
+
 
 
 
