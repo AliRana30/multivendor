@@ -70,52 +70,55 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // Validate input
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: "Both email and password are required."
+        message: "Both email and password are required.",
       });
     }
 
-    const findUser = await usermodel.findOne({ email }).select("+password");
+    // Find user and include password
+    const user = await usermodel.findOne({ email }).select("+password");
 
-    if (!findUser) {
+    if (!user) {
       return res.status(401).json({
         success: false,
-        message: "Invalid email or password"
+        message: "Invalid email or password",
       });
     }
 
-    // Compare password
-    const isPasswordValid = await bcrypt.compare(password, findUser.password);
-
-    if (!isPasswordValid) {
+    // Compare passwords properly
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: "Invalid email or password"
+        message: "Invalid email or password",
       });
     }
 
-    // Generate token
-    const token = authtoken(findUser);
+    // Generate authentication token
+    const token = authtoken(user);
 
-    // Set cookie
+    // Set cookie for 7 days
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true, 
-      sameSite: "none",
-      maxAge: 7 * 24 * 60 * 60 * 1000, 
+      secure: true, // set to false if testing locally without HTTPS
+      sameSite: "none", // change to "lax" if same-origin
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
+    // Send success response
     return res.status(200).json({
       success: true,
       message: "Login successful",
+      token,
       user: {
-        _id: findUser._id,
-        name: findUser.name,
-        email: findUser.email,
-        avatar: findUser.avatar,
-        role: findUser.role || 'user',
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar,
+        role: user.role || "user",
       },
     });
 
@@ -123,7 +126,7 @@ export const login = async (req, res) => {
     console.error("Login error:", error.message);
     return res.status(500).json({
       success: false,
-      message: "Internal server error. Please try again later."
+      message: "Internal server error. Please try again later.",
     });
   }
 };
@@ -419,6 +422,7 @@ export const updateUserPassword = async (req, res) => {
   }
 
 }
+
 
 
 
