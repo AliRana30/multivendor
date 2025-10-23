@@ -13,6 +13,9 @@ adminRouter.get("/admin-revenue",isAdmin,getAdminRevenue)
 
 adminRouter.delete("/delete-user/:id",isAdmin,deleteUserController)
 adminRouter.delete("/delete-shop/:id",isAdmin,deleteShopController)
+adminRouter.delete("/delete-shop-event/:id",isAdmin,deleteEventController)
+
+
 
 
 
