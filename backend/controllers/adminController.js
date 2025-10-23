@@ -369,4 +369,45 @@ export const getAdminRevenue = async (req, res) => {
       error: error.message
     });
   }
+
+};
+
+// delete event for admin
+export const deleteEventController = async (req, res) => {
+  try {
+    const { id } = req.params; 
+    
+    if (!id || !id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid event ID format"
+      });
+    }
+    
+    const event = await Event.findById(id);
+
+    if (!event) {
+      return res.status(404).json({
+        success: false,
+        message: "Event not found"
+      });
+    }
+    
+    await Event.findByIdAndDelete(id);
+    
+    console.log(`Event ${event.name} deleted successfully`);
+    
+    res.status(200).json({
+      success: true,
+      message: `Event ${event.name} deleted successfully`
+    });
+    
+  } catch (error) {
+    console.error("❌ Delete event error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete event",
+      error: process.env.NODE_ENV === 'development' ? error.message : "Something went wrong"
+    });
+  }
 };
