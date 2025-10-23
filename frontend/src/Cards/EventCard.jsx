@@ -340,7 +340,7 @@ const EventCard = ({ event, onEventUpdate }) => {
             className={`w-full py-3 px-4 font-semibold rounded-lg transition-all duration-300 transform hover:scale-[1.02] shadow-md flex items-center justify-center gap-2 text-sm sm:text-base ${
               !canAddToCart || isLoading
                 ? 'bg-gray-400 text-white cursor-not-allowed opacity-60'
-                : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white hover:shadow-lg'
+                : 'bg-black text-white hover:shadow-lg'
             }`}
             onClick={addToCartHandler}
           >
@@ -398,3 +398,4 @@ const EventCard = ({ event, onEventUpdate }) => {
 
 
 export default EventCard;
+
