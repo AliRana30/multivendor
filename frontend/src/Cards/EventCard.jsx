@@ -65,13 +65,13 @@ const EventCard = ({ event, onEventUpdate }) => {
           return event.image;
         }
         if (event.image.startsWith('/')) {
-          return `http://localhost:5000${event.image}`;
+          return `https://multivendors-7cy2.onrender.com${event.image}`;
         }
-        return `http://localhost:5000/uploads/${event.image}`;
+        return `https://multivendors-7cy2.onrender.com/uploads/${event.image}`;
       }
       
       if (typeof event.image === 'object' && event.image.url) {
-        return event.image.url.startsWith('http') ? event.image.url : `http://localhost:5000${event.image.url}`;
+        return event.image.url.startsWith('http') ? event.image.url : `https://multivendors-7cy2.onrender.com${event.image.url}`;
       }
     }
 
@@ -398,4 +398,5 @@ const EventCard = ({ event, onEventUpdate }) => {
 
 
 export default EventCard;
+
 
