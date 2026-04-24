@@ -386,7 +386,7 @@ const ProductsCategory = () => {
                         onClick={() => addToCartHandler(product)}
                       >
                         <BsCartPlus className="text-sm" />
-                        <span >
+                        <span>
                           {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
                         </span>
                       </button>
