@@ -197,265 +197,286 @@ const ShopWithdrawMoney = () => {
     }
   };
 
-  // Components
-  const BalanceCard = () => (
-    <div className="bg-white p-4 md:p-6 rounded-lg shadow-md mb-6">
-      <div className="flex items-center gap-3 mb-3">
-        <DollarSign className="w-6 h-6 text-green-600" />
-        <h3 className="text-lg font-semibold">Available Balance</h3>
+// Components
+const BalanceCard = ({ availableBalance, totalWithdrawn }) => (
+  <div className="bg-white p-4 md:p-6 rounded-lg shadow-md mb-6">
+    <div className="flex items-center gap-3 mb-3">
+      <DollarSign className="w-6 h-6 text-green-600" />
+      <h3 className="text-lg font-semibold">Available Balance</h3>
+    </div>
+    <p className="text-2xl md:text-3xl font-bold text-green-600 mb-2">
+      ${availableBalance.toLocaleString()}
+    </p>
+    <p className="text-sm text-gray-500">Current withdrawable balance</p>
+    {totalWithdrawn > 0 && (
+      <div className="mt-3 pt-3 border-t border-gray-200">
+        <p className="text-sm text-gray-600">
+          <span className="font-medium">Total Withdrawn:</span> ${totalWithdrawn.toLocaleString()}
+        </p>
       </div>
-      <p className="text-2xl md:text-3xl font-bold text-green-600 mb-2">
-        ${availableBalance.toLocaleString()}
-      </p>
-      <p className="text-sm text-gray-500">Current withdrawable balance</p>
-      {totalWithdrawn > 0 && (
-        <div className="mt-3 pt-3 border-t border-gray-200">
-          <p className="text-sm text-gray-600">
-            <span className="font-medium">Total Withdrawn:</span> ${totalWithdrawn.toLocaleString()}
-          </p>
+    )}
+  </div>
+);
+
+const BankAccountsList = ({ bankAccounts, setShowAddBankModal, handleDeleteBankAccount, deleteLoading, setSelectedBank, selectedBank }) => {
+  if (!bankAccounts.length) return null;
+
+  return (
+    <div className="bg-white p-4 md:p-6 rounded-lg shadow-md mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+        <div className="flex items-center gap-2">
+          <CreditCard className="w-5 h-5 text-blue-600" />
+          <h3 className="text-lg font-semibold">Your Bank Accounts</h3>
+        </div>
+        <button
+          onClick={() => setShowAddBankModal(true)}
+          className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium px-3 py-1.5 rounded-md hover:bg-blue-50 transition-colors"
+        >
+          <Plus className="w-4 h-4" />
+          Add New Account
+        </button>
+      </div>
+      <div className="grid gap-3">
+        {bankAccounts.map((account, index) => (
+          <div key={index} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+            <div className="min-w-0 flex-1">
+              <h4 className="font-medium text-gray-800 truncate">{account.bankName}</h4>
+              <p className="text-sm text-gray-600 truncate">{account.accountHolderName}</p>
+              <p className="text-sm text-gray-500 font-mono">
+                {"*".repeat(Math.max(0, account.accountNumber?.length - 4)) + account.accountNumber.slice(-4)}
+              </p>
+            </div>
+            <button
+              onClick={() => handleDeleteBankAccount(account.accountNumber)}
+              disabled={deleteLoading === account.accountNumber}
+              className="text-red-600 hover:text-red-800 p-2 rounded-md hover:bg-red-50 transition-colors disabled:opacity-50 ml-2"
+              title="Delete bank account"
+            >
+              {deleteLoading === account.accountNumber ? (
+                <div className="w-5 h-5 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Trash className="w-5 h-5" />
+              )}
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const WithdrawalForm = ({ 
+  handleWithdrawSubmit, 
+  bankAccounts, 
+  selectedBank, 
+  setSelectedBank, 
+  setShowAddBankModal, 
+  withdrawAmount, 
+  setWithdrawAmount, 
+  availableBalance, 
+  calculateNetAmount, 
+  withdrawalError 
+}) => (
+  <form onSubmit={handleWithdrawSubmit} className="bg-white p-4 md:p-6 rounded-lg shadow-md">
+    <h3 className="text-lg font-semibold mb-4">Withdrawal Request</h3>
+    
+    {/* Bank Account Selection */}
+    <div className="mb-4">
+      <label className="block text-sm font-medium text-gray-700 mb-2">Select Bank Account</label>
+      {bankAccounts.length > 0 ? (
+        <select
+          value={selectedBank}
+          onChange={(e) => setSelectedBank(e.target.value)}
+          className="w-full border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          required
+        >
+          <option value="">Choose bank account</option>
+          {bankAccounts.map((account, index) => (
+            <option key={index} value={account.accountNumber}>
+              {account.bankName} - {"*".repeat(Math.max(0, account.accountNumber.length - 4)) + account.accountNumber.slice(-4)} ({account.accountHolderName})
+            </option>
+          ))}
+        </select>
+      ) : (
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+          <p className="text-gray-500 mb-3">No bank accounts added</p>
+          <button
+            type="button"
+            onClick={() => setShowAddBankModal(true)}
+            className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+          >
+            Add Bank Account
+          </button>
         </div>
       )}
     </div>
-  );
 
-  const BankAccountsList = () => {
-    if (!bankAccounts.length) return null;
-
-    return (
-      <div className="bg-white p-4 md:p-6 rounded-lg shadow-md mb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-          <div className="flex items-center gap-2">
-            <CreditCard className="w-5 h-5 text-blue-600" />
-            <h3 className="text-lg font-semibold">Your Bank Accounts</h3>
-          </div>
-          <button
-            onClick={() => setShowAddBankModal(true)}
-            className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium px-3 py-1.5 rounded-md hover:bg-blue-50 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            Add New Account
-          </button>
-        </div>
-        <div className="grid gap-3">
-          {bankAccounts.map((account, index) => (
-            <div key={index} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-              <div className="min-w-0 flex-1">
-                <h4 className="font-medium text-gray-800 truncate">{account.bankName}</h4>
-                <p className="text-sm text-gray-600 truncate">{account.accountHolderName}</p>
-                <p className="text-sm text-gray-500 font-mono">
-                  {"*".repeat(Math.max(0, account.accountNumber?.length - 4)) + account.accountNumber.slice(-4)}
-                </p>
-              </div>
-              <button
-                onClick={() => handleDeleteBankAccount(account.accountNumber)}
-                disabled={deleteLoading === account.accountNumber}
-                className="text-red-600 hover:text-red-800 p-2 rounded-md hover:bg-red-50 transition-colors disabled:opacity-50 ml-2"
-                title="Delete bank account"
-              >
-                {deleteLoading === account.accountNumber ? (
-                  <div className="w-5 h-5 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <Trash className="w-5 h-5" />
-                )}
-              </button>
+    {/* Amount Input */}
+    <div className="mb-4">
+      <label className="block text-sm font-medium text-gray-700 mb-2">Withdrawal Amount ($)</label>
+      <input
+        type="number"
+        value={withdrawAmount}
+        onChange={(e) => setWithdrawAmount(e.target.value)}
+        className="w-full border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        placeholder="Enter amount"
+        min="1"
+        max={availableBalance}
+        required
+      />
+      <div className="mt-2 space-y-1">
+        <p className="text-sm text-gray-500">Maximum: ${availableBalance.toLocaleString()}</p>
+        {withdrawAmount && parseFloat(withdrawAmount) > 0 && (
+          <div className="text-sm bg-yellow-50 p-3 rounded border border-yellow-200">
+            <div className="space-y-1">
+              <p className="text-yellow-800"><span className="font-medium">Amount:</span> ${parseFloat(withdrawAmount).toFixed(2)}</p>
+              <p className="text-yellow-800"><span className="font-medium">Platform fee (10%):</span> ${(parseFloat(withdrawAmount) * 0.1).toFixed(2)}</p>
+              <p className="text-yellow-800 font-semibold"><span className="font-medium">You receive:</span> ${calculateNetAmount(withdrawAmount).toFixed(2)}</p>
             </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const WithdrawalForm = () => (
-    <form onSubmit={handleWithdrawSubmit} className="bg-white p-4 md:p-6 rounded-lg shadow-md">
-      <h3 className="text-lg font-semibold mb-4">Withdrawal Request</h3>
-      
-      {/* Bank Account Selection */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Select Bank Account</label>
-        {bankAccounts.length > 0 ? (
-          <select
-            value={selectedBank}
-            onChange={(e) => setSelectedBank(e.target.value)}
-            className="w-full border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            required
-          >
-            <option value="">Choose bank account</option>
-            {bankAccounts.map((account, index) => (
-              <option key={index} value={account.accountNumber}>
-                {account.bankName} - {"*".repeat(Math.max(0, account.accountNumber.length - 4)) + account.accountNumber.slice(-4)} ({account.accountHolderName})
-              </option>
-            ))}
-          </select>
-        ) : (
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-            <p className="text-gray-500 mb-3">No bank accounts added</p>
-            <button
-              type="button"
-              onClick={() => setShowAddBankModal(true)}
-              className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
-            >
-              Add Bank Account
-            </button>
           </div>
         )}
       </div>
+    </div>
 
-      {/* Amount Input */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Withdrawal Amount ($)</label>
-        <input
-          type="number"
-          value={withdrawAmount}
-          onChange={(e) => setWithdrawAmount(e.target.value)}
-          className="w-full border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="Enter amount"
-          min="1"
-          max={availableBalance}
-          required
-        />
-        <div className="mt-2 space-y-1">
-          <p className="text-sm text-gray-500">Maximum: ${availableBalance.toLocaleString()}</p>
-          {withdrawAmount && parseFloat(withdrawAmount) > 0 && (
-            <div className="text-sm bg-yellow-50 p-3 rounded border border-yellow-200">
-              <div className="space-y-1">
-                <p className="text-yellow-800"><span className="font-medium">Amount:</span> ${parseFloat(withdrawAmount).toFixed(2)}</p>
-                <p className="text-yellow-800"><span className="font-medium">Platform fee (10%):</span> ${(parseFloat(withdrawAmount) * 0.1).toFixed(2)}</p>
-                <p className="text-yellow-800 font-semibold"><span className="font-medium">You receive:</span> ${calculateNetAmount(withdrawAmount).toFixed(2)}</p>
-              </div>
-            </div>
-          )}
-        </div>
+    {withdrawalError && (
+      <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+        {withdrawalError}
       </div>
+    )}
 
-      {withdrawalError && (
-        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-          {withdrawalError}
-        </div>
-      )}
+    <button
+      type="submit"
+      disabled={!bankAccounts.length}
+      className={`w-full py-3 px-4 rounded-md font-medium transition-colors ${
+        bankAccounts.length
+          ? 'bg-black text-white'
+          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+      }`}
+    >
+      Submit Withdrawal Request
+    </button>
+  </form>
+);
 
-      <button
-        type="submit"
-        disabled={!bankAccounts.length}
-        className={`w-full py-3 px-4 rounded-md font-medium transition-colors ${
-          bankAccounts.length
-            ? 'bg-black text-white'
-            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-        }`}
-      >
-        Submit Withdrawal Request
-      </button>
-    </form>
-  );
+const AddBankModal = ({ 
+  showAddBankModal, 
+  resetBankForm, 
+  loading, 
+  handleAddBankAccount, 
+  bankForm, 
+  handleBankFormChange, 
+  pakistaniBanks, 
+  showPin, 
+  setShowPin 
+}) => (
+  showAddBankModal && (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-4 md:p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold">Add Bank Account</h3>
+            <button onClick={resetBankForm} disabled={loading} className="text-gray-500 hover:text-gray-700">
+              ✕
+            </button>
+          </div>
 
-  const AddBankModal = () => (
-    showAddBankModal && (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-          <div className="p-4 md:p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">Add Bank Account</h3>
-              <button onClick={resetBankForm} disabled={loading} className="text-gray-500 hover:text-gray-700">
-                ✕
-              </button>
+          <form onSubmit={handleAddBankAccount} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Select Bank *</label>
+              <select
+                name="bankName"
+                value={bankForm.bankName}
+                onChange={handleBankFormChange}
+                className="w-full border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-blue-500"
+                required
+                disabled={loading}
+              >
+                <option value="">Choose your bank</option>
+                {pakistaniBanks.map((bank) => (
+                  <option key={bank} value={bank}>{bank}</option>
+                ))}
+              </select>
             </div>
 
-            <form onSubmit={handleAddBankAccount} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Select Bank *</label>
-                <select
-                  name="bankName"
-                  value={bankForm.bankName}
-                  onChange={handleBankFormChange}
-                  className="w-full border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-blue-500"
-                  required
-                  disabled={loading}
-                >
-                  <option value="">Choose your bank</option>
-                  {pakistaniBanks.map((bank) => (
-                    <option key={bank} value={bank}>{bank}</option>
-                  ))}
-                </select>
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Account Holder Name *</label>
+              <input
+                type="text"
+                name="accountHolderName"
+                value={bankForm.accountHolderName}
+                onChange={handleBankFormChange}
+                className="w-full border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter account holder name"
+                required
+                disabled={loading}
+              />
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Account Holder Name *</label>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Account Number *</label>
+              <input
+                type="text"
+                name="accountNumber"
+                value={bankForm.accountNumber}
+                onChange={handleBankFormChange}
+                className="w-full border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter account number"
+                required
+                disabled={loading}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">4-Digit PIN *</label>
+              <div className="relative">
                 <input
-                  type="text"
-                  name="accountHolderName"
-                  value={bankForm.accountHolderName}
+                  type={showPin ? "text" : "password"}
+                  name="pin"
+                  value={bankForm.pin}
                   onChange={handleBankFormChange}
-                  className="w-full border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter account holder name"
+                  className="w-full border border-gray-300 rounded-md p-3 pr-10 focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter 4-digit PIN"
+                  maxLength="4"
                   required
                   disabled={loading}
                 />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Account Number *</label>
-                <input
-                  type="text"
-                  name="accountNumber"
-                  value={bankForm.accountNumber}
-                  onChange={handleBankFormChange}
-                  className="w-full border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter account number"
-                  required
-                  disabled={loading}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">4-Digit PIN *</label>
-                <div className="relative">
-                  <input
-                    type={showPin ? "text" : "password"}
-                    name="pin"
-                    value={bankForm.pin}
-                    onChange={handleBankFormChange}
-                    className="w-full border border-gray-300 rounded-md p-3 pr-10 focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter 4-digit PIN"
-                    maxLength="4"
-                    required
-                    disabled={loading}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPin(!showPin)}
-                    className="absolute right-3 top-3 text-gray-500 hover:text-gray-700"
-                  >
-                    {showPin ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex gap-3 pt-2">
                 <button
                   type="button"
-                  onClick={resetBankForm}
-                  className="flex-1 py-2 px-4 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
-                  disabled={loading}
+                  onClick={() => setShowPin(!showPin)}
+                  className="absolute right-3 top-3 text-gray-500 hover:text-gray-700"
                 >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center justify-center"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  ) : (
-                    'Add Account'
-                  )}
+                  {showPin ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
-            </form>
-          </div>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button
+                type="button"
+                onClick={resetBankForm}
+                className="flex-1 py-2 px-4 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+                disabled={loading}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="flex-1 py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center justify-center"
+                disabled={loading}
+              >
+                {loading ? (
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  'Add Account'
+                )}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
-    )
-  );
+    </div>
+  )
+);
 
   return (
     <div className="flex flex-col h-screen text-black">
@@ -481,14 +502,45 @@ const ShopWithdrawMoney = () => {
           <div className="max-w-2xl mx-auto">
             <h2 className="text-xl md:text-2xl font-bold mb-6 text-gray-800">Withdraw Money</h2>
             
-            <BalanceCard />
-            <BankAccountsList />
-            <WithdrawalForm />
+            <BalanceCard 
+              availableBalance={availableBalance} 
+              totalWithdrawn={totalWithdrawn} 
+            />
+            <BankAccountsList 
+              bankAccounts={bankAccounts} 
+              setShowAddBankModal={setShowAddBankModal} 
+              handleDeleteBankAccount={handleDeleteBankAccount} 
+              deleteLoading={deleteLoading} 
+              setSelectedBank={setSelectedBank} 
+              selectedBank={selectedBank} 
+            />
+            <WithdrawalForm 
+              handleWithdrawSubmit={handleWithdrawSubmit} 
+              bankAccounts={bankAccounts} 
+              selectedBank={selectedBank} 
+              setSelectedBank={setSelectedBank} 
+              setShowAddBankModal={setShowAddBankModal} 
+              withdrawAmount={withdrawAmount} 
+              setWithdrawAmount={setWithdrawAmount} 
+              availableBalance={availableBalance} 
+              calculateNetAmount={calculateNetAmount} 
+              withdrawalError={withdrawalError} 
+            />
           </div>
         </div>
       </div>
 
-      <AddBankModal />
+      <AddBankModal 
+        showAddBankModal={showAddBankModal} 
+        resetBankForm={resetBankForm} 
+        loading={loading} 
+        handleAddBankAccount={handleAddBankAccount} 
+        bankForm={bankForm} 
+        handleBankFormChange={handleBankFormChange} 
+        pakistaniBanks={pakistaniBanks} 
+        showPin={showPin} 
+        setShowPin={setShowPin} 
+      />
     </div>
   );
 };

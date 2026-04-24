@@ -42,7 +42,7 @@ const Events = () => {
               <div className="w-8 h-8 bg-red-100 rounded-full"></div>
             </div>
             <h3 className="text-xl font-medium text-gray-900 mb-2">Something went wrong</h3>
-            <p className="text-gray-500 text-sm leading-relaxed">{currentError}</p>
+            <p className="text-gray-500 text-sm leading-relaxed"></p>
           </div>
           <button 
             onClick={() => dispatch(getAllEventsFromAllSellers())}

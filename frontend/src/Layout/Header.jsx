@@ -408,7 +408,7 @@ const Header = () => {
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
         
-        <div className="relative max-w-7xl mx-auto py-3 px-4 sm:px-6 lg:px-8 border-b border-gray-200">          
+        <div className="relative max-w-7xl mx-auto py-3 px-2 sm:px-6 lg:px-8 border-b border-gray-200">          
           {/* Mobile Header */}
           <div className="flex lg:hidden items-center justify-between h-14">
             <motion.button
