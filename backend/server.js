@@ -23,7 +23,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 const PORT = process.env.PORT || 5000;
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+const FRONTEND_URL = process.env.VITE_SERVER;
 
 const corsOptions = {
     origin: FRONTEND_URL,
