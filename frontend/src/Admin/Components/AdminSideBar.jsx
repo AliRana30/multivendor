@@ -92,20 +92,19 @@ const AdminSideBar = ({ isCollapsed }) => {
                       ? activeColorVariants[item.color] 
                       : `text-gray-700 ${colorVariants[item.color]}`
                     }
-                    hover:transform hover:scale-105 hover:shadow-sm
+                    hover:shadow-sm
                     focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-2
                   `}
                   title={isCollapsed ? item.label : ''}
                 >
                   <span className={`
-                    text-xl transition-transform duration-200
-                    ${isActive ? 'scale-110' : 'group-hover:scale-110'}
+                    text-xl
                     ${isCollapsed ? 'mx-auto' : ''}
                   `}>
                     {item.icon}
                   </span>
                   {!isCollapsed && (
-                    <span className="font-medium text-sm whitespace-nowrap group-hover:translate-x-1 transition-transform duration-200">
+                    <span className="font-medium text-sm whitespace-nowrap">
                       {item.label}
                     </span>
                   )}
