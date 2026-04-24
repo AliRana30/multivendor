@@ -553,7 +553,13 @@ const Header = () => {
               {isAuthenticated ? (
                 <Link to="/profile" className="flex-shrink-0">
                   <Avatar
-                    src={currentUser?.avatar?.url ? `http://localhost:5000${currentUser.avatar.url}` : "/default-avatar.png"}
+                    src={
+                      currentUser?.avatar?.url 
+                        ? (currentUser.avatar.url.startsWith("/uploads/") 
+                            ? `http://localhost:5000${currentUser.avatar.url}?${Date.now()}` 
+                            : `http://localhost:5000/uploads/${currentUser.avatar.url}?${Date.now()}`)
+                        : "/default-avatar.png"
+                    }
                     sx={{ width: 32, height: 32 }}
                     className="border border-gray-200 hover:border-gray-300 transition-colors duration-200"
                   />
@@ -699,7 +705,13 @@ const Header = () => {
                         onClick={closeMobileMenu}
                       >
                         <Avatar
-                          src={currentUser?.avatar?.url ? `http://localhost:5000${currentUser.avatar.url}` : "/default-avatar.png"}
+                        src={
+                          currentUser?.avatar?.url 
+                            ? (currentUser.avatar.url.startsWith("/uploads/") 
+                                ? `http://localhost:5000${currentUser.avatar.url}?${Date.now()}` 
+                                : `http://localhost:5000/uploads/${currentUser.avatar.url}?${Date.now()}`)
+                            : "/default-avatar.png"
+                        }
                           className="mr-3"
                           sx={{ width: 24, height: 24 }}
                         />

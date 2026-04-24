@@ -236,7 +236,7 @@ export const updateUserAvatar = async (req, res) => {
       }
     }
 
-    const fileUrl = req.file.filename;
+    const fileUrl = `/uploads/${req.file.filename}`;
     console.log('New file URL:', fileUrl);
 
     const user = await usermodel.findByIdAndUpdate(

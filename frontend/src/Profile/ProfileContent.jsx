@@ -605,6 +605,10 @@ const TrackOrders = ({ orders }) => {
           ))}
         </div>
       )}
+    </div>
+  );
+};
+
 const ChangePassword = ({ oldPassword, setOldPassword, newPassword, setNewPassword, confirmNewPassword, setConfirmNewPassword, isChangingPassword, handlePasswordChange }) => (
   <div className="bg-white p-6 rounded-lg shadow-md text-black">
     <h2 className="text-xl font-bold mb-6">Change Password</h2>
@@ -1033,6 +1037,7 @@ const AddressContent = ({ dispatch }) => {
 const ProfileContent = ({ option }) => {
   const { user, error } = useSelector((state) => state.user);
   const { loading: productLoading } = useSelector((state) => state.product);
+  const { orders, loading: orderLoading } = useSelector((state) => state.order);
 
   const fileInputRef = useRef(null);
   const dispatch = useDispatch();
@@ -1397,7 +1402,11 @@ const handleReviewSubmit = async () => {
           <div className="relative">
             <img
               key={user?.avatar?.url}
-              src={`http://localhost:5000/uploads/${user?.avatar?.url}`}
+              src={
+                user?.avatar?.url?.startsWith("/uploads/")
+                  ? `http://localhost:5000${user.avatar.url}?${Date.now()}`
+                  : `http://localhost:5000/uploads/${user?.avatar?.url}?${Date.now()}`
+              }
               alt="User Avatar"
               className="w-24 h-24 rounded-full border-2 border-gray-300 object-cover"
             />
@@ -1602,8 +1611,8 @@ const handleReviewSubmit = async () => {
 
     {option === "Orders" && (
       <AllOrders
-        orders={useSelector((state) => state.order).orders}
-        loading={useSelector((state) => state.order).loading}
+        orders={orders}
+        loading={orderLoading}
         isReviewed={isReviewed}
         handleWriteReview={handleWriteReview}
         RefundHandler={RefundHandler}
@@ -1623,13 +1632,13 @@ const handleReviewSubmit = async () => {
     )}
     {option === "Refunds" && (
       <Refunds
-        orders={useSelector((state) => state.order).orders}
-        loading={useSelector((state) => state.order).loading}
+        orders={orders}
+        loading={orderLoading}
       />
     )}
     {option === "Track Orders" && (
       <TrackOrders
-        orders={useSelector((state) => state.order).orders}
+        orders={orders}
       />
     )}
       {option === "Change Password" && (
