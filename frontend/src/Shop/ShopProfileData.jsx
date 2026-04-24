@@ -17,10 +17,10 @@ const StarRating = ({ rating, size = 'w-4 h-4' }) => (
 const ItemCard = ({ item, type, getImageUrl }) => (
   <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100">
     <div className="relative">
-      <img 
-        src={getImageUrl(item)} 
-        alt={item.name} 
-        className="w-full h-48 sm:h-56 md:h-64 object-cover bg-gray-50" 
+      <img
+        src={getImageUrl(item)}
+        alt={item.name}
+        className="w-full h-48 sm:h-56 md:h-64 object-cover bg-gray-50"
       />
       {type === 'event' && (
         <div className="absolute top-3 right-3 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-medium">
@@ -30,7 +30,7 @@ const ItemCard = ({ item, type, getImageUrl }) => (
     </div>
     <div className="p-6 space-y-4">
       <h5 className="font-medium text-gray-900 text-lg leading-tight">{item.name}</h5>
-      
+
       <div className="grid grid-cols-3 gap-4 text-sm">
         <div className="text-center">
           <p className="text-gray-500 font-light">Price</p>
@@ -62,7 +62,7 @@ const ReviewsOverview = ({ reviewsData }) => (
       <h3 className="text-2xl font-light text-gray-900 mb-2">Reviews Overview</h3>
       <div className="w-12 h-[1px] bg-gray-900 mx-auto"></div>
     </div>
-    
+
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       <div className="text-center space-y-3">
         <div className="text-4xl font-light text-gray-900">{reviewsData.average.toFixed(1)}</div>
@@ -71,12 +71,12 @@ const ReviewsOverview = ({ reviewsData }) => (
         </div>
         <p className="text-gray-500 font-light">Average Rating</p>
       </div>
-      
+
       <div className="text-center space-y-3">
         <div className="text-4xl font-light text-gray-900">{reviewsData.total}</div>
         <p className="text-gray-500 font-light">Total Reviews</p>
       </div>
-      
+
       <div className="space-y-3">
         {[5, 4, 3, 2, 1].map(rating => {
           const count = reviewsData.breakdown[rating] || 0;
@@ -102,7 +102,7 @@ const ReviewsList = ({ reviewsData }) => (
       <h4 className="text-xl font-light text-gray-900 mb-2">Customer Reviews</h4>
       <div className="w-10 h-[1px] bg-gray-900 mx-auto"></div>
     </div>
-    
+
     <div className="max-h-96 overflow-y-auto space-y-6 pr-2">
       {reviewsData.reviews.map((review, index) => (
         <div key={review._id || index} className="border-b border-gray-100 pb-6 last:border-b-0 last:pb-0">
@@ -115,15 +115,15 @@ const ReviewsList = ({ reviewsData }) => (
               {review.createdAt ? new Date(review.createdAt).toLocaleDateString() : 'Recently'}
             </span>
           </div>
-          
+
           <p className="font-medium text-gray-900 mb-2">
             {review?.user || 'Anonymous Customer'}
           </p>
-          
+
           {review.comment && (
             <p className="text-gray-600 font-light leading-relaxed mb-3">"{review.comment}"</p>
           )}
-          
+
           <div className="bg-gray-50 rounded-md px-3 py-2">
             <span className="text-sm text-gray-600 font-light">Product: {review.productName}</span>
           </div>
@@ -166,8 +166,8 @@ const ShopProfileData = ({ isOwner }) => {
 
   const reviewsData = useMemo(() => {
     if (!products || !Array.isArray(products)) return { total: 0, average: 0, reviews: [], breakdown: {} };
-    
-    const allReviews = products.flatMap(product => 
+
+    const allReviews = products.flatMap(product =>
       (product.reviews || []).map(review => ({
         ...review,
         productName: product.name,
@@ -193,54 +193,49 @@ const ShopProfileData = ({ isOwner }) => {
   const getImageUrl = (item) => {
     const firstImage = item?.images?.[0];
     if (!firstImage) return '/placeholder-image.png';
-    
+
     if (typeof firstImage === 'string') {
       if (firstImage.startsWith('http')) return firstImage;
       return firstImage.startsWith('/') ? `http://localhost:5000${firstImage}` : `http://localhost:5000/uploads/${firstImage}`;
     }
-    
+
     return firstImage?.url?.startsWith('http') ? firstImage.url : `http://localhost:5000${firstImage?.url || ''}`;
   };
 
   if (loading) return <Loader />;
 
   return (
-    <div className="w-full py-20 px-4 md:px-10 bg-gray-50" style={{margin: 0, padding: 0}}>
+    <div className="w-full py-20 px-4 md:px-10 bg-gray-50" style={{ margin: 0, padding: 0 }}>
       <div className="max-w-7xl mx-auto px-4 md:px-10 py-20">
         {/* Header Section */}
         <div className="mb-16 text-center">
           <div className="inline-block mb-8">
-            <p className="text-sm font-medium text-gray-500 tracking-[0.15em] uppercase mb-4 font-mono">
-              Shop Dashboard
-            </p>
             <h1 className="text-3xl md:text-4xl font-light text-gray-900 leading-[0.9] mb-6">
               {seller?.name || 'Shop Profile'}
             </h1>
             <div className="w-20 h-[1px] bg-gray-900 mx-auto"></div>
           </div>
-          
+
           {/* Tab Navigation */}
           <div className="flex flex-wrap justify-center gap-2 mb-8">
             {tabs.map((tab, index) => {
               const Icon = tab.icon;
               const count = index === 0 ? products?.length : index === 1 ? events?.length : reviewsData.total;
-              
+
               return (
                 <button
                   key={index}
                   onClick={() => setActiveTab(index)}
-                  className={`flex items-center gap-2 px-6 py-3 rounded-lg font-light text-sm tracking-wide transition-all duration-300 ${
-                    activeTab === index
+                  className={`flex items-center gap-2 px-6 py-3 rounded-lg font-light text-sm tracking-wide transition-all duration-300 ${activeTab === index
                       ? 'bg-gray-900 text-white'
                       : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
-                  }`}
+                    }`}
                 >
                   <Icon className="w-4 h-4" />
                   <span>{tab.name}</span>
                   {count > 0 && (
-                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                      activeTab === index ? 'bg-white text-gray-900' : 'bg-gray-100 text-gray-600'
-                    }`}>
+                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${activeTab === index ? 'bg-white text-gray-900' : 'bg-gray-100 text-gray-600'
+                      }`}>
                       {count}
                     </span>
                   )}
@@ -274,9 +269,9 @@ const ShopProfileData = ({ isOwner }) => {
                 {products.map(product => <ItemCard key={product._id} item={product} type="product" getImageUrl={getImageUrl} />)}
               </div>
             ) : (
-              <EmptyState 
-                message="No products available yet" 
-                icon={<FiTrendingUp className="w-12 h-12" />} 
+              <EmptyState
+                message="No products available yet"
+                icon={<FiTrendingUp className="w-12 h-12" />}
               />
             )
           )}
@@ -287,9 +282,9 @@ const ShopProfileData = ({ isOwner }) => {
                 {events.map(event => <ItemCard key={event._id} item={event} type="event" getImageUrl={getImageUrl} />)}
               </div>
             ) : (
-              <EmptyState 
-                message="No events running currently" 
-                icon={<FiCalendar className="w-12 h-12" />} 
+              <EmptyState
+                message="No events running currently"
+                icon={<FiCalendar className="w-12 h-12" />}
               />
             )
           )}
@@ -301,9 +296,9 @@ const ShopProfileData = ({ isOwner }) => {
                 <ReviewsList reviewsData={reviewsData} />
               </div>
             ) : (
-              <EmptyState 
-                message="No reviews received yet" 
-                icon={<FiMessageCircle className="w-12 h-12" />} 
+              <EmptyState
+                message="No reviews received yet"
+                icon={<FiMessageCircle className="w-12 h-12" />}
               />
             )
           )}

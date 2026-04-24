@@ -78,13 +78,6 @@ const DashboardSideBar = ({ isCollapsed }) => {
           </div>
         ) : (
           <div className="flex items-center space-x-3">
-            <div className="ml-4">
-              <FaShoppingBag/>
-            </div>
-            <div>
-              <h2 className="text-lg font-bold text-gray-800">Shop Dashboard</h2>
-              <p className="text-xs text-gray-500">Manage your store</p>
-            </div>
           </div>
         )}
       </div>
@@ -103,8 +96,8 @@ const DashboardSideBar = ({ isCollapsed }) => {
                       group flex items-center transition-all duration-200 ease-in-out
                       border border-transparent rounded-xl
                       ${isCollapsed ? 'justify-center p-3' : 'px-4 py-3 space-x-3'}
-                      ${isActive 
-                        ? activeColorVariants[item.color] 
+                      ${isActive
+                        ? activeColorVariants[item.color]
                         : `text-gray-700 ${colorVariants[item.color]}`
                       }
                       hover:transform hover:scale-105 hover:shadow-sm
@@ -142,7 +135,7 @@ const DashboardSideBar = ({ isCollapsed }) => {
         <div className="p-4 flex-shrink-0 flex justify-center">
           <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
             <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
         </div>

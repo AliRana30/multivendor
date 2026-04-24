@@ -37,45 +37,50 @@ const EventCard = ({ event, onEventUpdate }) => {
     return totalItems > 0 ? Math.min((currentSoldOut / totalItems) * 100, 100) : 0;
   }, [currentStock, currentSoldOut]);
 
-  const getImageUrl = useCallback((event) => {
-    if (!event) return '/placeholder-image.png';
+  const getImageUrl = useCallback((item) => {
+    if (!item) return '/placeholder-image.png';
 
-    if (event.images && event.images.length > 0) {
-      const firstImage = event.images[0];
+    // Handle case where we pass the whole item or just an image object/string
+    const images = item.images || (item.url ? [item] : []);
+    const firstImage = images.length > 0 ? images[0] : (item.image || item);
 
-      if (typeof firstImage === 'string' && (firstImage.startsWith('http://') || firstImage.startsWith('https://'))) {
-        return firstImage;
-      }
+    if (!firstImage) return '/placeholder-image.png';
 
-      if (typeof firstImage === 'object' && firstImage.url) {
-        return firstImage.url.startsWith('http') ? firstImage.url : `http://localhost:5000${firstImage.url}`;
-      }
+    let imageUrl = '';
 
-      if (typeof firstImage === 'string') {
-        if (firstImage.startsWith('/')) {
-          return `http://localhost:5000${firstImage}`;
-        }
-        return `http://localhost:5000/uploads/${firstImage}`;
-      }
+    // If it's an object with a url property (common for events)
+    if (typeof firstImage === 'object' && firstImage.url) {
+      imageUrl = firstImage.url;
+    } 
+    // If it's a string (common for products)
+    else if (typeof firstImage === 'string') {
+      imageUrl = firstImage;
+    }
+    // Fallback for other object structures
+    else if (typeof firstImage === 'object' && firstImage.public_id) {
+      imageUrl = firstImage.public_id; // Sometimes filename is in public_id
     }
 
-    if (event.image) {
-      if (typeof event.image === 'string') {
-        if (event.image.startsWith('http://') || event.image.startsWith('https://')) {
-          return event.image;
-        }
-        if (event.image.startsWith('/')) {
-          return `http://localhost:5000${event.image}`;
-        }
-        return `http://localhost:5000/uploads/${event.image}`;
-      }
-      
-      if (typeof event.image === 'object' && event.image.url) {
-        return event.image.url.startsWith('http') ? event.image.url : `http://localhost:5000${event.image.url}`;
-      }
+    if (!imageUrl || typeof imageUrl !== 'string') return '/placeholder-image.png';
+
+    // If it's already a full URL
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl;
     }
 
-    return '/placeholder-image.png';
+    // Handle relative paths
+    const baseUrl = "http://localhost:5000";
+    
+    if (imageUrl.startsWith('/uploads/')) {
+      return `${baseUrl}${imageUrl}`;
+    }
+
+    if (imageUrl.startsWith('/')) {
+      return `${baseUrl}${imageUrl}`;
+    }
+
+    // Default to /uploads/ prefix for filenames
+    return `${baseUrl}/uploads/${imageUrl}`;
   }, []);
 
   // Update countdown timer
