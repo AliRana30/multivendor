@@ -32,7 +32,8 @@ export const signup = async (req, res) => {
     };
 
     const token = activationToken(userData);
-    const activationLink = `http://localhost:5173/activation/${token}`;
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    const activationLink = `${frontendUrl}/activation/${token}`;
 
     await sendmail({
       email: email,

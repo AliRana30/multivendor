@@ -51,7 +51,8 @@ export const shopController = async (req, res) => {
 
     if (existingShops.length === 0) {
       const token = activationToken(seller);
-      const activationLink = `http://localhost:5173/seller/activation/${token}`;
+      const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+      const activationLink = `${frontendUrl}/seller/activation/${token}`;
 
       await sendmail({
         email,
