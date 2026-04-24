@@ -1,17 +1,21 @@
 import { DataGrid } from '@mui/x-data-grid';
 import { Button } from '@mui/material';
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineDelete, AiOutlineEye } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import {toast} from 'react-hot-toast'
 import { deleteProduct, getAllProducts } from "../../../redux/actions/product";
 import Loader from '../../components/Loader';
+import ConfirmModal from '../../components/Layout/ConfirmModal';
 
 const AllProducts = () => {
   const { products, loading } = useSelector((state) => state.product);
   const { seller } = useSelector((state) => state.seller);
   const dispatch = useDispatch();
+  
+  const [open, setOpen] = useState(false);
+  const [productId, setProductId] = useState("");
 
   const handleDelete = async (id) => {
     await dispatch(deleteProduct(id));
@@ -50,7 +54,7 @@ const AllProducts = () => {
       headerName: "Delete",
       sortable: false,
       renderCell: (params) => (
-        <Button onClick={() => handleDelete(params.id)}>
+        <Button onClick={() => { setProductId(params.id); setOpen(true); }}>
           <AiOutlineDelete size={20} />
         </Button>
       ),
@@ -70,13 +74,23 @@ const AllProducts = () => {
       {loading ? (
         <Loader/>
       ) : (
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          pageSize={10}
-          autoHeight
-          disableSelectionOnClick
-        />
+        <>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            pageSize={10}
+            autoHeight
+            disableSelectionOnClick
+          />
+          <ConfirmModal
+            isOpen={open}
+            onClose={() => setOpen(false)}
+            onConfirm={() => handleDelete(productId)}
+            title="Delete Product"
+            message="Are you sure you want to delete this product? This action cannot be undone and will remove the product from your shop permanently."
+            confirmText="Yes, Delete"
+          />
+        </>
       )}
     </div>
   );

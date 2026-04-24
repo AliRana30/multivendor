@@ -7,6 +7,7 @@ import AdminSideBar from '../Components/AdminSideBar';
 import Loader from '../../components/Loader';
 import api from '../../components/axiosCongif';
 import AdminHeader from "../Components/AdminHeader";
+import ConfirmModal from '../../components/Layout/ConfirmModal';
 
 const AdminAllProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -75,9 +76,10 @@ const AdminAllProductsPage = () => {
     }
   }, []);
 
-  const handleDelete = useCallback(async (id) => {
-    if (!window.confirm('Are you sure you want to delete this product? This action cannot be undone.')) return;
+  const [open, setOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
 
+  const handleDelete = useCallback(async (id) => {
     try {
       setDeleteLoading(id);
       const response = await api.delete(`/delete-product/${id}`, { withCredentials: true });
@@ -162,7 +164,7 @@ const AdminAllProductsPage = () => {
               </button>
             </Link>
             <button 
-              onClick={() => handleDelete(params.id)}
+              onClick={() => { setProductToDelete(params.row); setOpen(true); }}
               disabled={isDeleting}
               className={`p-1 rounded transition-colors ${
                 isDeleting ? 'bg-red-100 text-red-400 cursor-not-allowed' : 'bg-red-50 text-red-600 hover:bg-red-100'
@@ -279,7 +281,7 @@ const AdminAllProductsPage = () => {
               </button>
             </Link>
             <button 
-              onClick={() => handleDelete(params.id)}
+              onClick={() => { setProductToDelete(params.row); setOpen(true); }}
               disabled={isDeleting}
               className={`p-1.5 rounded-md transition-colors ${
                 isDeleting ? 'bg-red-100 text-red-400 cursor-not-allowed' : 'bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700'
@@ -460,6 +462,14 @@ const AdminAllProductsPage = () => {
                     />
                   </div>
                 </div>
+                <ConfirmModal
+                  isOpen={open}
+                  onClose={() => setOpen(false)}
+                  onConfirm={() => handleDelete(productToDelete?.id)}
+                  title="Delete Product"
+                  message={`Are you sure you want to delete "${productToDelete?.name}"? This action cannot be undone and will permanently remove it from the platform.`}
+                  confirmText="Yes, Delete"
+                />
               </div>
             )}
           </div>

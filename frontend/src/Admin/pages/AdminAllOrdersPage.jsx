@@ -9,6 +9,7 @@ import AdminSideBar from '../Components/AdminSideBar';
 import Loader from '../../components/Loader';
 import api from '../../components/axiosCongif';
 import { getAllAdminOrders } from '../../../redux/actions/order';
+import ConfirmModal from '../../components/Layout/ConfirmModal';
 
 const AdminAllOrdersPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -50,9 +51,10 @@ const AdminAllOrdersPage = () => {
     }
   };
 
+  const [open, setOpen] = useState(false);
+  const [orderToDelete, setOrderToDelete] = useState(null);
+
   const handleDelete = async (orderId) => {
-    if (!window.confirm('Are you sure you want to delete this order? This action cannot be undone.')) return;
-    
     try {
       setDeleteLoading(orderId);
       await api.delete(`/delete-order/${orderId}`, { withCredentials: true });
@@ -145,7 +147,7 @@ const AdminAllOrdersPage = () => {
               <Eye size={12} />
             </Link>
             <button
-              onClick={() => handleDelete(params.row.id)}
+              onClick={() => { setOrderToDelete(params.row); setOpen(true); }}
               disabled={isDeleting}
               className={`p-1 rounded transition-colors ${
                 isDeleting
@@ -282,7 +284,7 @@ const AdminAllOrdersPage = () => {
               <Eye size={14} />
             </Link>
             <button
-              onClick={() => handleDelete(params.row.id)}
+              onClick={() => { setOrderToDelete(params.row); setOpen(true); }}
               disabled={isDeleting}
               className={`p-1.5 rounded-md transition-colors ${
                 isDeleting
@@ -471,6 +473,14 @@ const AdminAllOrdersPage = () => {
                     />
                   </div>
                 </div>
+                <ConfirmModal
+                  isOpen={open}
+                  onClose={() => setOpen(false)}
+                  onConfirm={() => handleDelete(orderToDelete?.id)}
+                  title="Delete Order"
+                  message={`Are you sure you want to delete order #${orderToDelete?.id?.slice(-8)}? This action cannot be undone and will permanently remove the record from the system.`}
+                  confirmText="Yes, Delete"
+                />
               </div>
             )}
           </div>

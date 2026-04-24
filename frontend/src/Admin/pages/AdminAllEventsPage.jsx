@@ -6,6 +6,7 @@ import AdminHeader from '../Components/AdminHeader';
 import AdminSideBar from '../Components/AdminSideBar';
 import Loader from '../../components/Loader';
 import api from '../../components/axiosCongif';
+import ConfirmModal from '../../components/Layout/ConfirmModal';
 
 const AdminAllEventsPage = () => {
   const [events, setEvents] = useState([]);
@@ -67,9 +68,10 @@ const AdminAllEventsPage = () => {
     }
   };
 
-  const handleDelete = async (id, eventName) => {
-    if (!window.confirm(`Are you sure you want to delete event "${eventName}"? This action cannot be undone.`)) return;
-    
+  const [open, setOpen] = useState(false);
+  const [eventToDelete, setEventToDelete] = useState(null);
+
+  const handleDelete = async (id) => {
     try {
       setDeleteLoading(id);
       const response = await api.delete(`/delete-shop-event/${id}`, { withCredentials: true });
@@ -156,7 +158,7 @@ const AdminAllEventsPage = () => {
         return (
           <div className="flex items-center gap-0.5">
             <button 
-              onClick={() => handleDelete(params.id, params.row.name)}
+              onClick={() => { setEventToDelete(params.row); setOpen(true); }}
               disabled={isDeleting}
               className={`p-1 rounded transition-colors ${
                 isDeleting ? 'bg-red-100 text-red-400 cursor-not-allowed' : 'bg-red-50 text-red-600 hover:bg-red-100'
@@ -264,7 +266,7 @@ const AdminAllEventsPage = () => {
         return (
           <div className="flex items-center gap-1">
             <button 
-              onClick={() => handleDelete(params.id, params.row.name)}
+              onClick={() => { setEventToDelete(params.row); setOpen(true); }}
               disabled={isDeleting}
               className={`p-1.5 rounded-md transition-colors ${
                 isDeleting ? 'bg-red-100 text-red-400 cursor-not-allowed' : 'bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700'
@@ -448,6 +450,14 @@ const AdminAllEventsPage = () => {
                     />
                   </div>
                 </div>
+                <ConfirmModal
+                  isOpen={open}
+                  onClose={() => setOpen(false)}
+                  onConfirm={() => handleDelete(eventToDelete?.id)}
+                  title="Delete Event"
+                  message={`Are you sure you want to delete event "${eventToDelete?.name}"? This action cannot be undone and will permanently remove it from the platform.`}
+                  confirmText="Yes, Delete"
+                />
               </div>
             )}
           </div>

@@ -8,6 +8,7 @@ import Loader from '../../components/Loader'
 import { Trash, AlertTriangle, Store, Eye } from 'lucide-react'
 import api from '../../components/axiosCongif'
 import toast from 'react-hot-toast'
+import ConfirmModal from '../../components/Layout/ConfirmModal'
 import { getAllAdminSellers } from '../../../redux/actions/seller'
 import { Link } from 'react-router-dom'
 
@@ -49,13 +50,10 @@ const AdminAllSellersPage = () => {
     }
   }
 
-  const handleDelete = async (id, userName) => {
-    const confirmDelete = window.confirm(
-      `Are you sure you want to delete seller "${userName}"? This action cannot be undone.`
-    );
-    
-    if (!confirmDelete) return;
-    
+  const [open, setOpen] = useState(false);
+  const [sellerToDelete, setSellerToDelete] = useState(null);
+
+  const handleDelete = async (id) => {
     try {
       setDeleteLoading(id); 
       
@@ -110,7 +108,7 @@ const AdminAllSellersPage = () => {
               <Eye size={12} />
             </Link>
             <button
-              onClick={() => handleDelete(params.row.id, params.row.name)}
+              onClick={() => { setSellerToDelete(params.row); setOpen(true); }}
               disabled={isDeleting}
               className={`p-1 rounded transition-colors ${
                 isDeleting
@@ -195,7 +193,7 @@ const AdminAllSellersPage = () => {
               <Eye size={14} />
             </Link>
             <button
-              onClick={() => handleDelete(params.row.id, params.row.name)}
+              onClick={() => { setSellerToDelete(params.row); setOpen(true); }}
               disabled={isDeleting}
               className={`p-1.5 rounded-md transition-colors ${
                 isDeleting
@@ -354,6 +352,14 @@ const AdminAllSellersPage = () => {
                     />
                   </div>
                 </div>
+                <ConfirmModal
+                  isOpen={open}
+                  onClose={() => setOpen(false)}
+                  onConfirm={() => handleDelete(sellerToDelete?.id)}
+                  title="Delete Seller"
+                  message={`Are you sure you want to delete seller "${sellerToDelete?.name}"? This action cannot be undone and will permanently remove the shop and all its data.`}
+                  confirmText="Yes, Delete"
+                />
               </div>
             )}
           </div>

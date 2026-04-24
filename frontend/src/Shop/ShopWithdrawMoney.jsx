@@ -6,6 +6,7 @@ import DashboardHeader from './ShopLayout/DashboardHeader';
 import DashboardSideBar from './ShopLayout/DashboardSideBar';
 import { getAllOrders } from '../../redux/actions/order';
 import api from '../components/axiosCongif';
+import ConfirmModal from '../components/Layout/ConfirmModal';
 
 const ShopWithdrawMoney = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -139,9 +140,10 @@ const ShopWithdrawMoney = () => {
     }
   };
 
-  const handleDeleteBankAccount = async (accountNumber) => {
-    if (!window.confirm('Are you sure you want to delete this bank account?')) return;
+  const [open, setOpen] = useState(false);
+  const [accountToDelete, setAccountToDelete] = useState(null);
 
+  const handleDeleteBankAccount = async (accountNumber) => {
     setDeleteLoading(accountNumber);
     try {
       const response = await api.delete('/delete-payment-method', {
@@ -247,7 +249,7 @@ const BankAccountsList = ({ bankAccounts, setShowAddBankModal, handleDeleteBankA
               </p>
             </div>
             <button
-              onClick={() => handleDeleteBankAccount(account.accountNumber)}
+              onClick={() => { setAccountToDelete(account); setOpen(true); }}
               disabled={deleteLoading === account.accountNumber}
               className="text-red-600 hover:text-red-800 p-2 rounded-md hover:bg-red-50 transition-colors disabled:opacity-50 ml-2"
               title="Delete bank account"
@@ -540,6 +542,14 @@ const AddBankModal = ({
         pakistaniBanks={pakistaniBanks} 
         showPin={showPin} 
         setShowPin={setShowPin} 
+      />
+      <ConfirmModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        onConfirm={() => handleDeleteBankAccount(accountToDelete?.accountNumber)}
+        title="Delete Bank Account"
+        message={`Are you sure you want to delete the ${accountToDelete?.bankName} account ending in ${accountToDelete?.accountNumber?.slice(-4)}?`}
+        confirmText="Yes, Delete"
       />
     </div>
   );

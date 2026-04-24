@@ -1,17 +1,21 @@
 import { DataGrid } from '@mui/x-data-grid';
 import { Button } from '@mui/material';
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineDelete, AiOutlineEye } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import {toast} from 'react-hot-toast'
 import Loader from '../../components/Loader';
 import { deleteEvent, getAllEvents } from '../../../redux/actions/event';
+import ConfirmModal from '../../components/Layout/ConfirmModal';
 
 const AllEvents = () => {
   const { events , loading } = useSelector((state) => state.event);
   const { seller } = useSelector((state) => state.seller);
   const dispatch = useDispatch();
+
+  const [open, setOpen] = useState(false);
+  const [eventId, setEventId] = useState("");
 
   const handleDelete = async (id) => {
     await dispatch(deleteEvent(id));
@@ -38,7 +42,7 @@ const AllEvents = () => {
       headerName: "Delete",
       sortable: false,
       renderCell: (params) => (
-        <Button onClick={() => handleDelete(params.id)}>
+        <Button onClick={() => { setEventId(params.id); setOpen(true); }}>
           <AiOutlineDelete size={20} />
         </Button>
       ),
@@ -53,15 +57,29 @@ const AllEvents = () => {
     sold: item.sold_out || 0,
   })) || [];
 
-  return loading ? (<Loader/>) : (
+  return (
     <div className="w-full px-4 pt-6">
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          pageSize={10}
-          autoHeight
-          disableSelectionOnClick
-        />
+      {loading ? (
+        <Loader/>
+      ) : (
+        <>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            pageSize={10}
+            autoHeight
+            disableSelectionOnClick
+          />
+          <ConfirmModal
+            isOpen={open}
+            onClose={() => setOpen(false)}
+            onConfirm={() => handleDelete(eventId)}
+            title="Delete Event"
+            message="Are you sure you want to delete this event? This action cannot be undone and will remove the event from your shop permanently."
+            confirmText="Yes, Delete"
+          />
+        </>
+      )}
     </div>
   );
 };

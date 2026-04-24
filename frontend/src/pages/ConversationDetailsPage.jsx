@@ -6,6 +6,7 @@ import { ArrowLeft, MessageSquare, Trash2 } from "lucide-react"
 import api from "../components/axiosCongif"
 import Cookies from "js-cookie"
 import UserMessages from "./UserMessages"
+import ConfirmModal from "../components/Layout/ConfirmModal"
 
 const ConversationDetailsPage = () => {
   const navigate = useNavigate()
@@ -74,11 +75,9 @@ const ConversationDetailsPage = () => {
     }
   }
 
-  const handleDeleteConversation = async () => {
-    if (!window.confirm("Are you sure you want to delete this conversation?")) {
-      return
-    }
+  const [open, setOpen] = useState(false);
 
+  const handleDeleteConversation = async () => {
     try {
       const token = Cookies.get("token")
       
@@ -157,7 +156,7 @@ const ConversationDetailsPage = () => {
                   Open Chat
                 </button>
                 <button
-                  onClick={handleDeleteConversation}
+                   onClick={() => setOpen(true)}
                   className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -184,6 +183,14 @@ const ConversationDetailsPage = () => {
             isSeller={false}
           />
         </div>
+        <ConfirmModal
+          isOpen={open}
+          onClose={() => setOpen(false)}
+          onConfirm={handleDeleteConversation}
+          title="Delete Conversation"
+          message="Are you sure you want to delete this conversation? All messages will be permanently removed."
+          confirmText="Yes, Delete"
+        />
       </div>
     </div>
   )

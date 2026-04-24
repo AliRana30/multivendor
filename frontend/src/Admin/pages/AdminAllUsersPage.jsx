@@ -8,6 +8,7 @@ import Loader from '../../components/Loader'
 import { Trash, AlertTriangle, User } from 'lucide-react'
 import api from '../../components/axiosCongif'
 import toast from 'react-hot-toast'
+import ConfirmModal from '../../components/Layout/ConfirmModal'
 
 const AdminAllUsersPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
@@ -47,13 +48,10 @@ const AdminAllUsersPage = () => {
     }
   }
 
-  const handleDelete = async (id, userName) => {
-    const confirmDelete = window.confirm(
-      `Are you sure you want to delete user "${userName}"? This action cannot be undone.`
-    );
-    
-    if (!confirmDelete) return;
-    
+  const [open, setOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
+
+  const handleDelete = async (id) => {
     try {
       setDeleteLoading(id); 
       
@@ -115,7 +113,7 @@ const AdminAllUsersPage = () => {
         
         return (
           <button
-            onClick={() => handleDelete(params.row.id, params.row.name)}
+            onClick={() => { setUserToDelete(params.row); setOpen(true); }}
             disabled={isDeleting || isCurrentUser}
             className={`p-1 rounded transition-colors ${
               isCurrentUser
@@ -209,7 +207,7 @@ const AdminAllUsersPage = () => {
         
         return (
           <button
-            onClick={() => handleDelete(params.row.id, params.row.name)}
+            onClick={() => { setUserToDelete(params.row); setOpen(true); }}
             disabled={isDeleting || isCurrentUser}
             className={`p-1.5 rounded-md transition-colors ${
               isCurrentUser
@@ -383,6 +381,14 @@ const AdminAllUsersPage = () => {
                     />
                   </div>
                 </div>
+                <ConfirmModal
+                  isOpen={open}
+                  onClose={() => setOpen(false)}
+                  onConfirm={() => handleDelete(userToDelete?.id)}
+                  title="Delete User"
+                  message={`Are you sure you want to delete user "${userToDelete?.name}"? This action cannot be undone and will permanently remove the account.`}
+                  confirmText="Yes, Delete"
+                />
               </div>
             )}
           </div>
