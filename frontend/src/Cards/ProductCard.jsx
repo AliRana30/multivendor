@@ -9,6 +9,7 @@ import { addToCart } from '../../redux/actions/cart';
 import { toast } from 'react-hot-toast';
 import { addToWishlist, removeFromWishlist } from "../../redux/actions/wishlist";
 import ProductDetailsCard from "./ProductDetailsCard";
+import { server } from "../components/axiosCongif";
 
 const ProductCard = ({ product }) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -28,14 +29,14 @@ const ProductCard = ({ product }) => {
       }
 
       if (typeof firstImage === 'object' && firstImage.url) {
-        return firstImage.url.startsWith('http') ? firstImage.url : `http://localhost:5000${firstImage.url}`;
+        return firstImage.url.startsWith('http') ? firstImage.url : `${server}${firstImage.url}`;
       }
 
       if (typeof firstImage === 'string') {
         if (firstImage.startsWith('/')) {
-          return `http://localhost:5000${firstImage}`;
+          return `${server}${firstImage}`;
         }
-        return `http://localhost:5000/uploads/${firstImage}`;
+        return `${server}/uploads/${firstImage}`;
       }
     }
 

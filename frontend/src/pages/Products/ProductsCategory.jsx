@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllProducts } from "../../../redux/actions/product";
+import { getAllProductsFromAllSellers } from "../../../redux/actions/product";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { FiEye, FiStar } from "react-icons/fi";
 import { BsCartPlus } from "react-icons/bs";
@@ -33,7 +33,7 @@ const ProductsCategory = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    dispatch(getAllProducts());
+    dispatch(getAllProductsFromAllSellers());
   }, [dispatch]);
 
   useEffect(() => {
@@ -134,13 +134,14 @@ const ProductsCategory = () => {
       return;
     }
 
-    const isItemExists = cart && cart.find((item) => item._id === product._id);
+    const productId = product._id || product.id;
+    const isItemExists = cart && cart.find((item) => (item._id || item.id) === productId);
     if (isItemExists) {
       toast.error("Product already in cart");
       return;
     }
 
-    if (product.stock <= 0) {
+    if (!product.stock || product.stock <= 0) {
       toast.error("Product is out of stock");
       return;
     }
@@ -156,8 +157,9 @@ const ProductsCategory = () => {
       return;
     }
 
-    if (isInWishlist(product._id)) {
-      dispatch(removeFromWishlist(product._id));
+    const productId = product._id || product.id;
+    if (isInWishlist(productId)) {
+      dispatch(removeFromWishlist(productId));
       toast.success("Removed from wishlist");
     } else {
       dispatch(addToWishlist({ ...product }));
@@ -253,7 +255,7 @@ const ProductsCategory = () => {
                   <div className="relative overflow-hidden bg-gray-50 h-48 sm:h-56">
                     <Link
                       to={`/products/${productNameSlug}`}
-                      state={{ productId: product._id }}
+                      state={{ productId: product._id || product.id }}
                     >
                       <img
                         src={getImageUrl(product)}
@@ -289,14 +291,14 @@ const ProductsCategory = () => {
 
                     <button
                       onClick={() => addToCartHandler(product)}
-                      disabled={product.stock === 0}
+                      disabled={!product.stock || product.stock === 0}
                       className={`bg-white p-2 rounded-full shadow-md hover:shadow-lg transition-all duration-200 hover:scale-110 ${product.stock === 0
                         ? "opacity-50 cursor-not-allowed"
                         : ""
                         }`}
                     >
                       <BsCartPlus
-                        className={`text-base transition-colors ${product.stock === 0
+                        className={`text-base transition-colors ${!product.stock || product.stock === 0
                           ? "text-gray-400"
                           : "text-gray-600 hover:text-green-500"
                           }`}
@@ -307,7 +309,7 @@ const ProductsCategory = () => {
                   <div className="p-4 flex flex-col flex-grow">
                     <Link
                       to={`/products/${productNameSlug}`}
-                      state={{ productId: product._id }}
+                      state={{ productId: product._id || product.id }}
                     >
                       <h3 className="text-base md:text-lg font-semibold text-gray-900 line-clamp-2 hover:text-blue-600 transition-colors duration-200 mb-2">
                         {product.name}
@@ -378,7 +380,7 @@ const ProductsCategory = () => {
 
                     <div className="mt-auto">
                       <button
-                        disabled={product.stock === 0}
+                        disabled={!product.stock || product.stock === 0}
                         className={`w-full h-10 font-medium text-sm rounded-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-md flex items-center justify-center gap-2 ${product.stock === 0
                           ? "bg-gray-400 text-white cursor-not-allowed opacity-60"
                           : "bg-black text-white"
@@ -387,7 +389,7 @@ const ProductsCategory = () => {
                       >
                         <BsCartPlus className="text-sm" />
                         <span>
-                          {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
+                          {!product.stock || product.stock === 0 ? "Out of Stock" : "Add to Cart"}
                         </span>
                       </button>
                     </div>

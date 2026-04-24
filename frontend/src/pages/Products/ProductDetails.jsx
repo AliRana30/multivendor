@@ -17,11 +17,11 @@ const ProductDetails = () => {
 
   useEffect(() => {
     if (product?._id) {
-      dispatch(getAllProducts(product._id));
+      dispatch(getAllProducts(product.shopId || product.shop?._id));
     } else {
       dispatch(getAllProductsFromAllSellers());
     }
-  }, [dispatch, product?._id]);
+  }, [dispatch, product?._id, product?.shopId, product?.shop?._id]);
 
   useEffect(() => {
     const productList = product?._id ? products : allProducts;

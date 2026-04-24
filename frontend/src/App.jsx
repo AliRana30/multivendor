@@ -100,11 +100,13 @@ const getCurrentUser = async () => {
   useEffect(() => {
     getCurrentUser();
     getCurrentSeller();
+  }, []);
 
-    if (isSeller === true) {
+  useEffect(() => {
+    if (isSeller && seller?._id) {
       navigate(`/shop/${seller._id}`, { replace: true });
     }
-  },[]);
+  }, [isSeller, seller, navigate]);
 
   return (
     <>

@@ -215,7 +215,7 @@ export const updateProductReview = (reviewId, reviewData) => async (dispatch) =>
     };
 
     const { data } = await api.put(
-      `/api/v2/product/update-review/${reviewId}`,
+      `/update-review/${reviewId}`,
       reviewData,
       config
     );

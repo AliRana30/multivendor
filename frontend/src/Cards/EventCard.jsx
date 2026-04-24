@@ -3,7 +3,7 @@ import { BsCartPlus } from "react-icons/bs";
 import { useSelector, useDispatch } from 'react-redux';
 import { addToCart } from '../../redux/actions/cart';
 import { toast } from 'react-hot-toast';
-import api from '../components/axiosCongif'; 
+import api, { server } from '../components/axiosCongif'; 
 
 const EventCard = ({ event, onEventUpdate }) => {
   const [timeLeft, setTimeLeft] = useState("");
@@ -69,7 +69,7 @@ const EventCard = ({ event, onEventUpdate }) => {
     }
 
     // Handle relative paths
-    const baseUrl = "http://localhost:5000";
+    const baseUrl = server;
     
     if (imageUrl.startsWith('/uploads/')) {
       return `${baseUrl}${imageUrl}`;

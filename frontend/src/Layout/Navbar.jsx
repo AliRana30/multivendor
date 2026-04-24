@@ -7,7 +7,7 @@ import { categoriesData } from "../../static/data";
 import Cart from "../components/Cart";
 import WishList from "../components/WishList";
 import { FaPowerOff } from "react-icons/fa";
-import api from "../components/axiosCongif";
+import api, { server } from "../components/axiosCongif";
 import toast from "react-hot-toast";
 
 const navItems = [
@@ -114,7 +114,7 @@ const Navbar = () => {
                 <div className="flex items-center space-x-3">
                   <Link to="/profile">
                     <Avatar
-                      src={user?.avatar?.url ? `http://localhost:5000/uploads/${user?.avatar?.url}` : "/default-avatar.png"}
+                      src={user?.avatar?.url ? `${server}/uploads/${user?.avatar?.url}` : "/default-avatar.png"}
                       className="cursor-pointer"
                       sx={{ width: 28, height: 28 }}
                     />

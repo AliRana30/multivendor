@@ -9,7 +9,7 @@ import { getAllProductsFromAllSellers } from "../../redux/actions/product";
 import { Avatar } from "@mui/material";
 import Cart from "../components/Cart";
 import WishList from "../components/WishList";
-import api from "../components/axiosCongif";
+import api, { server } from "../components/axiosCongif";
 import toast from "react-hot-toast";
 
 const navItems = [
@@ -141,13 +141,13 @@ const Header = () => {
       }
       
       if (typeof firstImage === 'object' && firstImage.url) {
-        return firstImage.url.startsWith('http') ? firstImage.url : `http://localhost:5000${firstImage.url}`;
+        return firstImage.url.startsWith('http') ? firstImage.url : `${server}${firstImage.url}`;
       }
       
       if (typeof firstImage === 'string') {
         return firstImage.startsWith('/') 
-          ? `http://localhost:5000${firstImage}`
-          : `http://localhost:5000/uploads/${firstImage}`;
+          ? `${server}${firstImage}`
+          : `${server}/uploads/${firstImage}`;
       }
     }
     
@@ -559,8 +559,8 @@ const Header = () => {
                           ? (user.avatar.url.startsWith("http")
                               ? user.avatar.url
                               : user.avatar.url.startsWith("/uploads/")
-                                ? `http://localhost:5000${user.avatar.url}`
-                                : `http://localhost:5000/uploads/${user.avatar.url}`)
+                                ? `${server}${user.avatar.url}`
+                                : `${server}/uploads/${user.avatar.url}`)
                           : "/default-avatar.png"
                       }
                       alt={user?.name}
@@ -718,8 +718,8 @@ const Header = () => {
                               ? (user.avatar.url.startsWith("http")
                                   ? user.avatar.url
                                   : user.avatar.url.startsWith("/uploads/")
-                                    ? `http://localhost:5000${user.avatar.url}`
-                                    : `http://localhost:5000/uploads/${user.avatar.url}`)
+                                    ? `${server}${user.avatar.url}`
+                                    : `${server}/uploads/${user.avatar.url}`)
                               : "/default-avatar.png"
                           }
                           alt={user?.name}
