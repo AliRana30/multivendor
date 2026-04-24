@@ -31,10 +31,10 @@ const ShopAllProducts = () => {
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         <div
-          className={`bg-gray-100 border-r transition-all duration-300 ${
+          className={`bg-white border-r shadow-xl transition-all duration-300 ${
             isMobile
               ? isSidebarOpen
-                ? 'fixed z-50 top-0 left-0 w-64 h-full'
+                ? 'fixed z-[70] inset-y-0 left-0 w-64 h-full'
                 : 'hidden'
               : 'w-64'
           }`}
@@ -45,7 +45,7 @@ const ShopAllProducts = () => {
         {/* Overlay on mobile when sidebar is open */}
         {isMobile && isSidebarOpen && (
           <div
-            className="fixed inset-0 bg-black opacity-50 z-40"
+            className="fixed inset-0 bg-black/50 z-[60] backdrop-blur-sm"
             onClick={toggleSidebar}
           ></div>
         )}

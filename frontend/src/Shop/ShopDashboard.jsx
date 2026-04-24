@@ -95,12 +95,12 @@ const ShopDashboard = () => {
       <DashboardHeader onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} isMobile={isMobile} />
       
       <div className="flex relative">
-        <div className={`${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} ${isMobile && isSidebarOpen ? 'fixed inset-0 z-40' : ''} transition-all duration-300 ease-in-out ${isMobile && isSidebarOpen ? 'w-64' : isMobile ? 'w-0' : isSidebarOpen ? 'w-64' : 'w-16 md:w-20'} bg-white shadow-sm border-r border-gray-200 ${isMobile ? 'h-screen' : 'min-h-screen'} overflow-y-auto`}>
+        <div className={`${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} ${isMobile && isSidebarOpen ? 'fixed inset-y-0 left-0 z-[70]' : ''} transition-all duration-300 ease-in-out ${isMobile && isSidebarOpen ? 'w-64' : isMobile ? 'w-0' : isSidebarOpen ? 'w-64' : 'w-16 md:w-20'} bg-white shadow-xl border-r border-gray-200 ${isMobile ? 'h-screen' : 'min-h-screen'} overflow-y-auto`}>
           <DashboardSideBar isCollapsed={!isSidebarOpen || (isMobile && !isSidebarOpen)} />
         </div>
 
         {isMobile && isSidebarOpen && (
-          <div className="fixed inset-0 bg-black/20 z-30 md:hidden transition-opacity duration-300" onClick={() => setIsSidebarOpen(false)} />
+          <div className="fixed inset-0 bg-black/50 z-[60] md:hidden backdrop-blur-sm transition-opacity duration-300" onClick={() => setIsSidebarOpen(false)} />
         )}
 
         <div className={`flex-1 transition-all duration-300 ease-in-out min-h-screen ${isMobile ? 'ml-0 w-full' : isSidebarOpen ? 'ml-20' : 'md:ml-20'}`}>

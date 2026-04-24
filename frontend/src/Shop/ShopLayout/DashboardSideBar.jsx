@@ -70,18 +70,6 @@ const DashboardSideBar = ({ isCollapsed }) => {
 
   return (
     <div className="w-full h-full bg-white/95 backdrop-blur-sm flex flex-col">
-      {/* Header - Fixed */}
-      <div className={`p-4 border-b border-gray-100 flex-shrink-0 ${isCollapsed ? 'text-center' : ''}`}>
-        {isCollapsed ? (
-          <div className="w-10 h-10 mx-auto bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-            <span className="text-white font-bold text-lg">S</span>
-          </div>
-        ) : (
-          <div className="flex items-center space-x-3">
-          </div>
-        )}
-      </div>
-
       {/* Navigation - Scrollable */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden">
         <div className="p-4">
@@ -100,20 +88,19 @@ const DashboardSideBar = ({ isCollapsed }) => {
                         ? activeColorVariants[item.color]
                         : `text-gray-700 ${colorVariants[item.color]}`
                       }
-                      hover:transform hover:scale-105 hover:shadow-sm
+                      hover:shadow-sm
                       focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-2
                     `}
                     title={isCollapsed ? item.label : ''}
                   >
                     <span className={`
                       text-xl transition-transform duration-200 flex-shrink-0
-                      ${isActive ? 'scale-110' : 'group-hover:scale-110'}
                       ${isCollapsed ? 'mx-auto' : ''}
                     `}>
                       {item.icon}
                     </span>
                     {!isCollapsed && (
-                      <span className="font-medium text-sm whitespace-nowrap group-hover:translate-x-1 transition-transform duration-200 min-w-0">
+                      <span className="font-medium text-sm whitespace-nowrap transition-transform duration-200 min-w-0">
                         {item.label}
                       </span>
                     )}

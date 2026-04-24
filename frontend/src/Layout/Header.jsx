@@ -551,18 +551,26 @@ const Header = () => {
 
               {/* User Avatar/Login */}
               {isAuthenticated ? (
-                <Link to="/profile" className="flex-shrink-0">
-                  <Avatar
-                    src={
-                      currentUser?.avatar?.url 
-                        ? (currentUser.avatar.url.startsWith("/uploads/") 
-                            ? `http://localhost:5000${currentUser.avatar.url}?${Date.now()}` 
-                            : `http://localhost:5000/uploads/${currentUser.avatar.url}?${Date.now()}`)
-                        : "/default-avatar.png"
-                    }
-                    sx={{ width: 32, height: 32 }}
-                    className="border border-gray-200 hover:border-gray-300 transition-colors duration-200"
-                  />
+                <Link to="/profile" className="flex-shrink-0 group">
+                  <div className="relative w-9 h-9">
+                    <img
+                      src={
+                        user?.avatar?.url
+                          ? (user.avatar.url.startsWith("http")
+                              ? user.avatar.url
+                              : user.avatar.url.startsWith("/uploads/")
+                                ? `http://localhost:5000${user.avatar.url}`
+                                : `http://localhost:5000/uploads/${user.avatar.url}`)
+                          : "/default-avatar.png"
+                      }
+                      alt={user?.name}
+                      className="w-full h-full rounded-full object-cover border-2 border-gray-100 group-hover:border-blue-500 transition-all duration-300"
+                      onError={(e) => {
+                        e.target.src = "/default-avatar.png";
+                      }}
+                    />
+                    <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></div>
+                  </div>
                 </Link>
               ) : (
                 <Link
@@ -704,16 +712,21 @@ const Header = () => {
                         className="flex items-center py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors duration-200"
                         onClick={closeMobileMenu}
                       >
-                        <Avatar
-                        src={
-                          currentUser?.avatar?.url 
-                            ? (currentUser.avatar.url.startsWith("/uploads/") 
-                                ? `http://localhost:5000${currentUser.avatar.url}?${Date.now()}` 
-                                : `http://localhost:5000/uploads/${currentUser.avatar.url}?${Date.now()}`)
-                            : "/default-avatar.png"
-                        }
-                          className="mr-3"
-                          sx={{ width: 24, height: 24 }}
+                        <img
+                          src={
+                            user?.avatar?.url
+                              ? (user.avatar.url.startsWith("http")
+                                  ? user.avatar.url
+                                  : user.avatar.url.startsWith("/uploads/")
+                                    ? `http://localhost:5000${user.avatar.url}`
+                                    : `http://localhost:5000/uploads/${user.avatar.url}`)
+                              : "/default-avatar.png"
+                          }
+                          alt={user?.name}
+                          className="w-8 h-8 rounded-full object-cover border border-gray-200 mr-3"
+                          onError={(e) => {
+                            e.target.src = "/default-avatar.png";
+                          }}
                         />
                         <span className="font-medium">Profile</span>
                       </Link>

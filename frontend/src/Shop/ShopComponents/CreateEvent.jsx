@@ -34,6 +34,20 @@ const CreateEvent = () => {
 
   useEffect(() => {
     if (error) toast.error(error);
+    if (success) {
+      toast.success("Event Created Successfully");
+      // Reset form fields
+      setName("");
+      setDescription("");
+      setCategory("");
+      setTags("");
+      setOriginalPrice("");
+      setDiscountPrice("");
+      setStock(1);
+      setStartDate(null);
+      setEndDate(null);
+      setImages([]);
+    }
   }, [error, success, navigate]);
 
   const handleImageChange = (e) => {
@@ -57,6 +71,11 @@ const CreateEvent = () => {
 
     if (images.length === 0) {
       toast.error("Please upload at least one image");
+      return;
+    }
+
+    if (stock < 1) {
+      toast.error("Stock cannot be less than 1");
       return;
     }
 
@@ -195,7 +214,8 @@ const CreateEvent = () => {
                   type="number"
                   value={stock}
                   className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  onChange={(e) => setStock(e.target.value)}
+                  onChange={(e) => setStock(Math.max(1, parseInt(e.target.value) || 0))}
+                  min="1"
                   placeholder="Enter product stock"
                   required
                 />

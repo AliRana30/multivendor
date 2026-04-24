@@ -120,7 +120,7 @@ const ProductsCategory = () => {
     return Math.floor(
       ((product.originalPrice - product.discountPrice) /
         product.originalPrice) *
-        100
+      100
     );
   };
 
@@ -290,18 +290,16 @@ const ProductsCategory = () => {
                     <button
                       onClick={() => addToCartHandler(product)}
                       disabled={product.stock === 0}
-                      className={`bg-white p-2 rounded-full shadow-md hover:shadow-lg transition-all duration-200 hover:scale-110 ${
-                        product.stock === 0
-                          ? "opacity-50 cursor-not-allowed"
-                          : ""
-                      }`}
+                      className={`bg-white p-2 rounded-full shadow-md hover:shadow-lg transition-all duration-200 hover:scale-110 ${product.stock === 0
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                        }`}
                     >
                       <BsCartPlus
-                        className={`text-base transition-colors ${
-                          product.stock === 0
-                            ? "text-gray-400"
-                            : "text-gray-600 hover:text-green-500"
-                        }`}
+                        className={`text-base transition-colors ${product.stock === 0
+                          ? "text-gray-400"
+                          : "text-gray-600 hover:text-green-500"
+                          }`}
                       />
                     </button>
                   </div>
@@ -325,11 +323,10 @@ const ProductsCategory = () => {
                         {[...Array(5)].map((_, i) => (
                           <FiStar
                             key={i}
-                            className={`w-3 h-3 ${
-                              i < Math.floor(product.rating || 0)
-                                ? "text-yellow-400 fill-current"
-                                : "text-gray-300"
-                            }`}
+                            className={`w-3 h-3 ${i < Math.floor(product.rating || 0)
+                              ? "text-yellow-400 fill-current"
+                              : "text-gray-300"
+                              }`}
                           />
                         ))}
                       </div>
@@ -382,15 +379,14 @@ const ProductsCategory = () => {
                     <div className="mt-auto">
                       <button
                         disabled={product.stock === 0}
-                        className={`w-full h-10 font-medium text-sm rounded-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-md flex items-center justify-center gap-2 ${
-                          product.stock === 0
-                            ? "bg-gray-400 text-white cursor-not-allowed opacity-60"
-                            : "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-                        }`}
+                        className={`w-full h-10 font-medium text-sm rounded-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-md flex items-center justify-center gap-2 ${product.stock === 0
+                          ? "bg-gray-400 text-white cursor-not-allowed opacity-60"
+                          : "bg-black text-white"
+                          }`}
                         onClick={() => addToCartHandler(product)}
                       >
                         <BsCartPlus className="text-sm" />
-                        <span>
+                        <span >
                           {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
                         </span>
                       </button>

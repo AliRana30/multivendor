@@ -21,6 +21,21 @@ const CreateProduct = () => {
   const [discountPrice, setDiscountPrice] = useState("");
   const [stock, setStock] = useState(0);
 
+  useEffect(() => {
+    if (success) {
+      toast.success("Product Created Successfully");
+      // Reset form fields
+      setName("");
+      setDescription("");
+      setCategory("");
+      setTags("");
+      setOriginalPrice("");
+      setDiscountPrice("");
+      setStock(1);
+      setImages([]);
+    }
+  }, [success]);
+
   const handleAddImages = (e) => {
     const files = Array.from(e.target.files);
     setImages((prev) => [...prev, ...files]);
@@ -35,6 +50,11 @@ const CreateProduct = () => {
 
     if (images.length === 0) {
       toast.error("Please upload at least one image");
+      return;
+    }
+
+    if (stock < 1) {
+      toast.error("Stock cannot be less than 1");
       return;
     }
 
@@ -55,7 +75,6 @@ const CreateProduct = () => {
       newForm.append("shopId", seller._id);
 
       dispatch(createProduct(newForm));
-      toast.success("Product Created Successfully");
 
     } catch (error) {
       console.log(error);
@@ -177,7 +196,8 @@ const CreateProduct = () => {
                   type="number"
                   placeholder="Stock Quantity"
                   value={stock}
-                  onChange={(e) => setStock(e.target.value)}
+                  onChange={(e) => setStock(Math.max(1, parseInt(e.target.value) || 0))}
+                  min="1"
                   className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 />
