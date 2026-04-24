@@ -1,21 +1,22 @@
 import mongoose from "mongoose";
 
 const mongodb = async () => {
-    const uri = process.env.MONGO_URI;
-    
-    if (!uri) {
-        console.error("❌ MONGO_URI is not defined in environment variables!");
-        throw new Error("MONGO_URI is missing");
+    const MONGO_URI = process.env.MONGO_URI;
+
+    if (!MONGO_URI) {
+        console.error("❌ MONGO_URI is missing in .env file");
+        process.exit(1);
     }
 
     try {
-        await mongoose.connect(uri);
-        console.log("✅ MONGO connected successfully to Cluster");
+        // We must AWAIT the connection to know if it actually worked
+        await mongoose.connect(MONGO_URI);
+        console.log("✅ Database connected successfully");
     } catch (error) {
-        console.error("❌ MONGO connection failed!");
-        console.error("Error detail:", error.message);
-        throw error; // Let the caller handle the crash
+        console.error("❌ Database connection failed:");
+        console.error(error.message);
+        process.exit(1);
     }
 };
 
-export default mongodb
+export default mongodb;
